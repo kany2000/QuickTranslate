@@ -1,6 +1,7 @@
 // 截圖翻譯器後台服務
 console.log('Background script loading...');
 
+// 立即启动服务（在 class 定义之后）
 class ScreenshotTranslator {
   constructor() {
     console.log('ScreenshotTranslator constructor called');
@@ -1390,6 +1391,5 @@ ${text}`;
   }
 }
 
-console.log('Creating ScreenshotTranslator instance...');
+// 在 class 定义后立即启动服务
 const translator = new ScreenshotTranslator();
-console.log('Background script loaded successfully');
