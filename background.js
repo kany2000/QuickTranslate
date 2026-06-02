@@ -289,7 +289,7 @@ class ScreenshotTranslator {
         translationHistory: result.translationHistory || [],
         savedWords: result.savedWords || [],
         exportTime: new Date().toISOString(),
-        version: '2.5.0'
+        version: '2.5.1'
       };
       sendResponse({ success: true, data: data });
     } catch (error) {
@@ -428,14 +428,47 @@ class ScreenshotTranslator {
       // 检查是否是受限页面
       if (tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://') || tab.url.startsWith('edge://')) {
         console.error('Cannot use on restricted pages');
+        chrome.notifications.create({
+          type: 'basic',
+          iconUrl: 'icons/icon16.png',
+          title: 'QuickTranslate',
+          message: '无法在此页面使用快捷键，请切换到普通网页'
+        });
         return;
       }
 
-      // 发送消息给 content script，如果失败就忽略
+      // 先尝试注入 float-panel.js（如果尚未注入）
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['float-panel.js']
+        });
+        console.log('Float panel script injected');
+      } catch (injectError) {
+        console.log('Float panel script may already be injected:', injectError.message);
+      }
+
+      // 发送消息给 content script
       try {
         chrome.tabs.sendMessage(tab.id, { action: 'openFloatPanel' });
+        console.log('Float panel open message sent');
       } catch (msgError) {
-        console.log('Content script not ready, will retry on next shortcut press');
+        console.error('Failed to open float panel:', msgError);
+        // 稍等片刻再重试一次
+        setTimeout(async () => {
+          try {
+            chrome.tabs.sendMessage(tab.id, { action: 'openFloatPanel' });
+            console.log('Float panel retry successful');
+          } catch (retryError) {
+            console.error('Float panel retry failed:', retryError);
+            chrome.notifications.create({
+              type: 'basic',
+              iconUrl: 'icons/icon16.png',
+              title: 'QuickTranslate',
+              message: '快捷面板打开失败，请刷新页面后重试'
+            });
+          }
+        }, 300);
       }
     } catch (error) {
       console.error('Failed to open float panel:', error);
