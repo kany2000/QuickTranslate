@@ -1,6 +1,6 @@
 /**
  * QuickTranslate - Quick Translation Panel
- * Version: 2.5.1
+ * Version: 2.5.2
  * 快捷翻译面板 - 选中文字即可快速翻译
  */
 
