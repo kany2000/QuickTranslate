@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://qtrans.737703.xyz/sitemap.xml
+
+# Crawl-delay (optional, be nice to small sites)
+Crawl-delay: 1

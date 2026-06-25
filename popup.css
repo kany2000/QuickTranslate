@@ -1127,3 +1127,201 @@ body {
   background: #fecaca;
 }
 
+/* 主界面開關分組 - 讓 toggle 更緊湊 */
+.toggle-group {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.04) 0%, rgba(118, 75, 162, 0.04) 100%);
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.toggle-group .checkbox-label {
+  padding: 6px 4px;
+}
+
+.toggle-group .help-text {
+  margin-top: 4px;
+  padding-left: 32px;
+}
+
+/* 高級設置內的折疊區塊 */
+.inline-section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+  margin: 16px 0 12px;
+}
+
+.inline-section {
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  background: #fafbfc;
+}
+
+.inline-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: #495057;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.inline-section-header:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.04) 0%, rgba(118, 75, 162, 0.04) 100%);
+}
+
+.inline-section-icon {
+  font-size: 14px;
+}
+
+.inline-section-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: #adb5bd;
+  font-weight: 600;
+}
+
+.inline-section-arrow {
+  font-size: 10px;
+  color: #adb5bd;
+  transition: transform 0.3s ease;
+}
+
+.inline-section-header:hover .inline-section-arrow {
+  color: #667eea;
+}
+
+.inline-section-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inline-section-body.expanded {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.inline-section-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.inline-section-body::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 3px;
+}
+
+.inline-section-body::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+/* 內聯列表 */
+.inline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #e9ecef;
+}
+
+.inline-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 14px;
+  background: white;
+  transition: background 0.2s;
+}
+
+.inline-list-item:hover {
+  background: #f8f9fa;
+}
+
+.inline-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.inline-item-original {
+  font-size: 12px;
+  color: #333;
+  font-weight: 600;
+  word-wrap: break-word;
+  margin-bottom: 2px;
+}
+
+.inline-item-translation {
+  font-size: 11px;
+  color: #667eea;
+  word-wrap: break-word;
+}
+
+.inline-item-time {
+  font-size: 9px;
+  color: #adb5bd;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.inline-list-empty {
+  text-align: center;
+  color: #adb5bd;
+  padding: 18px 0;
+  font-size: 12px;
+  background: white;
+}
+
+.inline-delete-btn {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 2px;
+}
+
+.inline-delete-btn:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+
+.inline-section-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.mini-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.mini-btn:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.08);
+  transform: scale(1.1);
+}
+

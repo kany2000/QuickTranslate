@@ -19,7 +19,7 @@
           <option value="ja">日本語</option>
           <option value="ko">한국어</option>
         </select>
-        <span class="version" data-i18n="app.version">v2.5.2</span>
+        <span class="version" data-i18n="app.version">v2.5.3</span>
       </div>
     </div>
 
@@ -63,6 +63,24 @@
         </select>
       </div>
 
+      <div class="setting-group toggle-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="quick-panel-enabled" class="setting-checkbox">
+          <span class="checkmark"></span>
+          <span data-i18n="opt.enableQuickPanel">啟用快捷翻譯面板 (選中文字即可翻譯)</span>
+        </label>
+        <small class="help-text" data-i18n="hint.quickPanel">選中網頁文字後自動顯示翻譯按鈕</small>
+      </div>
+
+      <div class="setting-group toggle-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="hover-translation-enabled" class="setting-checkbox">
+          <span class="checkmark"></span>
+          <span data-i18n="opt.enableHover">啟用懸浮翻譯 (按 Alt 鍵懸停翻譯)</span>
+        </label>
+        <small class="help-text" data-i18n="hint.hover">按住 Alt 鍵並將鼠標懸停在文字上，無需選中即可翻譯</small>
+      </div>
+
       <!-- 快速保存按鈕 -->
       <div class="quick-save-section">
         <button id="quick-save" class="save-btn">
@@ -79,14 +97,6 @@
 
     <!-- 底部操作 -->
     <div class="footer">
-      <button id="history-btn" class="secondary-btn">
-        <span class="btn-icon">📜</span>
-        <span class="btn-text" data-i18n="btn.history">歷史</span>
-      </button>
-      <button id="words-btn" class="secondary-btn">
-        <span class="btn-icon">⭐</span>
-        <span class="btn-text" data-i18n="btn.words">生詞本</span>
-      </button>
       <button id="settings-btn" class="secondary-btn">
         <span class="btn-icon">⚙️</span>
         <span class="btn-text" data-i18n="btn.advanced">高級設置</span>
@@ -152,24 +162,6 @@
 
         <div class="setting-group">
           <label class="checkbox-label">
-            <input type="checkbox" id="quick-panel-enabled" class="setting-checkbox">
-            <span class="checkmark"></span>
-            <span data-i18n="opt.enableQuickPanel">啟用快捷翻譯面板 (選中文字即可翻譯)</span>
-          </label>
-          <small class="help-text" data-i18n="hint.quickPanel">選中網頁文字後自動顯示翻譯按鈕</small>
-        </div>
-
-        <div class="setting-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="hover-translation-enabled" class="setting-checkbox">
-            <span class="checkmark"></span>
-            <span data-i18n="opt.enableHover">啟用懸浮翻譯 (按 Alt 鍵懸停翻譯)</span>
-          </label>
-          <small class="help-text" data-i18n="hint.hover">按住 Alt 鍵並將鼠標懸停在文字上，無需選中即可翻譯</small>
-        </div>
-
-        <div class="setting-group">
-          <label class="checkbox-label">
             <input type="checkbox" id="multi-engine-enabled" class="setting-checkbox">
             <span class="checkmark"></span>
             <span data-i18n="opt.multiEngine">多引擎結果對比</span>
@@ -200,6 +192,38 @@
             <button id="change-shortcut" class="shortcut-btn">修改</button>
           </div>
           <small class="help-text" data-i18n="hint.shortcutKey">使用快捷鍵快速啟動截圖翻譯</small>
+        </div>
+
+        <!-- 高級設置內的歷史記錄 -->
+        <div class="inline-section-divider"></div>
+        <div class="inline-section">
+          <div class="inline-section-header" id="history-section-toggle">
+            <span class="inline-section-icon">📜</span>
+            <span data-i18n="btn.history">歷史記錄</span>
+            <span class="inline-section-count" id="history-count">0/500</span>
+            <span class="inline-section-arrow">▾</span>
+          </div>
+          <div class="inline-section-body expanded" id="history-section-body">
+            <div id="history-list" class="inline-list"></div>
+          </div>
+        </div>
+
+        <!-- 高級設置內的生詞本 -->
+        <div class="inline-section-divider"></div>
+        <div class="inline-section">
+          <div class="inline-section-header" id="words-section-toggle">
+            <span class="inline-section-icon">⭐</span>
+            <span data-i18n="btn.words">生詞本</span>
+            <span class="inline-section-count" id="words-count">0/500</span>
+            <span class="inline-section-arrow">▾</span>
+            <div class="inline-section-actions">
+              <button id="words-export-btn" class="mini-btn" title="匯出">📤</button>
+              <button id="words-import-btn" class="mini-btn" title="匯入">📥</button>
+            </div>
+          </div>
+          <div class="inline-section-body expanded" id="words-section-body">
+            <div id="words-list" class="inline-list"></div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">

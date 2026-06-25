@@ -117,9 +117,15 @@ class PopupController {
       uiLanguage: document.getElementById('ui-language'),
       quickSave: document.getElementById('quick-save'),
       settingsBtn: document.getElementById('settings-btn'),
-      historyBtn: document.getElementById('history-btn'),
-      wordsBtn: document.getElementById('words-btn'),
       settingsModal: document.getElementById('settings-modal'),
+      historyList: document.getElementById('history-list'),
+      historyCount: document.getElementById('history-count'),
+      historySectionToggle: document.getElementById('history-section-toggle'),
+      historySectionBody: document.getElementById('history-section-body'),
+      wordsList: document.getElementById('words-list'),
+      wordsCount: document.getElementById('words-count'),
+      wordsSectionToggle: document.getElementById('words-section-toggle'),
+      wordsSectionBody: document.getElementById('words-section-body'),
       closeSettings: document.getElementById('close-settings'),
       apiProvider: document.getElementById('api-provider'),
       microsoftApiKey: document.getElementById('microsoft-api-key'),
@@ -163,14 +169,35 @@ class PopupController {
       this.showSettingsModal();
     });
 
-    // 歷史按鈕
-    this.elements.historyBtn.addEventListener('click', () => {
-      this.showHistoryModal();
+    // 高級設置內歷史記錄折疊/展開
+    this.elements.historySectionToggle.addEventListener('click', () => {
+      this.toggleInlineSection(this.elements.historySectionBody);
     });
 
-    // 生詞本按鈕
-    this.elements.wordsBtn.addEventListener('click', () => {
-      this.showWordsModal();
+    // 高級設置內生詞本折疊/展開
+    this.elements.wordsSectionToggle.addEventListener('click', () => {
+      this.toggleInlineSection(this.elements.wordsSectionBody);
+    });
+
+    // 高級設置內生詞本匯出
+    document.getElementById('words-export-btn').addEventListener('click', () => {
+      this.exportData();
+    });
+
+    // 高級設置內生詞本匯入
+    document.getElementById('words-import-btn').addEventListener('click', () => {
+      this.importData();
+    });
+
+    // 生詞本刪除按鈕事件委託（一次綁定）
+    this.elements.wordsList.addEventListener('click', (e) => {
+      const delBtn = e.target.closest('.inline-delete-btn');
+      if (delBtn) {
+        const id = parseInt(delBtn.dataset.id);
+        chrome.runtime.sendMessage({ action: 'removeFromSavedWords', id }, () => {
+          this.loadWordsSection();
+        });
+      }
     });
 
     // 關閉設置
@@ -622,7 +649,9 @@ class PopupController {
     try {
       const basicSettings = {
         targetLanguage: this.elements.targetLanguage.value,
-        ocrLanguage: this.elements.ocrLanguage.value
+        ocrLanguage: this.elements.ocrLanguage.value,
+        quickPanelEnabled: this.elements.quickPanelEnabled.checked,
+        hoverTranslationEnabled: this.elements.hoverTranslationEnabled.checked
       };
 
       // 顯示保存中狀態
@@ -826,75 +855,58 @@ class PopupController {
 
   showSettingsModal() {
     this.elements.settingsModal.classList.remove('hidden');
+    this.loadHistorySection();
+    this.loadWordsSection();
   }
 
-  showHistoryModal() {
+  loadHistorySection() {
     chrome.runtime.sendMessage({ action: 'getTranslationHistory' }, (response) => {
       if (response && response.success) {
         const history = response.data || [];
-        const list = history.map(item =>
-          `<div class="modal-list-item">
-            <div class="modal-item-original">${this.escapeHtml(item.original)}</div>
-            <div class="modal-item-translation">${this.escapeHtml(item.translation)}</div>
-            <div class="modal-item-time">${new Date(item.timestamp).toLocaleString()}</div>
-          </div>`
-        ).join('');
+        this.elements.historyCount.textContent = `${history.length}/500`;
 
-        const content = history.length === 0
-          ? `<div class="modal-empty">${i18n.t('float.history.empty')}</div>`
-          : `<div class="modal-list">${list}</div>`;
-
-        this.showModal(`${i18n.t('btn.history')} (${history.length}/500)`, content);
+        if (history.length === 0) {
+          this.elements.historyList.innerHTML = `<div class="inline-list-empty">${i18n.t('float.history.empty')}</div>`;
+        } else {
+          this.elements.historyList.innerHTML = history.map(item =>
+            `<div class="inline-list-item">
+              <div class="inline-item-text">
+                <div class="inline-item-original">${this.escapeHtml(item.original)}</div>
+                <div class="inline-item-translation">${this.escapeHtml(item.translation)}</div>
+              </div>
+              <div class="inline-item-time">${new Date(item.timestamp).toLocaleString()}</div>
+            </div>`
+          ).join('');
+        }
       }
     });
   }
 
-  showWordsModal() {
+  loadWordsSection() {
     chrome.runtime.sendMessage({ action: 'getSavedWords' }, (response) => {
       if (response && response.success) {
         const words = response.data || [];
-        const list = words.map(item =>
-          `<div class="modal-list-item">
-            <div class="modal-item-original">${this.escapeHtml(item.original)}</div>
-            <div class="modal-item-translation">${this.escapeHtml(item.translation)}</div>
-            <button class="modal-delete-btn" data-id="${item.id}">${i18n.t('float.btn.delete')}</button>
-          </div>`
-        ).join('');
+        this.elements.wordsCount.textContent = `${words.length}/500`;
 
-        const actionButtons = `
-          <div class="modal-actions">
-            <button id="words-export-btn" class="secondary-btn">${i18n.t('btn.export')}</button>
-            <button id="words-import-btn" class="secondary-btn">${i18n.t('btn.import')}</button>
-          </div>
-        `;
-
-        const content = words.length === 0
-          ? `<div class="modal-empty">${i18n.t('float.words.empty')}</div>${actionButtons}`
-          : `<div class="modal-list">${list}</div>${actionButtons}`;
-
-        this.showModal(`${i18n.t('btn.words')} (${words.length}/500)`, content);
-
-        // 绑定删除按钮事件
-        document.querySelectorAll('.modal-delete-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const id = parseInt(e.target.dataset.id);
-            chrome.runtime.sendMessage({ action: 'removeFromSavedWords', id }, () => {
-              this.showWordsModal(); // 刷新
-            });
-          });
-        });
-
-        // 绑定导出按钮事件
-        document.getElementById('words-export-btn')?.addEventListener('click', () => {
-          this.exportData();
-        });
-
-        // 绑定导入按钮事件
-        document.getElementById('words-import-btn')?.addEventListener('click', () => {
-          this.importData();
-        });
+        if (words.length === 0) {
+          this.elements.wordsList.innerHTML = `<div class="inline-list-empty">${i18n.t('float.words.empty')}</div>`;
+        } else {
+          this.elements.wordsList.innerHTML = words.map(item =>
+            `<div class="inline-list-item">
+              <div class="inline-item-text">
+                <div class="inline-item-original">${this.escapeHtml(item.original)}</div>
+                <div class="inline-item-translation">${this.escapeHtml(item.translation)}</div>
+              </div>
+              <button class="inline-delete-btn" data-id="${item.id}">${i18n.t('float.btn.delete')}</button>
+            </div>`
+          ).join('');
+        }
       }
     });
+  }
+
+  toggleInlineSection(bodyEl) {
+    bodyEl.classList.toggle('expanded');
   }
 
   exportData() {
