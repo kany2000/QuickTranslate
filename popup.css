@@ -1325,3 +1325,56 @@ body {
   transform: scale(1.1);
 }
 
+/* 模塊列表底部 */
+.inline-section-footer {
+  padding: 8px 14px;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 8px;
+}
+
+.uninstall-btn {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.uninstall-btn:hover {
+  background: #fecaca;
+}
+
+/* 模塊列表分組 */
+.module-group-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #adb5bd;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 14px 4px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.module-meta {
+  font-size: 10px !important;
+  color: #adb5bd !important;
+}
+
+.module-status {
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.module-status.active {
+  color: #10b981;
+}
+

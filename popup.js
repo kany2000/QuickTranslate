@@ -126,6 +126,11 @@ class PopupController {
       wordsCount: document.getElementById('words-count'),
       wordsSectionToggle: document.getElementById('words-section-toggle'),
       wordsSectionBody: document.getElementById('words-section-body'),
+      modulesBtn: document.getElementById('modules-btn'),
+      modulesModal: document.getElementById('modules-modal'),
+      closeModulesBtn: document.getElementById('close-modules-btn'),
+      modulesListFull: document.getElementById('modules-list-full'),
+      importModuleBtnFull: document.getElementById('import-module-btn-full'),
       closeSettings: document.getElementById('close-settings'),
       apiProvider: document.getElementById('api-provider'),
       microsoftApiKey: document.getElementById('microsoft-api-key'),
@@ -177,6 +182,26 @@ class PopupController {
     // 高級設置內生詞本折疊/展開
     this.elements.wordsSectionToggle.addEventListener('click', () => {
       this.toggleInlineSection(this.elements.wordsSectionBody);
+    });
+
+    // 模塊按鈕
+    this.elements.modulesBtn.addEventListener('click', () => {
+      this.showModulesModal();
+    });
+
+    // 關閉模塊模態框
+    this.elements.closeModulesBtn.addEventListener('click', () => {
+      this.hideModulesModal();
+    });
+    this.elements.modulesModal.addEventListener('click', (e) => {
+      if (e.target === this.elements.modulesModal) {
+        this.hideModulesModal();
+      }
+    });
+
+    // 導入模塊按鈕
+    this.elements.importModuleBtnFull.addEventListener('click', () => {
+      this.importModule();
     });
 
     // 高級設置內生詞本匯出
@@ -243,8 +268,12 @@ class PopupController {
 
     // ESC 鍵關閉模態框
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !this.elements.settingsModal.classList.contains('hidden')) {
-        this.hideSettingsModal();
+      if (e.key === 'Escape') {
+        if (!this.elements.settingsModal.classList.contains('hidden')) {
+          this.hideSettingsModal();
+        } else if (!this.elements.modulesModal.classList.contains('hidden')) {
+          this.hideModulesModal();
+        }
       }
     });
 
@@ -859,6 +888,15 @@ class PopupController {
     this.loadWordsSection();
   }
 
+  showModulesModal() {
+    this.elements.modulesModal.classList.remove('hidden');
+    this.loadModulesSection();
+  }
+
+  hideModulesModal() {
+    this.elements.modulesModal.classList.add('hidden');
+  }
+
   loadHistorySection() {
     chrome.runtime.sendMessage({ action: 'getTranslationHistory' }, (response) => {
       if (response && response.success) {
@@ -907,6 +945,138 @@ class PopupController {
 
   toggleInlineSection(bodyEl) {
     bodyEl.classList.toggle('expanded');
+  }
+
+  loadModulesSection() {
+    chrome.runtime.sendMessage({ action: 'getModules' }, (response) => {
+      if (response && response.success) {
+        const modules = response.modules || [];
+        const activeCount = modules.filter(m => m.active).length;
+        if (modules.length === 0) {
+          this.elements.modulesListFull.innerHTML = `<div class="inline-list-empty">${i18n.t('module.empty')}</div>`;
+        } else {
+          // 按類型分組
+          const typeOrder = ['translator', 'mode', 'renderer', 'processor', 'service', 'theme'];
+          const typeNames = {
+            translator: i18n.t('module.type.translator'),
+            mode: i18n.t('module.type.mode'),
+            renderer: i18n.t('module.type.renderer'),
+            processor: i18n.t('module.type.processor'),
+            service: i18n.t('module.type.service'),
+            theme: i18n.t('module.type.theme')
+          };
+          const groups = {};
+          for (const m of modules) {
+            const t = m.manifest.type || 'other';
+            if (!groups[t]) groups[t] = [];
+            groups[t].push(m);
+          }
+
+          let html = '';
+          for (const type of typeOrder) {
+            const list = groups[type];
+            if (!list || list.length === 0) continue;
+            html += `<div class="module-group-label">${typeNames[type] || type} (${list.length})</div>`;
+            html += list.map(m => {
+              const statusHtml = m.active
+                ? `<span class="module-status active">● ${i18n.t('module.active')}</span>`
+                : `<button class="uninstall-btn" data-id="${m.id}">卸載</button>`;
+              return `<div class="inline-list-item">
+                <div class="inline-item-text">
+                  <div class="inline-item-original">${this.escapeHtml(i18n.t('module.name.' + m.id))}</div>
+                  <div class="inline-item-translation module-meta">v${m.manifest.version}</div>
+                </div>
+                ${statusHtml}
+              </div>`;
+            }).join('');
+          }
+
+          this.elements.modulesListFull.innerHTML = html;
+
+          // 卸載按鈕事件委託
+          this.elements.modulesListFull.addEventListener('click', (e) => {
+            const btn = e.target.closest('.uninstall-btn');
+            if (btn) {
+              const moduleId = btn.dataset.id;
+              if (!confirm('確定卸載此模塊？')) return;
+              chrome.runtime.sendMessage({ action: 'uninstallModule', moduleId }, () => {
+                this.loadModulesSection();
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  importModule() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.js,.qt-module,.txt';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const code = event.target.result;
+
+          // 嘗試提取 manifest（正則匹配 static manifest = {...}）
+          const manifestMatch = code.match(/static\s+manifest\s*=\s*(\{[\s\S]*?\n\})\s*/);
+          if (!manifestMatch) {
+            this.showStatus('無效的模塊文件：找不到 manifest', 'error');
+            return;
+          }
+
+          // 用 Function 解析 manifest 對象
+          // 注意：Chrome 擴展頁面默認 CSP 不允許 eval，但 new Function 在某些 MV3 環境下可用
+          // 這裡使用正則提取 JSON 風格的 manifest
+          let manifestStr = manifestMatch[1]
+            // 將註釋替換為空格
+            .replace(/\/\/.*/g, ' ')
+            // 將單引號替換為雙引號
+            .replace(/'/g, '"')
+            // 將屬性名包裝為引號
+            .replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
+            // 刪除尾部逗號
+            .replace(/,\s*}/g, '}')
+            // 刪除 undefined/null
+            .replace(/: undefined|: null/g, ': ""')
+            // 將 undefined/null 數組元素移除
+            .replace(/undefined|null/g, '""');
+
+          // 驗證
+          const manifest = JSON.parse(manifestStr);
+          const required = ['id', 'name', 'version', 'author', 'type', 'description', 'minAppVersion'];
+          const missing = required.filter(f => !manifest[f]);
+          if (missing.length > 0) {
+            this.showStatus(`manifest 缺少欄位: ${missing.join(', ')}`, 'error');
+            return;
+          }
+
+          if (!confirm(`安裝模塊「${manifest.name}」v${manifest.version}？\n作者: ${manifest.author}\n類型: ${manifest.type}`)) return;
+
+          chrome.runtime.sendMessage({
+            action: 'installModule',
+            moduleId: manifest.id,
+            code,
+            manifest
+          }, (resp) => {
+            if (resp && resp.success) {
+              this.showStatus(`模塊「${manifest.name}」已安裝`, 'success');
+              this.loadModulesSection();
+            } else {
+              this.showStatus('安裝失敗: ' + (resp?.error || '未知錯誤'), 'error');
+            }
+          });
+        } catch (err) {
+          this.showStatus('文件解析失敗: ' + err.message, 'error');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
   }
 
   exportData() {

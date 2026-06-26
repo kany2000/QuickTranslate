@@ -101,6 +101,10 @@
         <span class="btn-icon">⚙️</span>
         <span class="btn-text" data-i18n="btn.advanced">高級設置</span>
       </button>
+      <button id="modules-btn" class="secondary-btn">
+        <span class="btn-icon">🧩</span>
+        <span class="btn-text" data-i18n="btn.modules">模塊</span>
+      </button>
     </div>
   </div>
 
@@ -203,7 +207,7 @@
             <span class="inline-section-count" id="history-count">0/500</span>
             <span class="inline-section-arrow">▾</span>
           </div>
-          <div class="inline-section-body expanded" id="history-section-body">
+          <div class="inline-section-body" id="history-section-body">
             <div id="history-list" class="inline-list"></div>
           </div>
         </div>
@@ -221,7 +225,7 @@
               <button id="words-import-btn" class="mini-btn" title="匯入">📥</button>
             </div>
           </div>
-          <div class="inline-section-body expanded" id="words-section-body">
+          <div class="inline-section-body" id="words-section-body">
             <div id="words-list" class="inline-list"></div>
           </div>
         </div>
@@ -229,6 +233,22 @@
       <div class="modal-footer">
         <button id="save-settings" class="primary-btn" data-i18n="btn.saveSettings">保存設置</button>
         <button id="reset-settings" class="secondary-btn" data-i18n="btn.resetSettings">重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模塊管理模態框 -->
+  <div id="modules-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>🧩 <span data-i18n="settings.modules">模塊系統</span></h3>
+      </div>
+      <div class="modal-body" id="modules-modal-body">
+        <div id="modules-list-full" class="inline-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="import-module-btn-full" class="primary-btn" data-i18n="module.import">📥 導入模塊</button>
+        <button id="close-modules-btn" class="secondary-btn" data-i18n="btn.back">← 返回</button>
       </div>
     </div>
   </div>

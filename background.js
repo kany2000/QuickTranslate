@@ -1,3 +1,25 @@
+// ===== 模塊系統核心 =====
+importScripts(
+  'core/event-bus.js',
+  'core/module-loader.js',
+  'modules/translator-google.js',
+  'modules/translator-microsoft.js',
+  'modules/translator-glm.js',
+  'modules/translator-custom.js',
+  'modules/mode-quick-panel.js',
+  'modules/mode-float-panel.js'
+)
+
+// ===== 模塊系統初始化 =====
+const eventBus = new EventBus()
+const moduleLoader = new ModuleLoader(eventBus, chrome.storage.local)
+moduleLoader.register(GoogleTranslatorModule)
+moduleLoader.register(MicrosoftTranslatorModule)
+moduleLoader.register(GLMTranslatorModule)
+moduleLoader.register(CustomLLMModule)
+moduleLoader.register(QuickPanelMode)
+moduleLoader.register(FloatPanelMode)
+
 // 截圖翻譯器後台服務
 console.log('Background script loading...');
 
@@ -320,6 +342,33 @@ class ScreenshotTranslator {
     }
   }
 
+  async installModule(moduleId, code, manifest, sendResponse) {
+    try {
+      await moduleLoader.installModule(moduleId, code, manifest)
+      sendResponse({ success: true })
+    } catch (error) {
+      sendResponse({ success: false, error: error.message })
+    }
+  }
+
+  async uninstallModule(moduleId, sendResponse) {
+    try {
+      await moduleLoader.uninstallModule(moduleId)
+      sendResponse({ success: true })
+    } catch (error) {
+      sendResponse({ success: false, error: error.message })
+    }
+  }
+
+  async getModulesList(sendResponse) {
+    try {
+      const modules = await moduleLoader.getCombinedModuleList()
+      sendResponse({ success: true, modules })
+    } catch (error) {
+      sendResponse({ success: false, error: error.message })
+    }
+  }
+
   setupMessageListeners() {
     console.log('Setting up message listeners...');
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -572,6 +621,19 @@ class ScreenshotTranslator {
           break;
         case 'importData':
           this.importData(request.data, sendResponse);
+          break;
+        case 'installModule':
+          this.installModule(request.moduleId, request.code, request.manifest, sendResponse);
+          break;
+        case 'uninstallModule':
+          this.uninstallModule(request.moduleId, sendResponse);
+          break;
+        case 'getModules':
+          this.getModulesList(sendResponse);
+          break;
+        case 'emitEvent':
+          eventBus.emit(request.event, request.data);
+          sendResponse({ success: true });
           break;
         default:
           console.warn('Unknown action:', request.action);
@@ -1393,3 +1455,15 @@ ${text}`;
 
 // 在 class 定义后立即启动服务
 const translator = new ScreenshotTranslator();
+
+// 加載模塊系統
+moduleLoader.loadAll().then(results => {
+  const ok = results.filter(r => r.success).length
+  const fail = results.filter(r => !r.success).length
+  console.log(`Module system initialized: ${ok} active, ${fail} failed`)
+  if (fail > 0) {
+    results.filter(r => !r.success).forEach(r =>
+      console.warn(`  ${r.id}: ${r.error || r.errors?.join(', ')}`)
+    )
+  }
+})
