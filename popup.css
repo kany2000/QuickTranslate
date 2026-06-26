@@ -1378,3 +1378,22 @@ body {
   color: #10b981;
 }
 
+/* 模塊設置按鈕 */
+.module-settings-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 4px;
+  opacity: 0.4;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.module-settings-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+

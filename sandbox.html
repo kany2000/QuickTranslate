@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<script>
+// 模塊倉庫：requestId -> ModuleClass
+window.__qtModules = {}
+window.__qtRequestId = null
+
+// 模塊註冊入口（被 eval 的模塊代碼調用）
+window.qtDefineModule = function(ModuleClass) {
+  const id = ModuleClass.manifest.id
+  window.__qtModules[id] = ModuleClass
+}
+
+// 清理解上一次評估狀態
+function reset() {
+  window.__qtModules = {}
+  window.__qtRequestId = null
+}
+
+// 監聽父頁面的評估請求
+window.addEventListener('message', function(event) {
+  if (event.source !== parent) return
+  var msg = event.data
+  if (msg.type === 'evaluate') {
+    reset()
+    try {
+      eval(msg.code)
+      // 收集評估過程中註冊的所有模塊
+      var ids = Object.keys(window.__qtModules)
+      if (ids.length > 0) {
+        var results = ids.map(function(id) {
+          return {
+            id: id,
+            manifest: window.__qtModules[id].manifest
+          }
+        })
+        parent.postMessage({
+          type: 'evaluated',
+          requestId: msg.requestId,
+          modules: results
+        }, '*')
+      } else {
+        parent.postMessage({
+          type: 'evaluated',
+          requestId: msg.requestId,
+          error: '模塊代碼未調用 qtDefineModule'
+        }, '*')
+      }
+    } catch (err) {
+      parent.postMessage({
+        type: 'evaluated',
+        requestId: msg.requestId,
+        error: err.message
+      }, '*')
+    }
+  }
+})
+
+parent.postMessage({ type: 'ready' }, '*')
+</script>
+</body>
+</html>

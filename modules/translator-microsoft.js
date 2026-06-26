@@ -12,7 +12,10 @@ class MicrosoftTranslatorModule {
     description: 'Microsoft Translator API 翻譯引擎',
     minAppVersion: '2.5.3',
     permissions: ['https://api.cognitive.microsofttranslator.com/*'],
-    hooks: ['translate:text']
+    hooks: ['translate:text'],
+    options: [
+      { key: 'apiKey', type: 'password', label: 'Microsoft API Key', placeholder: '輸入 Microsoft Translator API Key' }
+    ]
   }
 
   constructor(core) {
@@ -27,6 +30,7 @@ class MicrosoftTranslatorModule {
 
   async onActivate() {
     this._unsub = this.core.eventBus.on('translate:text', async (req) => {
+      if (req.target && req.target !== 'engine-microsoft') return
       try {
         // 從 storage 讀取 API key
         const settings = await this.core.storage.get(['apiKeys'])

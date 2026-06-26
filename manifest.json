@@ -51,6 +51,9 @@
       "matches": ["<all_urls>"]
     }
   ],
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  },
   "commands": {
     "smart-translate": {
       "suggested_key": {

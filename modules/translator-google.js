@@ -24,6 +24,7 @@ class GoogleTranslatorModule {
 
   async onActivate() {
     this._unsub = this.core.eventBus.on('translate:text', async (req) => {
+      if (req.target && req.target !== 'engine-google') return
       try {
         const result = await this.translate(req.text, req.from, req.to)
         this.core.eventBus.emit('translate:result', {

@@ -345,7 +345,9 @@ class ScreenshotTranslator {
   async installModule(moduleId, code, manifest, sendResponse) {
     try {
       await moduleLoader.installModule(moduleId, code, manifest)
-      sendResponse({ success: true })
+      // 嘗試通過沙箱即時激活
+      const activationResult = await moduleLoader.activateFromStorage(moduleId)
+      sendResponse({ success: true, activated: activationResult.success })
     } catch (error) {
       sendResponse({ success: false, error: error.message })
     }
@@ -628,6 +630,14 @@ class ScreenshotTranslator {
         case 'uninstallModule':
           this.uninstallModule(request.moduleId, sendResponse);
           break;
+        case 'evaluateModule':
+          // 此請求由 offscreen document 處理，這裡只做轉發
+          sendResponse({ success: false, error: 'not handled by background' });
+          break;
+        case 'hostReady':
+          console.log('Background: Module host ready:', request.hostId);
+          sendResponse({ success: true });
+          break;
         case 'getModules':
           this.getModulesList(sendResponse);
           break;
@@ -821,6 +831,41 @@ class ScreenshotTranslator {
     }
   }
 
+  _providerToModuleId(provider) {
+    const map = { google: 'engine-google', microsoft: 'engine-microsoft', glm: 'engine-glm', custom: 'engine-custom' }
+    return map[provider] || null
+  }
+
+  _translateViaEventBus(text, from, to, moduleId) {
+    return new Promise((resolve, reject) => {
+      const requestId = 'req_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)
+      const timeout = setTimeout(() => {
+        unsubResult()
+        unsubError()
+        reject(new Error('Translation timeout'))
+      }, 30000)
+
+      const unsubResult = eventBus.on('translate:result', (data) => {
+        if (data.id === requestId) {
+          clearTimeout(timeout)
+          unsubResult()
+          unsubError()
+          resolve(data.result)
+        }
+      })
+      const unsubError = eventBus.on('translate:error', (data) => {
+        if (data.id === requestId) {
+          clearTimeout(timeout)
+          unsubResult()
+          unsubError()
+          reject(new Error(data.error))
+        }
+      })
+
+      eventBus.emit('translate:text', { text, from, to, id: requestId, target: moduleId })
+    })
+  }
+
   async translateText(text, sourceLang, targetLang, sendResponse) {
     try {
       console.log(`Background: Translating "${text}" from ${sourceLang} to ${targetLang}`);
@@ -833,43 +878,55 @@ class ScreenshotTranslator {
 
       let result;
 
-      // 根据 API Provider 选择翻译方法
-      switch (apiProvider) {
-        case 'glm':
-          // 使用 GLM 大模型翻译
-          const glmApiKey = settings.apiKeys?.glm;
-          if (!glmApiKey) {
-            throw new Error('GLM API Key 未设置，请在设置中配置');
-          }
-          result = await this.callGLMTranslate(text, sourceLang, targetLang, glmApiKey);
-          break;
+      // 優先嘗試通過 EventBus 模塊路由翻譯
+      const moduleId = this._providerToModuleId(apiProvider)
+      const modEntry = moduleLoader.getModule(moduleId)
+      if (modEntry && modEntry.instance) {
+        try {
+          result = await this._translateViaEventBus(text, sourceLang, targetLang, moduleId)
+          console.log('Background: Translated via EventBus module:', moduleId)
+        } catch (ebError) {
+          console.warn('Background: EventBus translation failed, falling back:', ebError.message)
+          result = null
+        }
+      }
 
-        case 'microsoft':
-          // 使用 Microsoft Translator（免费）
-          result = await this.callMicrosoftTranslate(text, sourceLang, targetLang);
-          break;
+      // 如果 EventBus 失敗或沒有對應模塊，回退到舊的 switch-case
+      if (result === null || result === undefined) {
+        // 根据 API Provider 选择翻译方法
+        switch (apiProvider) {
+          case 'glm':
+            const glmApiKey = settings.apiKeys?.glm;
+            if (!glmApiKey) {
+              throw new Error('GLM API Key 未设置，请在设置中配置');
+            }
+            result = await this.callGLMTranslate(text, sourceLang, targetLang, glmApiKey);
+            break;
 
-        case 'custom':
-          // 使用通用 LLM（OpenAI 兼容格式）
-          const customApiKey = settings.apiKeys?.custom;
-          const llmConfig = settings.llmConfig || {};
-          console.log('Background: Custom LLM config:', {
-            hasApiKey: !!customApiKey,
-            baseUrl: llmConfig.baseUrl || 'not set',
-            model: llmConfig.model || 'not set'
-          });
-          if (!customApiKey || !llmConfig.baseUrl || !llmConfig.model) {
-            throw new Error('LLM 自定义配置不完整，请检查 API Key、Base URL 和模型名称');
-          }
-          console.log('Background: Calling Custom LLM with model:', llmConfig.model);
-          result = await this.callCustomLLMTranslate(text, sourceLang, targetLang, customApiKey, llmConfig);
-          break;
+          case 'microsoft':
+            result = await this.callMicrosoftTranslate(text, sourceLang, targetLang);
+            break;
 
-        case 'google':
-        default:
-          // 默认使用 Google 翻译（免费）
-          result = await this.callGoogleTranslate(text, sourceLang, targetLang);
-          break;
+          case 'custom':
+            const customApiKey = settings.apiKeys?.custom;
+            const llmConfig = settings.llmConfig || {};
+            console.log('Background: Custom LLM config:', {
+              hasApiKey: !!customApiKey,
+              baseUrl: llmConfig.baseUrl || 'not set',
+              model: llmConfig.model || 'not set'
+            });
+            if (!customApiKey || !llmConfig.baseUrl || !llmConfig.model) {
+              throw new Error('LLM 自定义配置不完整，请检查 API Key、Base URL 和模型名称');
+            }
+            console.log('Background: Calling Custom LLM with model:', llmConfig.model);
+            result = await this.callCustomLLMTranslate(text, sourceLang, targetLang, customApiKey, llmConfig);
+            break;
+
+          case 'google':
+          default:
+            result = await this.callGoogleTranslate(text, sourceLang, targetLang);
+            break;
+        }
       }
 
       sendResponse({
@@ -1340,7 +1397,7 @@ ${text}`;
       const googleResult = await this.callGoogleTranslate(text, sourceLang, targetLang);
       results.google = googleResult;
     } catch (e) {
-      errors.google = e.message;
+      results.google = null;
     }
 
     // 2. Microsoft 翻译（需要 API Key）
@@ -1350,35 +1407,46 @@ ${text}`;
         const microsoftResult = await this.callMicrosoftTranslate(text, sourceLang, targetLang, microsoftApiKey);
         results.microsoft = microsoftResult;
       } catch (e) {
-        errors.microsoft = e.message;
+        results.microsoft = null;
       }
-    } else {
-      errors.microsoft = '未配置 Microsoft API Key';
     }
 
-    // 3. 只有在开启多引擎模式时才包含 LLM 和 GLM
+    // 3. 使用 EventBus 調用 Custom LLM（走模塊系統）
     if (includeLLM) {
-      // 检查是否有自定义 LLM 配置
-      const customApiKey = settings.apiKeys?.custom;
-      const llmConfig = settings.llmConfig || {};
-
-      if (customApiKey && llmConfig.baseUrl && llmConfig.model) {
+      // Custom LLM — 不用預先檢查設定，讓模塊自己處理
+      const customMod = moduleLoader.getModule('engine-custom');
+      if (customMod) {
         try {
-          const llmResult = await this.callCustomLLMTranslate(text, sourceLang, targetLang, customApiKey, llmConfig);
-          results.llm = llmResult;
+          const llmResult = await this._translateViaEventBus(text, sourceLang, targetLang, 'engine-custom');
+          if (llmResult) results.llm = llmResult;
         } catch (e) {
-          errors.llm = e.message;
+          // EventBus 失敗，嘗試直接調用（從標準設定或 moduleSettings 讀取）
+          try {
+            const modSettings = await chrome.storage.local.get(['apiKeys', 'llmConfig', 'moduleSettings.engine-custom']);
+            const apiKey = modSettings.apiKeys?.custom || modSettings['moduleSettings.engine-custom']?.apiKey;
+            const config = modSettings.llmConfig || {};
+            const baseUrl = config.baseUrl || modSettings['moduleSettings.engine-custom']?.baseUrl;
+            const model = config.model || modSettings['moduleSettings.engine-custom']?.model;
+            if (apiKey && baseUrl && model) {
+              results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, apiKey, { baseUrl, model });
+            }
+          } catch (e2) { /* 都不行就算了 */ }
         }
       }
 
-      // 检查 GLM 配置（如果有）
-      const glmApiKey = settings.apiKeys?.glm;
-      if (glmApiKey) {
+      // GLM
+      const glmMod = moduleLoader.getModule('engine-glm');
+      if (glmMod) {
         try {
-          const glmResult = await this.callGLMTranslate(text, sourceLang, targetLang, glmApiKey);
-          results.glm = glmResult;
+          const glmResult = await this._translateViaEventBus(text, sourceLang, targetLang, 'engine-glm');
+          if (glmResult) results.glm = glmResult;
         } catch (e) {
-          errors.glm = e.message;
+          // GLM 回退
+          try {
+            const modSettings = await chrome.storage.local.get(['apiKeys', 'moduleSettings.engine-glm']);
+            const apiKey = modSettings.apiKeys?.glm || modSettings['moduleSettings.engine-glm']?.apiKey;
+            if (apiKey) results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, apiKey);
+          } catch (e2) {}
         }
       }
     }
@@ -1466,4 +1534,30 @@ moduleLoader.loadAll().then(results => {
       console.warn(`  ${r.id}: ${r.error || r.errors?.join(', ')}`)
     )
   }
+
+  // 啟動 offscreen document（用於沙箱評估第三方模塊）
+  initModuleHost()
 })
+
+// 初始化 offscreen document（模塊沙箱橋接器）
+async function initModuleHost() {
+  try {
+    // 檢查是否已存在
+    const existing = await chrome.runtime.getContexts({
+      contextTypes: ['OFFSCREEN_DOCUMENT']
+    }).catch(() => [])
+    if (existing && existing.length > 0) {
+      console.log('ModuleHost: already exists')
+      return
+    }
+
+    await chrome.offscreen.createDocument({
+      url: 'module-host.html',
+      reasons: ['DOM_OPERATION'],
+      justification: 'Evaluate third-party module code in sandbox'
+    })
+    console.log('ModuleHost: offscreen document created')
+  } catch (e) {
+    console.warn('ModuleHost: init failed:', e.message)
+  }
+}

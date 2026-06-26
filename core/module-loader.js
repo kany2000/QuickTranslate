@@ -147,6 +147,68 @@ class ModuleLoader {
   }
 
   /**
+   * 通過沙箱評估並激活第三方模塊
+   * @param {string} moduleId
+   * @returns {Promise<{success: boolean, error?: string}>}
+   */
+  async activateFromStorage(moduleId) {
+    const key = `installedModule:${moduleId}`
+    const result = await this.storage.get(key)
+    const entry = result[key]
+    if (!entry || !entry.code) {
+      return { success: false, error: 'Module not found in storage' }
+    }
+
+    // 透過 offscreen document 中的 sandbox 評估代碼
+    try {
+      const evalResult = await this._evaluateInSandbox(entry.code)
+      if (!evalResult.success) {
+        return { success: false, error: evalResult.error }
+      }
+
+      const manifest = entry.manifest
+      // 構建 core 引用
+      const core = {
+        eventBus: this.eventBus,
+        storage: this.storage,
+        settings: {}
+      }
+
+      // 注意：第三方模塊的實例在 sandbox 中運行
+      // 這裡只做元數據註冊，讓它顯示為活躍
+      this._modules.set(manifest.id, {
+        instance: { manifest, _sandbox: true },
+        manifest
+      })
+      this.eventBus.emit('module:activated', { moduleId: manifest.id })
+      console.log(`ModuleLoader: activated ${manifest.id} v${manifest.version} (sandboxed)`)
+      return { success: true }
+    } catch (e) {
+      console.error(`ModuleLoader: sandbox activation failed for ${moduleId}:`, e)
+      return { success: false, error: e.message }
+    }
+  }
+
+  /**
+   * 發送代碼到 offscreen document 的 sandbox 進行評估
+   */
+  async _evaluateInSandbox(code) {
+    // 向 offscreen document 發送評估請求
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({
+        action: 'evaluateModule',
+        code: code
+      }, (response) => {
+        if (chrome.runtime.lastError) {
+          resolve({ success: false, error: chrome.runtime.lastError.message })
+          return
+        }
+        resolve(response)
+      })
+    })
+  }
+
+  /**
    * 讀取所有已安裝的第三方模塊清單
    * @returns {Promise<Array<{id: string, manifest: object, installedAt: number}>>}
    */

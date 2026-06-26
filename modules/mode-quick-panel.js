@@ -47,16 +47,6 @@ class QuickPanelMode {
       hoverTranslationEnabled: result.hoverTranslationEnabled !== false
     }
     await this.core.storage.set(settings)
-    // 通知所有頁面
-    const tabs = await chrome.tabs.query({})
-    for (const tab of tabs) {
-      if (tab.id && tab.url && !tab.url.startsWith('chrome://')) {
-        chrome.tabs.sendMessage(tab.id, {
-          action: 'settingsUpdated',
-          settings
-        }).catch(() => {}) // 忽略無響應的 tab
-      }
-    }
   }
 }
 

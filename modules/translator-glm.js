@@ -12,7 +12,10 @@ class GLMTranslatorModule {
     description: '智譜 GLM 大模型翻譯引擎',
     minAppVersion: '2.5.3',
     permissions: ['https://open.bigmodel.cn/*'],
-    hooks: ['translate:text']
+    hooks: ['translate:text'],
+    options: [
+      { key: 'apiKey', type: 'password', label: 'GLM API Key', placeholder: '輸入智譜 GLM API Key' }
+    ]
   }
 
   constructor(core) {
@@ -27,6 +30,7 @@ class GLMTranslatorModule {
 
   async onActivate() {
     this._unsub = this.core.eventBus.on('translate:text', async (req) => {
+      if (req.target && req.target !== 'engine-glm') return
       try {
         const settings = await this.core.storage.get(['apiKeys'])
         const apiKey = settings.apiKeys?.glm

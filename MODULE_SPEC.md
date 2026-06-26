@@ -72,6 +72,14 @@ interface ModuleManifest {
   minAppVersion: string // 最低兼容的核心版本
   permissions: string[] // Chrome 權限
   hooks: string[]     // 監聽的事件列表
+  options?: Array<{           // 可選：配置項定義
+    key: string,             // 配置鍵名
+    type: 'text' | 'password' | 'number' | 'select',  // 輸入類型
+    label: string,           // 顯示標籤
+    placeholder?: string,    // 佔位文字
+    default?: any,           // 默認值
+    options?: Array<{value: string, label: string}>  // select 類型的選項
+  }>
   optionsPage?: string | null // 配置頁 URL
   icon?: string | null        // 圖標（Base64）
   homepage?: string | null    // 首頁 URL
@@ -219,12 +227,27 @@ await this.core.storage.set('moduleSettings.' + this.constructor.manifest.id, { 
 
 ---
 
-## 九、安全限制
+## 九、沙箱執行環境
+
+第三方導入的模塊在 sandbox iframe 中執行（MV3 要求），通過 `postMessage` 與核心通訊。
+
+### 生命周期限制
+
+導入的模塊依賴 offscreen document 中的 sandbox iframe 存活。Chrome 可能在空閒一段時間後自動銷毀 offscreen document。當前 V2 實現中，導入的模塊顯示為「活躍」但尚未 routing 實際翻譯請求。後續版本會加入**心跳機制**定期重建 sandbox。
+
+### 開發者注意
+
+第三方模塊的 class 實例存在 sandbox 中，無法直接傳遞回 Service Worker。後續版本會通過 `chrome.runtime.sendMessage` 橋接所有 EventBus 調用。目前模塊的生命周期鉤子（onActivate/onDeactivate）僅在 sandbox 首次評估時被調用，後續重連時需要重新激活。
+
+---
+
+## 十、安全限制
 
 1. **無遠程代碼** — 必須本地安裝（MV3 合規）
 2. **權限聲明** — host_permissions 必須在 manifest 中列出
 3. **無 DOM 操作**（v1）— 只能通過 EventBus 交互
 4. **配置隔離** — 模塊間配置獨立
+5. **沙箱隔離** — 第三方代碼運行在 sandbox iframe 中，無法訪問 extension API
 
 ---
 

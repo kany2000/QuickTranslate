@@ -12,7 +12,12 @@ class CustomLLMModule {
     description: 'OpenAI 兼容的自定義 LLM 翻譯引擎',
     minAppVersion: '2.5.3',
     permissions: ['<all_urls>'],
-    hooks: ['translate:text']
+    hooks: ['translate:text'],
+    options: [
+      { key: 'apiKey', type: 'password', label: 'API Key', placeholder: '輸入 API Key' },
+      { key: 'baseUrl', type: 'text', label: 'Base URL', placeholder: 'https://api.openai.com/v1' },
+      { key: 'model', type: 'text', label: '模型名稱', placeholder: 'gpt-4o' }
+    ]
   }
 
   constructor(core) {
@@ -27,6 +32,7 @@ class CustomLLMModule {
 
   async onActivate() {
     this._unsub = this.core.eventBus.on('translate:text', async (req) => {
+      if (req.target && req.target !== 'engine-custom') return
       try {
         const s = await this.core.storage.get(['apiKeys', 'llmConfig'])
         const apiKey = s.apiKeys?.custom

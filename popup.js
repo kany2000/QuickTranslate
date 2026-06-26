@@ -189,13 +189,31 @@ class PopupController {
       this.showModulesModal();
     });
 
-    // 關閉模塊模態框
-    this.elements.closeModulesBtn.addEventListener('click', () => {
-      this.hideModulesModal();
+    // 模塊列表事件委託（卸載 + 設置，只綁一次）
+    this.elements.modulesListFull.addEventListener('click', (e) => {
+      const uninstallBtn = e.target.closest('.uninstall-btn');
+      if (uninstallBtn) {
+        const moduleId = uninstallBtn.dataset.id;
+        if (!confirm('確定卸載此模塊？')) return;
+        chrome.runtime.sendMessage({ action: 'uninstallModule', moduleId }, () => {
+          this.loadModulesSection();
+        });
+        return;
+      }
+      const settingsBtn = e.target.closest('.module-settings-btn');
+      if (settingsBtn) {
+        const moduleId = settingsBtn.dataset.module;
+        this.showModuleSettings(moduleId);
+      }
     });
+
+    // 關閉模塊模態框
+    document.getElementById('close-modules-btn').onclick = () => {
+      document.getElementById('modules-modal').classList.add('hidden');
+    };
     this.elements.modulesModal.addEventListener('click', (e) => {
       if (e.target === this.elements.modulesModal) {
-        this.hideModulesModal();
+        document.getElementById('modules-modal').classList.add('hidden');
       }
     });
 
@@ -986,26 +1004,204 @@ class PopupController {
                   <div class="inline-item-original">${this.escapeHtml(i18n.t('module.name.' + m.id))}</div>
                   <div class="inline-item-translation module-meta">v${m.manifest.version}</div>
                 </div>
+                <button class="module-settings-btn" data-module="${m.id}" title="設置">⚙️</button>
                 ${statusHtml}
               </div>`;
             }).join('');
           }
 
           this.elements.modulesListFull.innerHTML = html;
-
-          // 卸載按鈕事件委託
-          this.elements.modulesListFull.addEventListener('click', (e) => {
-            const btn = e.target.closest('.uninstall-btn');
-            if (btn) {
-              const moduleId = btn.dataset.id;
-              if (!confirm('確定卸載此模塊？')) return;
-              chrome.runtime.sendMessage({ action: 'uninstallModule', moduleId }, () => {
-                this.loadModulesSection();
-              });
-            }
-          });
         }
       }
+    });
+  }
+
+  showModuleSettings(moduleId) {
+    chrome.runtime.sendMessage({ action: 'getModules' }, (response) => {
+      if (!response?.success) return;
+      const allModules = response.modules || [];
+      const mod = allModules.find(m => m.id === moduleId);
+      if (!mod) return;
+
+      const options = mod.manifest.options;
+      if (!options || options.length === 0) {
+        this.showStatus('此模塊無需配置', 'info');
+        return;
+      }
+
+      const settingsKey = 'moduleSettings.' + moduleId;
+      const settingsView = document.getElementById('module-settings-view');
+
+      chrome.storage.local.get([settingsKey], (result) => {
+        const currentSettings = result[settingsKey] || {};
+
+        const fields = options.map(opt => {
+          const val = currentSettings[opt.key] ?? opt.default ?? '';
+          let input = '';
+          switch (opt.type) {
+            case 'password':
+              input = `<input type="password" class="setting-input" data-key="${opt.key}" value="${this.escapeHtml(String(val))}" placeholder="${opt.placeholder || ''}">`;
+              break;
+            case 'number':
+              input = `<input type="number" class="setting-input" data-key="${opt.key}" value="${val}">`;
+              break;
+            case 'select':
+              input = `<select class="setting-select" data-key="${opt.key}">` +
+                (opt.options || []).map(o =>
+                  `<option value="${o.value}" ${o.value === val ? 'selected' : ''}>${o.label}</option>`
+                ).join('') + `</select>`;
+              break;
+            default:
+              input = `<input type="text" class="setting-input" data-key="${opt.key}" value="${this.escapeHtml(String(val))}" placeholder="${opt.placeholder || ''}">`;
+          }
+          return `<div class="setting-group">
+            <label>${opt.label}</label>
+            ${input}
+          </div>`;
+        }).join('');
+
+        // Custom LLM 特殊處理：在 model 欄位後加「獲取可用模型」按鈕
+        let extraHtml = '';
+        if (moduleId === 'engine-custom') {
+          extraHtml = `<div style="margin-bottom:12px">
+            <button id="settings-fetch-models" style="width:100%;padding:8px;border:2px solid #e9ecef;border-radius:8px;background:white;color:#667eea;font-weight:700;cursor:pointer;font-size:11px">🔄 獲取可用模型</button>
+          </div>`;
+        }
+
+        settingsView.innerHTML = `
+          <div style="border-bottom:1px solid #e9ecef;">
+            <button class="settings-back-btn" style="background:none;border:none;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;color:#495057;width:100%;text-align:left">← ${i18n.t('module.name.' + moduleId)} 設置</button>
+          </div>
+          <div style="padding:14px">
+            <form class="module-settings-form">${extraHtml}${fields}</form>
+            <button class="module-settings-save" style="width:100%;padding:10px 0;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-weight:700;cursor:pointer;font-size:12px;margin-top:8px">保存</button>
+          </div>`;
+
+        // 切換視圖
+        this.elements.modulesListFull.classList.add('hidden');
+        settingsView.classList.remove('hidden');
+
+        // 綁定：頭部返回按鈕
+        const backBtn = settingsView.querySelector('.settings-back-btn');
+        backBtn.onclick = () => {
+          settingsView.classList.add('hidden');
+          this.elements.modulesListFull.classList.remove('hidden');
+          this.loadModulesSection();
+        };
+
+        // 綁定：保存按鈕
+        const saveBtn = settingsView.querySelector('.module-settings-save');
+        saveBtn.onclick = () => {
+          const inputs = settingsView.querySelectorAll('[data-key]');
+          const settings = {};
+          inputs.forEach(inp => { settings[inp.dataset.key] = inp.value; });
+          // 同步到舊的 apiKeys/llmConfig 路徑（模塊實際讀取這些）
+          const extraSave = {};
+          if (moduleId === 'engine-custom') {
+            extraSave.apiKeys = extraSave.apiKeys || {};
+            extraSave.apiKeys.custom = settings.apiKey || '';
+            extraSave.llmConfig = {
+              baseUrl: settings.baseUrl || '',
+              model: settings.model || settings['model-custom'] || ''
+            };
+          }
+          if (moduleId === 'engine-microsoft') {
+            extraSave.apiKeys = extraSave.apiKeys || {};
+            extraSave.apiKeys.microsoft = settings.apiKey || '';
+          }
+          if (moduleId === 'engine-glm') {
+            extraSave.apiKeys = extraSave.apiKeys || {};
+            extraSave.apiKeys.glm = settings.apiKey || '';
+          }
+          chrome.storage.local.set({ [settingsKey]: settings, ...extraSave }, () => {
+            this.showStatus('設置已保存', 'success');
+            backBtn.click();
+          });
+        };
+
+        // 綁定：Custom LLM 獲取模型按鈕
+        const fetchBtn = document.getElementById('settings-fetch-models');
+        if (fetchBtn) {
+          fetchBtn.onclick = async () => {
+            const apiKey = settingsView.querySelector('[data-key="apiKey"]')?.value?.trim();
+            const baseUrl = settingsView.querySelector('[data-key="baseUrl"]')?.value?.trim();
+            if (!apiKey || !baseUrl) {
+              this.showStatus('請先填寫 API Key 和 Base URL', 'error');
+              return;
+            }
+            fetchBtn.textContent = '載入中...';
+            fetchBtn.disabled = true;
+            try {
+              const resp = await chrome.runtime.sendMessage({
+                action: 'getModels', apiKey, baseUrl
+              });
+              if (resp?.success && resp.models?.length > 0) {
+                // 把 model 文字輸入框替換為下拉選單
+                const modelGroup = settingsView.querySelector('[data-key="model"]')?.closest('.setting-group');
+                if (modelGroup) {
+                  const currentVal = settingsView.querySelector('[data-key="model"]')?.value || '';
+                  const opts = resp.models.map(m =>
+                    `<option value="${m}" ${m === currentVal ? 'selected' : ''}>${m}</option>`
+                  ).join('');
+                  modelGroup.innerHTML = `<label>模型名稱</label>
+                    <select class="setting-select" data-key="model">${opts}
+                      <option value="__custom__" ${!resp.models.includes(currentVal) && currentVal ? 'selected' : ''}>-- 或輸入自定義模型 --</option>
+                    </select>
+                    <input type="text" class="setting-input" data-key="model-custom" placeholder="輸入自定義模型名稱" style="display:none;margin-top:6px">`;
+
+                  // 切換自定義/下拉
+                  const select = modelGroup.querySelector('[data-key="model"]');
+                  const customInput = modelGroup.querySelector('[data-key="model-custom"]');
+                  select.onchange = () => {
+                    if (select.value === '__custom__') {
+                      select.style.display = 'none';
+                      customInput.style.display = 'block';
+                      customInput.focus();
+                    }
+                  };
+                  // 如果當前值是自定義的，自動顯示輸入框
+                  if (select.value === '__custom__' && currentVal) {
+                    select.style.display = 'none';
+                    customInput.style.display = 'block';
+                    customInput.value = currentVal;
+                  }
+                }
+                // 保存時合併自定義模型值 + 同步到舊路徑
+                saveBtn.onclick = () => {
+                  const inputs = settingsView.querySelectorAll('[data-key]');
+                  const settings = {};
+                  inputs.forEach(inp => {
+                    const key = inp.dataset.key;
+                    if (key === 'model-custom') return;
+                    if (key === 'model' && inp.tagName === 'SELECT') {
+                      settings.model = inp.value === '__custom__'
+                        ? (settingsView.querySelector('[data-key="model-custom"]')?.value || '')
+                        : inp.value;
+                      return;
+                    }
+                    settings[key] = inp.value;
+                  });
+                  const extraSave = {
+                    apiKeys: { custom: settings.apiKey || '' },
+                    llmConfig: { baseUrl: settings.baseUrl || '', model: settings.model || '' }
+                  };
+                  chrome.storage.local.set({ [settingsKey]: settings, ...extraSave }, () => {
+                    this.showStatus('設置已保存', 'success');
+                    backBtn.click();
+                  });
+                };
+                this.showStatus(`已載入 ${resp.models.length} 個模型`, 'success');
+              } else {
+                this.showStatus(resp?.error || '未找到可用模型', 'error');
+              }
+            } catch (err) {
+              this.showStatus('獲取失敗: ' + err.message, 'error');
+            }
+            fetchBtn.textContent = '🔄 獲取可用模型';
+            fetchBtn.disabled = false;
+          };
+        }
+      });
     });
   }
 
