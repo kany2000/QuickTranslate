@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="dark">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>範例教學 - QuickTranslate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{--g1:#667eea;--g2:#764ba2;--bg:#0a0a0f;--bg2:#12121a;--tx:#ffffff;--tx2:#a0a0b0;--ce:rgba(255,255,255,0.08)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--tx);line-height:1.7}.nav{background:linear-gradient(135deg,var(--g1),var(--g2));padding:14px 24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.nav .ttl{font-weight:800;font-size:15px;margin-right:auto}.nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-weight:600;font-size:13px;padding:4px 10px;border-radius:6px}.nav a:hover{background:rgba(255,255,255,0.15)}.lang-bar{display:flex;gap:4px;flex-wrap:wrap}.lang-tag{font-size:11px!important;padding:2px 8px!important;border:1px solid rgba(255,255,255,0.2)!important;border-radius:10px!important}.lang-tag.active{background:rgba(255,255,255,0.2)!important;border-color:#fff!important}.container{max-width:860px;margin:0 auto;padding:32px 24px 80px}h1{font-size:26px;font-weight:800;margin:28px 0 14px;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}h2{font-size:18px;font-weight:700;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--ce)}h3{font-size:15px;font-weight:700;margin:20px 0 8px}p{margin:10px 0;font-size:14px}a{color:var(--g1)}a:hover{text-decoration:underline}code{background:rgba(102,126,234,0.15);padding:2px 6px;border-radius:4px;font-size:13px}pre{background:rgba(255,255,255,0.04);border:1px solid var(--ce);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}pre code{background:none;padding:0;font-size:12px;line-height:1.5}hr{border:none;border-top:1px solid var(--ce);margin:28px 0}table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}td,th{padding:8px 12px;border:1px solid var(--ce)}th{background:rgba(102,126,234,0.1);font-weight:700}li{margin:4px 0 4px 18px;font-size:14px}@media(max-width:600px){.container{padding:20px 16px}}</style></head><body>
+<div class="nav">
+  <span class="ttl">📖 範例教學</span>
+  <div class="lang-bar"><a href="example-zh-CN.html" class="lang-tag">简体中文</a><a href="example-zh-TW.html" class="lang-tag active">繁體中文</a><a href="example.html" class="lang-tag">English</a><a href="example-ja.html" class="lang-tag">日本語</a><a href="example-ko.html" class="lang-tag">한국어</a></div>
+  <a href="../index.html">🏠</a>
+</div>
+<div class="container"><h1>模块製作完整示例</h1>
+<p>從零开始寫一個模块並導入到 QuickTranslate，共 3 步。</p>
+<hr>
+<h2>第 1 步：用 CLI 生成模板</h2>
+<pre><code>node packages/create-qt-module/index.js</code></pre>
+<p>終端對話：</p>
+<pre><code>🧩  QuickTranslate Module Scaffold
+
+Select module type:
+  1. Translation Engine — 翻譯引擎
+  2. Interaction Mode — 交互模式
+  ...
+
+Number (1-6): 1
+Module name: Echo Translator
+Author: myname
+Short description: 測試用示范模块</code></pre>
+<p>生成文件：<code>translator-echo-translator.qt-module</code></p>
+<hr>
+<h2>第 2 步：改程式碼</h2>
+<p>打开生成的 <code>.qt-module</code> 文件，找到 <code>translate()</code> 方法，改成你的邏輯：</p>
+<pre><code>// 改之前
+async translate(text, from, to) {
+  throw new Error('translate() not implemented')
+}
+
+// 改之後 — 調用 DeepL API 為例
+async translate(text, from, to) {
+  const resp = await fetch('https://api.deepl.com/v2/translate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'DeepL-Auth-Key ' + apiKey
+    },
+    body: JSON.stringify({
+      text: [text],
+      source_lang: from.toUpperCase(),
+      target_lang: to.toUpperCase()
+    })
+  })
+  const data = await resp.json()
+  return data.translations[0].text
+}</code></pre>
+<hr>
+<h2>第 3 步：導入 QuickTranslate</h2>
+<p>1. 打开 QuickTranslate → 點底部 <strong>🧩 模块</strong></p>
+<p>2. 點 <strong>📥 導入模块</strong></p>
+<p>3. 選擇你的 <code>.qt-module</code> 文件</p>
+<p>4. 確認安裝 → 模块出現在列表，开关打开</p>
+<hr>
+<h2>快速測試</h2>
+<p>不想從頭寫？直接用已有的示范模块：</p>
+<pre><code>echo-translator.qt-module</code></pre>
+<p>導入後，它會把翻譯文字加上前綴返回。你可以在 ⚙️ 設置中修改前綴文字。</p>
+<hr>
+<h2>調試技巧</h2>
+<h3>模块導入失敗</h3>
+<p>檢查 <code>manifest</code> 是否完整：</p>
+<table>
+<tr><td>欄位</td><td>类型</td><td>说明</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>全小寫字母数字连字号：<code>engine-mymod</code></td></tr>
+<tr><td><code>name</code></td><td>string</td><td>建議用英文名稱</td></tr>
+<tr><td><code>version</code></td><td>string</td><td><code>x.y.z</code> 格式</td></tr>
+<tr><td><code>type</code></td><td>string</td><td><code>translator</code> / <code>mode</code> / <code>renderer</code> / <code>processor</code> / <code>service</code> / <code>theme</code></td></tr>
+</table>
+<h3>翻譯不生效</h3>
+<li>確保模块开关是 <strong>ON</strong> 狀态</li>
+<li>檢查 <code>onActivate</code> 中有訂閱 <code>translate:text</code> 事件</li>
+<li>檢查事件回調中有 <code>target</code> 過濾：<code>if (req.target && req.target !== 'engine-xxx') return</code></li>
+<li>檢查 API 端點是否可訪問、API Key 是否正確</li>
+<h3>設置不保存</h3>
+<li><code>options</code> 的 <code>key</code> 必須與 <code>translate()</code> 中讀取的 key 一致</li>
+<li>配置存儲在 <code>moduleSettings.{moduleId}</code> 路徑下</li>
+<hr>
+<h2>完整示例參考</h2>
+<li><a href="echo-translator.qt-module" target="_blank"><code>echo-translator.qt-module</code></a> — 最簡翻譯引擎（含配置項）</li>
+<li><a href="modules/translator-google.js" target="_blank"><code>modules/translator-google.js</code></a> — 內置 Google 翻譯模块</li>
+<li><a href="modules/translator-custom.js" target="_blank"><code>modules/translator-custom.js</code></a> — 自定義 LLM 模块</li>
+<li><a href="modules/mode-quick-panel.js" target="_blank"><code>modules/mode-quick-panel.js</code></a> — 交互模式模块示例</li>
+<hr>
+<h2>发布到商店</h2>
+<p>完成後，按 <a href="STORE_GUIDE.md" target="_blank"><code>STORE_GUIDE.md</code></a> 提交你的模块到 QuickTranslate 模块商店。</p>
+</div>
+</body></html>

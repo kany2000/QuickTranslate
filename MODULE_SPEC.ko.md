@@ -1,6 +1,6 @@
-# QuickTranslate Module System Specification v1.0
+# QuickTranslate 모듈 시스템 명세 v1.0
 
-## 📖 Quick Start (5 minutes)
+## 📖 빠른 시작 (5분)
 
 ```bash
 # 1. Generate a template with CLI
@@ -11,7 +11,7 @@ node packages/create-qt-module/index.js
 # 3. Open QuickTranslate → 🧩 Modules → 📥 Import → select file
 ```
 
-See [`EXAMPLE.md`](EXAMPLE.md) for a step-by-step tutorial.
+참조 [`EXAMPLE.md`](EXAMPLE.md) 단계별 튜토리얼
 
 ---
 

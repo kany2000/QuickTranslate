@@ -7,7 +7,9 @@ importScripts(
   'modules/translator-glm.js',
   'modules/translator-custom.js',
   'modules/mode-quick-panel.js',
-  'modules/mode-float-panel.js'
+  'modules/mode-float-panel.js',
+  'modules/service-history.js',
+  'modules/service-words.js'
 )
 
 // ===== 模塊系統初始化 =====
@@ -19,6 +21,8 @@ moduleLoader.register(GLMTranslatorModule)
 moduleLoader.register(CustomLLMModule)
 moduleLoader.register(QuickPanelMode)
 moduleLoader.register(FloatPanelMode)
+moduleLoader.register(HistoryService)
+moduleLoader.register(WordsService)
 
 // 截圖翻譯器後台服務
 console.log('Background script loading...');
@@ -192,153 +196,41 @@ class ScreenshotTranslator {
 
   // ==================== 历史记录和生词本 ====================
 
-  async getTranslationHistory(sendResponse) {
-    try {
-      const result = await chrome.storage.local.get(['translationHistory']);
-      const history = result.translationHistory || [];
-      sendResponse({ success: true, data: history });
-    } catch (error) {
-      console.error('Failed to get translation history:', error);
-      sendResponse({ success: false, error: error.message });
-    }
-  }
-
-  async addToHistory(item, sendResponse) {
-    try {
-      const result = await chrome.storage.local.get(['translationHistory']);
-      let history = result.translationHistory || [];
-
-      // 生成唯一ID
-      const newItem = {
-        id: Date.now(),
-        original: item.original,
-        translation: item.translation,
-        sourceLang: item.sourceLang || 'auto',
-        targetLang: item.targetLang || 'zh-CN',
-        timestamp: Date.now()
-      };
-
-      // 添加到开头
-      history.unshift(newItem);
-
-      // 限制条数
-      if (history.length > this.MAX_HISTORY) {
-        history = history.slice(0, this.MAX_HISTORY);
+  _routeViaEventBus(requestName, responseName, payload, sendResponse, timeout = 5000) {
+    const requestId = 'eb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)
+    const timer = setTimeout(() => {
+      if (typeof sendResponse === 'function') {
+        unsub()
+        sendResponse({ success: false, error: 'timeout' })
       }
-
-      await chrome.storage.local.set({ translationHistory: history });
-      sendResponse({ success: true, data: newItem });
-    } catch (error) {
-      console.error('Failed to add to history:', error);
-      sendResponse({ success: false, error: error.message });
-    }
-  }
-
-  async clearHistory(sendResponse) {
-    try {
-      await chrome.storage.local.set({ translationHistory: [] });
-      sendResponse({ success: true });
-    } catch (error) {
-      console.error('Failed to clear history:', error);
-      sendResponse({ success: false, error: error.message });
-    }
-  }
-
-  async getSavedWords(sendResponse) {
-    try {
-      const result = await chrome.storage.local.get(['savedWords']);
-      const words = result.savedWords || [];
-      sendResponse({ success: true, data: words });
-    } catch (error) {
-      console.error('Failed to get saved words:', error);
-      sendResponse({ success: false, error: error.message });
-    }
-  }
-
-  async addToSavedWords(item, sendResponse) {
-    try {
-      const result = await chrome.storage.local.get(['savedWords']);
-      let words = result.savedWords || [];
-
-      // 检查是否已存在
-      const exists = words.some(w => w.original === item.original && w.translation === item.translation);
-      if (exists) {
-        sendResponse({ success: false, error: '已存在' });
-        return;
+    }, timeout)
+    const unsub = eventBus.on(responseName, (data) => {
+      if (data.requestId === requestId) {
+        clearTimeout(timer)
+        unsub()
+        if (typeof sendResponse === 'function') {
+          sendResponse({ success: true, ...data })
+        }
       }
-
-      const newItem = {
-        id: Date.now(),
-        original: item.original,
-        translation: item.translation,
-        sourceLang: item.sourceLang || 'auto',
-        targetLang: item.targetLang || 'zh-CN',
-        timestamp: Date.now()
-      };
-
-      words.unshift(newItem);
-
-      if (words.length > this.MAX_HISTORY) {
-        words = words.slice(0, this.MAX_HISTORY);
-      }
-
-      await chrome.storage.local.set({ savedWords: words });
-      sendResponse({ success: true, data: newItem });
-    } catch (error) {
-      console.error('Failed to add to saved words:', error);
-      sendResponse({ success: false, error: error.message });
-    }
+    })
+    eventBus.emit(requestName, { ...payload, requestId })
   }
 
-  async removeFromSavedWords(id, sendResponse) {
+  async getTranslationHistory(sendResponse) { this._routeViaEventBus('history:get', 'history:data', {}, sendResponse) }
+  async addToHistory(item, sendResponse) { this._routeViaEventBus('history:add', 'history:added', { item }, sendResponse) }
+  async clearHistory(sendResponse) { this._routeViaEventBus('history:clear', 'history:cleared', {}, sendResponse) }
+  async getSavedWords(sendResponse) { this._routeViaEventBus('words:get', 'words:data', {}, sendResponse) }
+  async addToSavedWords(item, sendResponse) { this._routeViaEventBus('words:add', 'words:added', { item }, sendResponse) }
+  async removeFromSavedWords(id, sendResponse) { this._routeViaEventBus('words:remove', 'words:removed', { id }, sendResponse) }
+  async exportData(sendResponse) { this._routeViaEventBus('data:export', 'data:exported', {}, sendResponse) }
+  async importData(data, sendResponse) { this._routeViaEventBus('data:import', 'data:imported', { data }, sendResponse) }
+
+  async toggleModule(moduleId, enable, sendResponse) {
     try {
-      const result = await chrome.storage.local.get(['savedWords']);
-      let words = result.savedWords || [];
-
-      words = words.filter(w => w.id !== id);
-
-      await chrome.storage.local.set({ savedWords: words });
-      sendResponse({ success: true });
+      const result = await moduleLoader.toggleModule(moduleId, enable)
+      sendResponse({ success: true, active: result.success })
     } catch (error) {
-      console.error('Failed to remove from saved words:', error);
-      sendResponse({ success: false, error: error.message });
-    }
-  }
-
-  async exportData(sendResponse) {
-    try {
-      const result = await chrome.storage.local.get(['translationHistory', 'savedWords']);
-      const data = {
-        translationHistory: result.translationHistory || [],
-        savedWords: result.savedWords || [],
-        exportTime: new Date().toISOString(),
-        version: '2.5.3'
-      };
-      sendResponse({ success: true, data: data });
-    } catch (error) {
-      console.error('Failed to export data:', error);
-      sendResponse({ success: false, error: error.message });
-    }
-  }
-
-  async importData(data, sendResponse) {
-    try {
-      if (!data || !data.version) {
-        sendResponse({ success: false, error: 'Invalid data format' });
-        return;
-      }
-
-      if (data.translationHistory) {
-        await chrome.storage.local.set({ translationHistory: data.translationHistory });
-      }
-      if (data.savedWords) {
-        await chrome.storage.local.set({ savedWords: data.savedWords });
-      }
-
-      sendResponse({ success: true });
-    } catch (error) {
-      console.error('Failed to import data:', error);
-      sendResponse({ success: false, error: error.message });
+      sendResponse({ success: false, error: error.message })
     }
   }
 
@@ -624,6 +516,9 @@ class ScreenshotTranslator {
         case 'importData':
           this.importData(request.data, sendResponse);
           break;
+        case 'toggleModule':
+          this.toggleModule(request.moduleId, request.enable, sendResponse);
+          break;
         case 'installModule':
           this.installModule(request.moduleId, request.code, request.manifest, sendResponse);
           break;
@@ -866,6 +761,13 @@ class ScreenshotTranslator {
     })
   }
 
+  async _isModuleEnabled(moduleId) {
+    const data = await chrome.storage.local.get('moduleToggles')
+    const toggles = data.moduleToggles || {}
+    // 默認為啟用（如果沒有 toggle 記錄）
+    return toggles[moduleId] !== false
+  }
+
   async translateText(text, sourceLang, targetLang, sendResponse) {
     try {
       console.log(`Background: Translating "${text}" from ${sourceLang} to ${targetLang}`);
@@ -891,8 +793,15 @@ class ScreenshotTranslator {
         }
       }
 
-      // 如果 EventBus 失敗或沒有對應模塊，回退到舊的 switch-case
+      // 如果 EventBus 失敗或沒有對應模塊，檢查開關再回退到 switch-case
       if (result === null || result === undefined) {
+        // 如果模塊被用戶手動關閉，跳過舊方法
+        const modId = this._providerToModuleId(apiProvider)
+        if (modId && !(await this._isModuleEnabled(modId))) {
+          throw new Error(`模塊「${apiProvider}」已關閉，請在 🧩 模塊系統中啟用`)
+        }
+
+        // 回退到舊的 switch-case
         // 根据 API Provider 选择翻译方法
         switch (apiProvider) {
           case 'glm':
@@ -1387,22 +1296,24 @@ ${text}`;
   // 多引擎翻译 - 同时调用多个翻译服务
   async translateMultiEngine(text, sourceLang, targetLang, includeLLM, sendResponse) {
     const results = {};
-    const errors = {};
+    const toggles = (await chrome.storage.local.get('moduleToggles')).moduleToggles || {};
 
     // 0. 获取用户设置
     const settings = await this.getUserSettings();
 
-    // 1. Google 翻译（始终调用）
-    try {
-      const googleResult = await this.callGoogleTranslate(text, sourceLang, targetLang);
-      results.google = googleResult;
-    } catch (e) {
-      results.google = null;
+    // 1. Google 翻译（检查開關）
+    if (toggles['engine-google'] !== false) {
+      try {
+        const googleResult = await this.callGoogleTranslate(text, sourceLang, targetLang);
+        results.google = googleResult;
+      } catch (e) {
+        results.google = null;
+      }
     }
 
-    // 2. Microsoft 翻译（需要 API Key）
+    // 2. Microsoft 翻译（檢查開關 + API Key）
     const microsoftApiKey = settings.apiKeys?.microsoft;
-    if (microsoftApiKey) {
+    if (microsoftApiKey && toggles['engine-microsoft'] !== false) {
       try {
         const microsoftResult = await this.callMicrosoftTranslate(text, sourceLang, targetLang, microsoftApiKey);
         results.microsoft = microsoftResult;
@@ -1411,11 +1322,12 @@ ${text}`;
       }
     }
 
-    // 3. 使用 EventBus 調用 Custom LLM（走模塊系統）
+    // 3. EventBus 引擎（檢查開關）
     if (includeLLM) {
-      // Custom LLM — 不用預先檢查設定，讓模塊自己處理
-      const customMod = moduleLoader.getModule('engine-custom');
-      if (customMod) {
+      // Custom LLM
+      if (toggles['engine-custom'] !== false) {
+        const customMod = moduleLoader.getModule('engine-custom');
+        if (customMod) {
         try {
           const llmResult = await this._translateViaEventBus(text, sourceLang, targetLang, 'engine-custom');
           if (llmResult) results.llm = llmResult;
@@ -1433,10 +1345,12 @@ ${text}`;
           } catch (e2) { /* 都不行就算了 */ }
         }
       }
+      }
 
       // GLM
-      const glmMod = moduleLoader.getModule('engine-glm');
-      if (glmMod) {
+      if (toggles['engine-glm'] !== false) {
+        const glmMod = moduleLoader.getModule('engine-glm');
+        if (glmMod) {
         try {
           const glmResult = await this._translateViaEventBus(text, sourceLang, targetLang, 'engine-glm');
           if (glmResult) results.glm = glmResult;
@@ -1449,6 +1363,7 @@ ${text}`;
           } catch (e2) {}
         }
       }
+    }
     }
 
     // 返回所有结果

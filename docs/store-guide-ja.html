@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>公開ガイド - QuickTranslate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{--g1:#667eea;--g2:#764ba2;--bg:#0a0a0f;--bg2:#12121a;--tx:#ffffff;--tx2:#a0a0b0;--ce:rgba(255,255,255,0.08)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--tx);line-height:1.7}.nav{background:linear-gradient(135deg,var(--g1),var(--g2));padding:14px 24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.nav .ttl{font-weight:800;font-size:15px;margin-right:auto}.nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-weight:600;font-size:13px;padding:4px 10px;border-radius:6px}.nav a:hover{background:rgba(255,255,255,0.15)}.lang-bar{display:flex;gap:4px;flex-wrap:wrap}.lang-tag{font-size:11px!important;padding:2px 8px!important;border:1px solid rgba(255,255,255,0.2)!important;border-radius:10px!important}.lang-tag.active{background:rgba(255,255,255,0.2)!important;border-color:#fff!important}.container{max-width:860px;margin:0 auto;padding:32px 24px 80px}h1{font-size:26px;font-weight:800;margin:28px 0 14px;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}h2{font-size:18px;font-weight:700;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--ce)}h3{font-size:15px;font-weight:700;margin:20px 0 8px}p{margin:10px 0;font-size:14px}a{color:var(--g1)}a:hover{text-decoration:underline}code{background:rgba(102,126,234,0.15);padding:2px 6px;border-radius:4px;font-size:13px}pre{background:rgba(255,255,255,0.04);border:1px solid var(--ce);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}pre code{background:none;padding:0;font-size:12px;line-height:1.5}hr{border:none;border-top:1px solid var(--ce);margin:28px 0}table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}td,th{padding:8px 12px;border:1px solid var(--ce)}th{background:rgba(102,126,234,0.1);font-weight:700}li{margin:4px 0 4px 18px;font-size:14px}@media(max-width:600px){.container{padding:20px 16px}}</style></head><body>
+<div class="nav">
+  <span class="ttl">📖 公開ガイド</span>
+  <div class="lang-bar"><a href="store-guide-zh-CN.html" class="lang-tag">简体中文</a><a href="store-guide-zh-TW.html" class="lang-tag">繁體中文</a><a href="store-guide.html" class="lang-tag">English</a><a href="store-guide-ja.html" class="lang-tag active">日本語</a><a href="store-guide-ko.html" class="lang-tag">한국어</a></div>
+  <a href="../index.html">🏠</a>
+</div>
+<div class="container"><h1>QuickTranslate モジュールストアガイド</h1>
+<h2>モジュールをストアに追加する方法</h2>
+<h3>1. .qt-module ファイルを構築</h3>
+<pre><code># Use the CLI scaffold
+node packages/create-qt-module/index.js
+
+# Or write manually, see EXAMPLE.md</code></pre>
+<p>The generated <code>.qt-module</code> file is a standard JS file 完全なマニフェストとモジュールロジックを含みます。</p>
+<h3>2. store/ ディレクトリにコピー</h3>
+<pre><code>cp your-module.qt-module store/</code></pre>
+<h3>3. store/modules.json にエントリを追加</h3>
+<p>Open <code>store/modules.json</code> and add to the <code>modules</code> array:</p>
+<pre><code>{
+  "id": "engine-your-engine",
+  "name": "Your Module Name",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "type": "translator",
+  "description": "What this module does",
+  "download": "store/your-module.qt-module",
+  "size": "2.5 KB"
+}</code></pre>
+<h3>フィールドリファレンス</h3>
+<table>
+<tr><td>Field</td><td>Description</td><td>Example</td></tr>
+<tr><td>id</td><td>Unique ID, matches manifest.id</td><td>engine-deepl</td></tr>
+<tr><td>name</td><td>Module name</td><td>DeepL Translator</td></tr>
+<tr><td>version</td><td>Version number</td><td>1.0.0</td></tr>
+<tr><td>author</td><td>Author (GitHub username)</td><td>yourname</td></tr>
+<tr><td>type</td><td>Module type</td><td>translator / mode / renderer / ...</td></tr>
+<tr><td>description</td><td>Short description (<=80 chars)</td><td>DeepL API translation engine</td></tr>
+<tr><td>download</td><td>.qt-module file path</td><td>store/deepl.qt-module</td></tr>
+<tr><td>size</td><td>File size</td><td>2.5 KB</td></tr>
+</table>
+<h3>4. 提出</h3>
+<p>1. Fork the repository</p>
+<p>2. Add your .qt-module file and update store/modules.json</p>
+<p>3. Submit a Pull Request</p>
+<p>4. After review and merge, the website updates automatically</p>
+</div>
+</body></html>

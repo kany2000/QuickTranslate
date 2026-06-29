@@ -1,0 +1,15 @@
+{
+  "updated": "2026-06-26",
+  "modules": [
+    {
+      "id": "engine-echo",
+      "name": "Echo Translator",
+      "version": "1.0.0",
+      "author": "QuickTranslate Team",
+      "type": "translator",
+      "description": "Demo module — prepends prefix text to input",
+      "download": "store/echo-translator.qt-module",
+      "size": "2.3 KB"
+    }
+  ]
+}

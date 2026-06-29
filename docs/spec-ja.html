@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>モジュール仕様 - QuickTranslate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{--g1:#667eea;--g2:#764ba2;--bg:#0a0a0f;--bg2:#12121a;--tx:#ffffff;--tx2:#a0a0b0;--ce:rgba(255,255,255,0.08)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--tx);line-height:1.7}.nav{background:linear-gradient(135deg,var(--g1),var(--g2));padding:14px 24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.nav .ttl{font-weight:800;font-size:15px;margin-right:auto}.nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-weight:600;font-size:13px;padding:4px 10px;border-radius:6px}.nav a:hover{background:rgba(255,255,255,0.15)}.lang-bar{display:flex;gap:4px;flex-wrap:wrap}.lang-tag{font-size:11px!important;padding:2px 8px!important;border:1px solid rgba(255,255,255,0.2)!important;border-radius:10px!important}.lang-tag.active{background:rgba(255,255,255,0.2)!important;border-color:#fff!important}.container{max-width:860px;margin:0 auto;padding:32px 24px 80px}h1{font-size:26px;font-weight:800;margin:28px 0 14px;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}h2{font-size:18px;font-weight:700;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--ce)}h3{font-size:15px;font-weight:700;margin:20px 0 8px}p{margin:10px 0;font-size:14px}a{color:var(--g1)}a:hover{text-decoration:underline}code{background:rgba(102,126,234,0.15);padding:2px 6px;border-radius:4px;font-size:13px}pre{background:rgba(255,255,255,0.04);border:1px solid var(--ce);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}pre code{background:none;padding:0;font-size:12px;line-height:1.5}hr{border:none;border-top:1px solid var(--ce);margin:28px 0}table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}td,th{padding:8px 12px;border:1px solid var(--ce)}th{background:rgba(102,126,234,0.1);font-weight:700}li{margin:4px 0 4px 18px;font-size:14px}@media(max-width:600px){.container{padding:20px 16px}}</style></head><body>
+<div class="nav">
+  <span class="ttl">📖 モジュール仕様</span>
+  <div class="lang-bar"><a href="spec-zh-CN.html" class="lang-tag">简体中文</a><a href="spec-zh-TW.html" class="lang-tag">繁體中文</a><a href="spec.html" class="lang-tag">English</a><a href="spec-ja.html" class="lang-tag active">日本語</a><a href="spec-ko.html" class="lang-tag">한국어</a></div>
+  <a href="../index.html">🏠</a>
+</div>
+<div class="container"><h1>QuickTranslate モジュールシステム仕様 v1.0</h1>
+<h2>📖 クイックスタート（5分）</h2>
+<pre><code># 1. CLIでテンプレートを生成
+node packages/create-qt-module/index.js
+
+# 2. 生成された .qt-module ファイルを編集し、translate() を実装
+
+# 3. QuickTranslateを開く → 🧩 モジュール → 📥 インポート → ファイルを選択</code></pre>
+<p>詳細は <a href="EXAMPLE.md" target="_blank"><code>EXAMPLE.md</code></a> をご覧ください。</p>
+<hr>
+<h2>1. モジュール形式</h2>
+<p>各モジュールは <strong>標準 ES6 クラス</strong> で、静的 <code>manifest</code> とライフサイクルメソッドを持ちます。<code>.qt-module</code> ファイル（UTF-8 エンコードの JS）として配布します。</p>
+<pre><code>class MyModule {
+  static manifest = {
+    id: 'engine-myengine',           // &lt;type&gt;-&lt;name&gt;、小文字の英数字とハイフン
+    name: 'My Engine',               // 表示名（英語推奨）
+    version: '1.0.0',                // セマンティックバージョン
+    author: 'your-github-username',  // 作者
+    type: 'translator',              // モジュールタイプ
+    description: 'What this module does',  // 短い説明（80字以内）
+    minAppVersion: '2.5.3',          // 最小コアバージョン
+    permissions: [],                 // 必要なChrome権限
+    hooks: ['translate:text']        // リッスンするイベント
+  }
+
+  constructor(core) {
+    this.core = core  // { eventBus, storage, settings }
+  }
+
+  async onActivate()    {}
+  async onDeactivate()  {}
+  async onSettingsChanged(settings) {}
+}
+
+// モジュールを登録するためにこの関数を呼び出す
+window.qtDefineModule(MyModule)</code></pre>
+<hr>
+<h2>2. モジュールタイプ</h2>
+<table>
+<tr><td>タイプ</td><td>識別子</td><td>目的</td><td>例</td></tr>
+<tr><td>翻訳エンジン</td><td><code>translator</code></td><td>翻訳APIの呼び出し</td><td>Google、DeepL、Claude</td></tr>
+<tr><td>インタラクションモード</td><td><code>mode</code></td><td>翻訳トリガーの定義</td><td>選択、ホバー、スクリーンショット</td></tr>
+<tr><td>UI レンダラー</td><td><code>renderer</code></td><td>翻訳結果の表示</td><td>バブル、パネル、サイドバー</td></tr>
+<tr><td>プロセッサー</td><td><code>processor</code></td><td>テキストの前/後処理</td><td>書式変換、用語置換</td></tr>
+<tr><td>サービス</td><td><code>service</code></td><td>バックグラウンドデータサービス</td><td>履歴、クラウド同期</td></tr>
+<tr><td>テーマ</td><td><code>theme</code></td><td>UI ビジュアルテーマ</td><td>ダーク、グラスモーフィズム</td></tr>
+</table>
+<p><strong>命名規則：</strong> <code>id</code> はタイププレフィックスで始める必要があります：</p>
+<table>
+<tr><td>タイプ</td><td>id プレフィックス</td><td>例</td></tr>
+<tr><td>translator</td><td><code>engine-</code></td><td><code>engine-deepl</code></td></tr>
+<tr><td>mode</td><td><code>mode-</code></td><td><code>mode-my-feature</code></td></tr>
+<tr><td>renderer</td><td><code>renderer-</code></td><td><code>renderer-bubble</code></td></tr>
+<tr><td>processor</td><td><code>processor-</code></td><td><code>processor-format</code></td></tr>
+<tr><td>service</td><td><code>service-</code></td><td><code>service-sync</code></td></tr>
+<tr><td>theme</td><td><code>theme-</code></td><td><code>theme-dark</code></td></tr>
+<hr>
+</table>
+<h2>3. マニフェストフィールド</h2>
+<h3>必須フィールド</h3>
+<table>
+<tr><td>フィールド</td><td>タイプ</td><td>説明</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>一意のID: <code><prefix>-<name></code>、小文字英数字</td></tr>
+<tr><td><code>name</code></td><td>string</td><td>表示名（英語推奨）</td></tr>
+<tr><td><code>version</code></td><td>string</td><td>セマンティックバージョン <code>x.y.z</code></td></tr>
+<tr><td><code>author</code></td><td>string</td><td>作者（GitHubユーザー名推奨）</td></tr>
+<tr><td><code>type</code></td><td>string</td><td>モジュールタイプ</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>短い説明（80字以内）</td></tr>
+<tr><td><code>minAppVersion</code></td><td>string</td><td>最小コアバージョン</td></tr>
+</table>
+<h3>オプションフィールド</h3>
+<table>
+<tr><td>フィールド</td><td>タイプ</td><td>説明</td></tr>
+<tr><td><code>permissions</code></td><td>string[]</td><td>Chrome権限（<code>storage</code>、<code>https://...</code> 等）</td></tr>
+<tr><td><code>hooks</code></td><td>string[]</td><td>リッスンするイベント</td></tr>
+<tr><td><code>options</code></td><td>Array</td><td>設定項目の定義</td></tr>
+<tr><td><code>homepage</code></td><td>string</td><td>プロジェクトURL</td></tr>
+<tr><td><code>icon</code></td><td>string</td><td>アイコン（Base64またはURL）</td></tr>
+</table>
+<h3>options の書式</h3>
+<pre><code>options: [
+  { key: 'apiKey', type: 'password', label: 'API Key', placeholder: 'Enter your key' },
+  { key: 'model', type: 'select', label: 'Model', options: [
+    { value: 'gpt-4', label: 'GPT-4' },
+    { value: 'gpt-3.5', label: 'GPT-3.5' }
+  ]},
+  { key: 'temperature', type: 'number', label: 'Temperature', default: 0.1 }
+]</code></pre>
+<p>対応タイプ: <code>text</code>、<code>password</code>、<code>number</code>、<code>select</code>。</p>
+<hr>
+<h2>4. ライフサイクル</h2>
+<pre><code>class MyModule {
+  /** モジュールが有効化されたときに呼ばれます。イベントの購読、接続の初期化を行います。 */
+  async onActivate() {}
+
+  /** モジュールが無効化またはアンインストールされたときに呼ばれます。購読解除、クリーンアップを行います。 */
+  async onDeactivate() {}
+
+  /** ユーザーが設定を変更したときに呼ばれます。 */
+  async onSettingsChanged(settings) {}
+}</code></pre>
+<p><strong>重要：</strong> <code>onActivate</code> と <code>onDeactivate</code> は対にして使用してください。<code>onActivate</code> で購読したイベントは <code>onDeactivate</code> で解除する必要があります。</p>
+<hr>
+<h2>5. イベントバス（EventBus）</h2>
+<h3>コアイベント</h3>
+<table>
+<tr><td>イベント</td><td>方向</td><td>ペイロード</td><td>タイミング</td></tr>
+<tr><td><code>translate:text</code></td><td>Core→Module</td><td><code>{text, from, to, id, target}</code></td><td>翻訳リクエスト</td></tr>
+<tr><td><code>translate:result</code></td><td>Module→Core</td><td><code>{id, result, engine}</code></td><td>翻訳成功</td></tr>
+<tr><td><code>translate:error</code></td><td>Module→Core</td><td><code>{id, error, engine}</code></td><td>翻訳失敗</td></tr>
+<tr><td><code>settings:changed</code></td><td>Core→Module</td><td><code>{key, value}</code></td><td>設定変更</td></tr>
+</table>
+<h3>API</h3>
+<pre><code>// イベントを発行
+this.core.eventBus.emit('translate:text', { text:'Hello', from:'en', to:'zh-TW', id:'req-001' })
+
+// リッスン（購読解除関数を返す）
+const unsub = this.core.eventBus.on('translate:text', (data) =&gt; {})
+
+// 購読解除
+unsub()
+
+// 1回だけリッスン
+this.core.eventBus.once('translate:result', (data) =&gt; {})</code></pre>
+<h3>⚠️ target フィルター</h3>
+<p>翻訳エンジンモジュールはイベントコールバックで <code>req.target</code> をチェックする必要があります：</p>
+<pre><code>this.core.eventBus.on('translate:text', async (req) =&gt; {
+  if (req.target &amp;&amp; req.target !== 'engine-myengine') return  // ← 必須
+  // ... 翻訳を処理
+})</code></pre>
+<hr>
+<h2>6. 翻訳エンジンモジュールテンプレート（完全版）</h2>
+<pre><code>class MyEngine {
+  static manifest = {
+    id: 'engine-deepl',
+    name: 'DeepL Translator',
+    version: '1.0.0',
+    author: 'yourname',
+    type: 'translator',
+    description: 'DeepL API translation engine',
+    minAppVersion: '2.5.3',
+    permissions: ['https://api.deepl.com/*'],
+    hooks: ['translate:text'],
+    options: [
+      { key: 'apiKey', type: 'password', label: 'API Key', placeholder: 'Enter DeepL API key' }
+    ]
+  }
+
+  constructor(core) { this.core = core }
+
+  async onActivate() {
+    this._unsub = this.core.eventBus.on('translate:text', async (req) =&gt; {
+      if (req.target &amp;&amp; req.target !== 'engine-deepl') return  // target filter
+      try {
+        const result = await this.translate(req.text, req.from, req.to)
+        this.core.eventBus.emit('translate:result', {
+          id: req.id, result, engine: 'deepl'
+        })
+      } catch (err) {
+        this.core.eventBus.emit('translate:error', {
+          id: req.id, error: err.message, engine: 'deepl'
+        })
+      }
+    })
+  }
+
+  async onDeactivate() { if (this._unsub) this._unsub() }
+
+  async translate(text, from, to) {
+    // ← ここに翻訳ロジックを実装
+    throw new Error('translate() not implemented')
+  }
+}
+
+window.qtDefineModule(MyEngine)</code></pre>
+<hr>
+<h2>7. モジュール設定へのアクセス</h2>
+<p>⚙️ 設定で保存された設定は <code>this.core.storage</code> からアクセスします：</p>
+<pre><code>const key = 'moduleSettings.' + this.constructor.manifest.id
+const config = await this.core.storage.get(key)
+// config: { apiKey: 'xxx', model: 'gpt-4', ... }</code></pre>
+<hr>
+<h2>8. インタラクションモードモジュールテンプレート</h2>
+<pre><code>class MyMode {
+  static manifest = {
+    id: 'mode-my-feature',
+    name: 'My Feature',
+    version: '1.0.0',
+    author: 'yourname',
+    type: 'mode',
+    description: 'Does something cool',
+    minAppVersion: '2.5.3',
+    permissions: [],
+    hooks: []
+  }
+
+  constructor(core) { this.core = core; this._unsubs = [] }
+
+  async onActivate() {
+    console.log('MyMode activated')
+  }
+
+  async onDeactivate() {
+    this._unsubs.forEach(fn =&gt; fn())
+    this._unsubs = []
+  }
+}
+
+window.qtDefineModule(MyMode)</code></pre>
+<hr>
+<h2>9. 開発ツール</h2>
+<h3>CLI スキャフォールド</h3>
+<pre><code>node packages/create-qt-module/index.js</code></pre>
+<p>6種類のモジュールタイプに対応したテンプレートを生成します。</p>
+<h3>クイックテスト</h3>
+<p>インポート後、🧩 モジュール → オン → ⚙️ 設定（必要な場合）→ メインUIに戻る</p>
+<hr>
+<h2>10. 技術的制限</h2>
+<p>1. <strong>リモートコード不可</strong> — モジュールはインポートでインストールする必要があり、ネットワークからロード不可</p>
+<p>2. <strong><code>window.qtDefineModule</code> 必須</strong> — これがないとモジュールは認識されません</p>
+<p>3. <strong><code>target</code> フィルター必須</strong> — ないと全翻訳リクエストを横取りします</p>
+<p>4. <strong>設定の分離</strong> — 各モジュールの設定は個別に保存されます</p>
+<p>5. <strong>サンドボックス実行</strong> — サードパーティモジュールは sandbox iframe で実行され、<code>chrome.*</code> API に直接アクセス不可</p>
+<hr>
+<h2>関連ドキュメント</h2>
+<li><a href="EXAMPLE.md" target="_blank"><code>EXAMPLE.md</code></a> — ゼロからモジュールをインポートするまでの完全チュートリアル</li>
+<li><a href="STORE_GUIDE.md" target="_blank"><code>STORE_GUIDE.md</code></a> — モジュールストアへの公開方法</li>
+<li><a href="echo-translator.qt-module" target="_blank"><code>echo-translator.qt-module</code></a> — テスト用の実際のインポート可能モジュール</li>
+<hr>
+<p><em>仕様 v1.0 - 2026-06-26</em></p>
+</div>
+</body></html>

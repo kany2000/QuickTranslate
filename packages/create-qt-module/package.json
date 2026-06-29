@@ -1,0 +1,11 @@
+{
+  "name": "create-qt-module",
+  "version": "1.0.0",
+  "description": "Scaffold a QuickTranslate module in seconds",
+  "bin": {
+    "create-qt-module": "./index.js"
+  },
+  "keywords": ["quicktranslate", "qt-module", "chrome-extension", "translation"],
+  "license": "MIT",
+  "type": "module"
+}

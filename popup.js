@@ -207,6 +207,35 @@ class PopupController {
       }
     });
 
+    // 模塊開關切換事件委託
+    this.elements.modulesListFull.addEventListener('change', (e) => {
+      const checkbox = e.target.closest('.module-toggle-input');
+      if (!checkbox) return;
+      const moduleId = checkbox.dataset.id;
+      const enable = checkbox.checked;
+
+      // 先同步更新本地設置，保證 UI 即時響應
+      if (moduleId === 'mode-quick-panel') {
+        this.settings.quickPanelEnabled = enable;
+        this.elements.quickPanelEnabled.checked = enable;
+      }
+      if (moduleId === 'mode-float-panel') {
+        this.settings.floatPanelEnabled = enable;
+      }
+
+      chrome.runtime.sendMessage({ action: 'toggleModule', moduleId, enable }, (resp) => {
+        if (!resp || !resp.success) {
+          this.showStatus(`切換失敗: ${resp?.error || '未知錯誤'}`, 'error');
+          checkbox.checked = !enable; // 恢復
+          // 恢復本地設置
+          if (moduleId === 'mode-quick-panel') {
+            this.settings.quickPanelEnabled = !enable;
+            this.elements.quickPanelEnabled.checked = !enable;
+          }
+        }
+      });
+    });
+
     // 關閉模塊模態框
     document.getElementById('close-modules-btn').onclick = () => {
       document.getElementById('modules-modal').classList.add('hidden');
@@ -913,6 +942,7 @@ class PopupController {
 
   hideModulesModal() {
     this.elements.modulesModal.classList.add('hidden');
+    this.loadSettings(); // 重新加載設置，同步開關狀態
   }
 
   loadHistorySection() {
@@ -996,16 +1026,16 @@ class PopupController {
             if (!list || list.length === 0) continue;
             html += `<div class="module-group-label">${typeNames[type] || type} (${list.length})</div>`;
             html += list.map(m => {
-              const statusHtml = m.active
-                ? `<span class="module-status active">● ${i18n.t('module.active')}</span>`
-                : `<button class="uninstall-btn" data-id="${m.id}">卸載</button>`;
               return `<div class="inline-list-item">
+                <label class="module-toggle-label">
+                  <input type="checkbox" class="module-toggle-input" data-id="${m.id}" ${m.active ? 'checked' : ''}>
+                  <span class="module-toggle-slider"></span>
+                </label>
                 <div class="inline-item-text">
-                  <div class="inline-item-original">${this.escapeHtml(i18n.t('module.name.' + m.id))}</div>
+                  <div class="inline-item-original">${this.escapeHtml(this._moduleDisplayName(m))}</div>
                   <div class="inline-item-translation module-meta">v${m.manifest.version}</div>
                 </div>
                 <button class="module-settings-btn" data-module="${m.id}" title="設置">⚙️</button>
-                ${statusHtml}
               </div>`;
             }).join('');
           }
@@ -1068,13 +1098,18 @@ class PopupController {
           </div>`;
         }
 
+        const deleteHtml = mod.builtin ? '' : `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e9ecef">
+            <button class="module-delete-btn" data-id="${moduleId}" style="width:100%;padding:8px 0;border:1px solid #fecaca;border-radius:8px;background:#fff;color:#dc2626;font-weight:700;cursor:pointer;font-size:11px">刪除此模塊</button>
+          </div>`;
+
         settingsView.innerHTML = `
           <div style="border-bottom:1px solid #e9ecef;">
-            <button class="settings-back-btn" style="background:none;border:none;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;color:#495057;width:100%;text-align:left">← ${i18n.t('module.name.' + moduleId)} 設置</button>
+            <button class="settings-back-btn" style="background:none;border:none;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:700;color:#495057;width:100%;text-align:left">← ${this._moduleDisplayName(mod)} 設置</button>
           </div>
           <div style="padding:14px">
             <form class="module-settings-form">${extraHtml}${fields}</form>
             <button class="module-settings-save" style="width:100%;padding:10px 0;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-weight:700;cursor:pointer;font-size:12px;margin-top:8px">保存</button>
+            ${deleteHtml}
           </div>`;
 
         // 切換視圖
@@ -1089,7 +1124,7 @@ class PopupController {
           this.loadModulesSection();
         };
 
-        // 綁定：保存按鈕
+        // 綁定：保存按鈕（含反饋動畫）
         const saveBtn = settingsView.querySelector('.module-settings-save');
         saveBtn.onclick = () => {
           const inputs = settingsView.querySelectorAll('[data-key]');
@@ -1113,11 +1148,31 @@ class PopupController {
             extraSave.apiKeys = extraSave.apiKeys || {};
             extraSave.apiKeys.glm = settings.apiKey || '';
           }
+          // 按鈕反饋：綠色閃爍後返回
+          const origBg = saveBtn.style.background;
+          saveBtn.textContent = '✓ 已保存';
+          saveBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+          saveBtn.disabled = true;
           chrome.storage.local.set({ [settingsKey]: settings, ...extraSave }, () => {
-            this.showStatus('設置已保存', 'success');
-            backBtn.click();
+            setTimeout(() => { backBtn.click(); }, 600);
           });
         };
+
+        // 綁定：刪除模塊按鈕（僅第三方模塊）
+        const delBtn = settingsView.querySelector('.module-delete-btn');
+        if (delBtn) {
+          delBtn.onclick = () => {
+            if (!confirm('確定卸載此模塊？')) return;
+            // 立即清空界面
+            settingsView.classList.add('hidden');
+            settingsView.innerHTML = '';
+            this.elements.modulesListFull.classList.remove('hidden');
+            this.elements.modulesListFull.innerHTML = '';
+            chrome.runtime.sendMessage({ action: 'uninstallModule', moduleId }, () => {
+              this.loadModulesSection();
+            });
+          };
+        }
 
         // 綁定：Custom LLM 獲取模型按鈕
         const fetchBtn = document.getElementById('settings-fetch-models');
@@ -1185,9 +1240,11 @@ class PopupController {
                     apiKeys: { custom: settings.apiKey || '' },
                     llmConfig: { baseUrl: settings.baseUrl || '', model: settings.model || '' }
                   };
+                  saveBtn.textContent = '✓ 已保存';
+                  saveBtn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+                  saveBtn.disabled = true;
                   chrome.storage.local.set({ [settingsKey]: settings, ...extraSave }, () => {
-                    this.showStatus('設置已保存', 'success');
-                    backBtn.click();
+                    setTimeout(() => { backBtn.click(); }, 600);
                   });
                 };
                 this.showStatus(`已載入 ${resp.models.length} 個模型`, 'success');
@@ -1218,28 +1275,20 @@ class PopupController {
         try {
           const code = event.target.result;
 
-          // 嘗試提取 manifest（正則匹配 static manifest = {...}）
-          const manifestMatch = code.match(/static\s+manifest\s*=\s*(\{[\s\S]*?\n\})\s*/);
-          if (!manifestMatch) {
+          // 提取 manifest（括號計數法，支援巢狀物件）
+          const manifestRaw = this._extractManifest(code);
+          if (!manifestRaw) {
             this.showStatus('無效的模塊文件：找不到 manifest', 'error');
             return;
           }
 
-          // 用 Function 解析 manifest 對象
-          // 注意：Chrome 擴展頁面默認 CSP 不允許 eval，但 new Function 在某些 MV3 環境下可用
-          // 這裡使用正則提取 JSON 風格的 manifest
-          let manifestStr = manifestMatch[1]
-            // 將註釋替換為空格
+          // 轉為 JSON
+          let manifestStr = manifestRaw
             .replace(/\/\/.*/g, ' ')
-            // 將單引號替換為雙引號
             .replace(/'/g, '"')
-            // 將屬性名包裝為引號
             .replace(/([{,]\s*)([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/g, '$1"$2":')
-            // 刪除尾部逗號
             .replace(/,\s*}/g, '}')
-            // 刪除 undefined/null
             .replace(/: undefined|: null/g, ': ""')
-            // 將 undefined/null 數組元素移除
             .replace(/undefined|null/g, '""');
 
           // 驗證
@@ -1349,6 +1398,30 @@ class PopupController {
         modal.remove();
       }
     });
+  }
+
+  // 模塊顯示名稱：優先 i18n，否則用 manifest.name
+  _moduleDisplayName(module) {
+    const i18nKey = 'module.name.' + module.id
+    const translated = i18n.t(i18nKey)
+    if (translated !== i18nKey) return translated
+    return module.manifest.name
+  }
+
+  // 從模塊源碼中提取 manifest 物件（括號計數，支援巢狀）
+  _extractManifest(code) {
+    const match = code.match(/static\s+manifest\s*=\s*/)
+    if (!match) return null
+    const start = match.index + match[0].length
+    let depth = 0, started = false, end = start
+    for (let i = start; i < code.length; i++) {
+      const ch = code[i]
+      if (ch === '{') { depth++; started = true }
+      else if (ch === '}') { depth-- }
+      if (started && depth === 0) { end = i + 1; break }
+    }
+    if (!started) return null
+    return code.substring(start, end)
   }
 
   escapeHtml(text) {

@@ -1,0 +1,60 @@
+/**
+ * Echo Translator - QuickTranslate 示範模塊
+ *
+ * 把輸入的文字加上前綴返回，用於測試導入流程。
+ * 真實使用時把 translate() 改成調用你自己的 API。
+ */
+
+class EchoTranslator {
+  static manifest = {
+    id: 'engine-echo',
+    name: 'Echo 翻譯',
+    version: '1.0.0',
+    author: 'QuickTranslate Team',
+    type: 'translator',
+    description: '示範模塊：原文加前綴返回（測試導入用）',
+    minAppVersion: '2.5.3',
+    permissions: [],
+    hooks: ['translate:text'],
+    options: [
+      { key: 'prefix', type: 'text', label: 'Prefix Text', placeholder: '[ECHO]', default: '[ECHO]' }
+    ]
+  }
+
+  constructor(core) {
+    this.core = core
+    this._unsub = null
+  }
+
+  async onActivate() {
+    this._unsub = this.core.eventBus.on('translate:text', async (req) => {
+      if (req.target && req.target !== 'engine-echo') return
+      try {
+        const result = await this.translate(req.text, req.from, req.to)
+        this.core.eventBus.emit('translate:result', {
+          id: req.id, result, engine: 'echo'
+        })
+      } catch (err) {
+        this.core.eventBus.emit('translate:error', {
+          id: req.id, error: err.message, engine: 'echo'
+        })
+      }
+    })
+  }
+
+  async onDeactivate() {
+    if (this._unsub) this._unsub()
+    this._unsub = null
+  }
+
+  async translate(text, from, to) {
+    // 讀取用戶配置的前綴
+    const settings = await this.core.storage.get('moduleSettings.engine-echo')
+    const prefix = settings['moduleSettings.engine-echo']?.prefix || '[ECHO]'
+    return `${prefix} ${text}`
+  }
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.EchoTranslator = EchoTranslator
+}

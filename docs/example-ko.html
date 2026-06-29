@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>튜토리얼 - QuickTranslate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>:root{--g1:#667eea;--g2:#764ba2;--bg:#0a0a0f;--bg2:#12121a;--tx:#ffffff;--tx2:#a0a0b0;--ce:rgba(255,255,255,0.08)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:var(--tx);line-height:1.7}.nav{background:linear-gradient(135deg,var(--g1),var(--g2));padding:14px 24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.nav .ttl{font-weight:800;font-size:15px;margin-right:auto}.nav a{color:rgba(255,255,255,0.85);text-decoration:none;font-weight:600;font-size:13px;padding:4px 10px;border-radius:6px}.nav a:hover{background:rgba(255,255,255,0.15)}.lang-bar{display:flex;gap:4px;flex-wrap:wrap}.lang-tag{font-size:11px!important;padding:2px 8px!important;border:1px solid rgba(255,255,255,0.2)!important;border-radius:10px!important}.lang-tag.active{background:rgba(255,255,255,0.2)!important;border-color:#fff!important}.container{max-width:860px;margin:0 auto;padding:32px 24px 80px}h1{font-size:26px;font-weight:800;margin:28px 0 14px;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}h2{font-size:18px;font-weight:700;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--ce)}h3{font-size:15px;font-weight:700;margin:20px 0 8px}p{margin:10px 0;font-size:14px}a{color:var(--g1)}a:hover{text-decoration:underline}code{background:rgba(102,126,234,0.15);padding:2px 6px;border-radius:4px;font-size:13px}pre{background:rgba(255,255,255,0.04);border:1px solid var(--ce);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}pre code{background:none;padding:0;font-size:12px;line-height:1.5}hr{border:none;border-top:1px solid var(--ce);margin:28px 0}table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}td,th{padding:8px 12px;border:1px solid var(--ce)}th{background:rgba(102,126,234,0.1);font-weight:700}li{margin:4px 0 4px 18px;font-size:14px}@media(max-width:600px){.container{padding:20px 16px}}</style></head><body>
+<div class="nav">
+  <span class="ttl">📖 튜토리얼</span>
+  <div class="lang-bar"><a href="example-zh-CN.html" class="lang-tag">简体中文</a><a href="example-zh-TW.html" class="lang-tag">繁體中文</a><a href="example.html" class="lang-tag">English</a><a href="example-ja.html" class="lang-tag">日本語</a><a href="example-ko.html" class="lang-tag active">한국어</a></div>
+  <a href="../index.html">🏠</a>
+</div>
+<div class="container"><h1>모듈 생성 튜토리얼</h1>
+<p>3단계로 모듈 개발하기</p>
+<hr>
+<h2>1단계: CLI로 생성</h2>
+<pre><code>node packages/create-qt-module/index.js</code></pre>
+<p>대화형 프롬프트:</p>
+<pre><code>🧩  QuickTranslate Module Scaffold
+
+Select module type:
+  1. Translation Engine
+  2. Interaction Mode
+  ...
+
+Number (1-6): 1
+Module name: Echo Translator
+Author: myname
+Short description: Demo module for testing</code></pre>
+<p>출력: <code>translator-echo-translator.qt-module</code></p>
+<hr>
+<h2>2단계: 코드 편집</h2>
+<p>Open the generated <code>.qt-module</code> file, find <code>translate()</code> and implement your logic:</p>
+<pre><code>// Before
+async translate(text, from, to) {
+  throw new Error('translate() not implemented')
+}
+
+// After — DeepL API example
+async translate(text, from, to) {
+  const resp = await fetch('https://api.deepl.com/v2/translate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'DeepL-Auth-Key ' + apiKey
+    },
+    body: JSON.stringify({
+      text: [text],
+      source_lang: from.toUpperCase(),
+      target_lang: to.toUpperCase()
+    })
+  })
+  const data = await resp.json()
+  return data.translations[0].text
+}</code></pre>
+<hr>
+<h2>3단계: QuickTranslate에 가져오기</h2>
+<p>1. Open QuickTranslate → click <strong>🧩 Modules</strong></p>
+<p>2. Click <strong>📥 Import Module</strong></p>
+<p>3. Select your <code>.qt-module</code> file</p>
+<p>4. Confirm → Module appears in the list, toggle ON</p>
+<hr>
+<h2>빠른 테스트</h2>
+<p>기존 데모 모듈 사용:</p>
+<pre><code>echo-translator.qt-module</code></pre>
+<p>After importing, it prepends a prefix to translated text. You can change the prefix in ⚙️ settings.</p>
+<hr>
+<h2>디버깅</h2>
+<h3>가져오기 실패</h3>
+<p>Check <code>manifest</code> is complete:</p>
+<table>
+<tr><td>Field</td><td>Type</td><td>Description</td></tr>
+<tr><td><code>id</code></td><td>string</td><td>Lowercase alphanumeric with hyphens: <code>engine-mymod</code></td></tr>
+<tr><td><code>name</code></td><td>string</td><td>Use English name</td></tr>
+<tr><td><code>version</code></td><td>string</td><td><code>x.y.z</code> format</td></tr>
+<tr><td><code>type</code></td><td>string</td><td><code>translator</code> / <code>mode</code> / <code>renderer</code> / <code>processor</code> / <code>service</code> / <code>theme</code></td></tr>
+</table>
+<h3>번역이 작동하지 않음</h3>
+<li>Ensure module toggle is <strong>ON</strong></li>
+<li>Check <code>onActivate</code> subscribes to <code>translate:text</code></li>
+<li>Check <code>target</code> filter: <code>if (req.target && req.target !== 'engine-xxx') return</code></li>
+<li>Check API endpoint accessibility and API Key</li>
+<h3>설정이 저장되지 않음</h3>
+<li><code>options</code> field <code>key</code> must match the key used in <code>translate()</code></li>
+<li>Config is stored at <code>moduleSettings.{moduleId}</code></li>
+<hr>
+<h2>참고 예제</h2>
+<li><a href="echo-translator.qt-module" target="_blank"><code>echo-translator.qt-module</code></a> — Minimal translator with options</li>
+<li><a href="modules/translator-google.js" target="_blank"><code>modules/translator-google.js</code></a> — Built-in Google Translate module</li>
+<li><a href="modules/translator-custom.js" target="_blank"><code>modules/translator-custom.js</code></a> — Custom LLM module</li>
+<li><a href="modules/mode-quick-panel.js" target="_blank"><code>modules/mode-quick-panel.js</code></a> — Interaction mode example</li>
+<hr>
+<h2>게시</h2>
+<p>Follow <a href="STORE_GUIDE.md" target="_blank"><code>STORE_GUIDE.md</code></a> to submit your module to the QuickTranslate Module Store.</p>
+</div>
+</body></html>

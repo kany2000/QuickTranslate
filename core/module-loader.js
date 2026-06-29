@@ -15,6 +15,8 @@ class ModuleLoader {
     this._modules = new Map()
     /** @type {Array<Function>} 等待註冊的模塊類 */
     this._registry = []
+    /** @type {Map<string, Function>} 模塊 ID → 原始 Class */
+    this._moduleClasses = new Map()
   }
 
   /**
@@ -23,18 +25,79 @@ class ModuleLoader {
    */
   register(ModuleClass) {
     this._registry.push(ModuleClass)
+    this._moduleClasses.set(ModuleClass.manifest.id, ModuleClass)
   }
 
   /**
-   * 載入並激活所有已註冊的模塊
+   * 載入並激活所有已註冊的模塊（跳過已關閉的）
    */
   async loadAll() {
+    const toggleData = await this.storage.get('moduleToggles') || {}
+    const toggles = toggleData.moduleToggles || {}
     const results = []
     for (const ModuleClass of this._registry) {
+      const id = ModuleClass.manifest.id
+      // 核心模塊必須加載，不讀取開關狀態
+      if (ModuleClass.manifest.required) {
+        const result = await this._activateModule(ModuleClass)
+        results.push(result)
+        continue
+      }
+      // 如果用戶手動關閉了此模塊，跳過
+      if (toggles[id] === false) {
+        console.log(`ModuleLoader: skipping ${id} (disabled by user)`)
+        results.push({ id, success: false, error: 'disabled by user' })
+        continue
+      }
       const result = await this._activateModule(ModuleClass)
       results.push(result)
     }
     return results
+  }
+
+  /**
+   * 激活/停用模塊（用戶開關）
+   */
+  async toggleModule(moduleId, enable) {
+    // 核心模塊禁止開關
+    const modClass = this._moduleClasses.get(moduleId)
+    if (modClass && modClass.manifest.required) {
+      return { id: moduleId, success: false, error: 'required module cannot be toggled' }
+    }
+
+    // 保存開關狀態
+    const toggleData = await this.storage.get('moduleToggles') || {}
+    const toggles = toggleData.moduleToggles || {}
+    toggles[moduleId] = enable
+    await this.storage.set({ moduleToggles: toggles })
+
+    // 同步模式模塊到對應的設置項
+    const settingMap = {
+      'mode-quick-panel': 'quickPanelEnabled',
+      'mode-float-panel': 'floatPanelEnabled'
+    }
+    const settingKey = settingMap[moduleId]
+    if (settingKey) {
+      await this.storage.set({ [settingKey]: enable })
+    }
+
+    if (enable) {
+      // 激活
+      const ModuleClass = this._moduleClasses.get(moduleId)
+      if (ModuleClass) {
+        const result = await this._activateModule(ModuleClass)
+        return result
+      }
+      // 嘗試從 storage 激活（第三方模塊）
+      return await this.activateFromStorage(moduleId)
+    } else {
+      // 停用
+      await this.unregister(moduleId)
+      // 清理可能殘留的已安裝模塊（第三方）
+      const key = `installedModule:${moduleId}`
+      await this.storage.remove(key)
+      return { id: moduleId, success: true }
+    }
   }
 
   /**
@@ -233,23 +296,34 @@ class ModuleLoader {
    * @returns {Promise<Array<{id: string, manifest: object, active: boolean}>>}
    */
   async getCombinedModuleList() {
-    const active = Array.from(this._modules.entries()).map(([id, entry]) => ({
-      id,
-      manifest: entry.manifest,
-      active: true
-    }))
+    const result = []
+    const inActive = new Set()
 
-    const installed = await this.getInstalledModules()
-    const installedIds = new Set(installed.map(m => m.id))
+    // 1. 活躍模塊（跳過 required 核心模塊）
+    for (const [id, entry] of this._modules) {
+      if (entry.manifest.required) continue
+      result.push({ id, manifest: entry.manifest, active: true, builtin: this._moduleClasses.has(id) })
+      inActive.add(id)
+    }
 
-    // 只添加不在活躍列表中的已安裝模塊
-    for (const mod of installed) {
-      if (!this._modules.has(mod.id)) {
-        active.push({ id: mod.id, manifest: mod.manifest, active: false })
+    // 2. 已註冊但未激活的內置模塊（被用戶關閉的，跳過 required）
+    for (const [id, ModuleClass] of this._moduleClasses) {
+      if (ModuleClass.manifest.required) continue
+      if (!inActive.has(id)) {
+        result.push({ id, manifest: ModuleClass.manifest, active: false, builtin: true })
+        inActive.add(id)
       }
     }
 
-    return active
+    // 3. 已安裝但未激活的第三方模塊
+    const installed = await this.getInstalledModules()
+    for (const mod of installed) {
+      if (!inActive.has(mod.id)) {
+        result.push({ id: mod.id, manifest: mod.manifest, active: false, builtin: false })
+      }
+    }
+
+    return result
   }
 
   _validateManifest(m) {
