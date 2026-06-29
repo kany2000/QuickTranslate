@@ -10,7 +10,7 @@ class MicrosoftTranslatorModule {
     author: 'QuickTranslate Team',
     type: 'translator',
     description: 'Microsoft Translator API 翻譯引擎',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://api.cognitive.microsofttranslator.com/*'],
     hooks: ['translate:text'],
     options: [

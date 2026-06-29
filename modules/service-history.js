@@ -11,7 +11,7 @@ class HistoryService {
     type: 'service',
     required: true,
     description: '管理翻譯歷史記錄的存儲與查詢',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['storage'],
     hooks: ['history:get', 'history:add', 'history:clear']
   }

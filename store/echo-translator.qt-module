@@ -13,7 +13,7 @@ class EchoTranslator {
     author: 'QuickTranslate Team',
     type: 'translator',
     description: '示範模塊：原文加前綴返回（測試導入用）',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: ['translate:text'],
     options: [

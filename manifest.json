@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "QuickTranslate - 快译",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "QuickTranslate 快译 - 選中文字即時翻譯，支持 Google、Microsoft、GLM、LLM。快捷面板、截圖、懸浮翻譯，識別準確率 98%+。",
   "author": "QuickTranslate Team",
   "permissions": [

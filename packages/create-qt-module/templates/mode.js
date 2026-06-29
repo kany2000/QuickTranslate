@@ -11,7 +11,7 @@ class {{CLASSNAME}} {
     author: '{{AUTHOR}}',
     type: 'mode',
     description: '{{DESCRIPTION}}',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: [],
     options: []

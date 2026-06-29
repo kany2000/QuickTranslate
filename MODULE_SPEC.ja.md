@@ -28,7 +28,7 @@ class MyModule {
     author: 'your-github-username',  // 作者
     type: 'translator',              // モジュールタイプ
     description: 'What this module does',  // 短い説明（80字以内）
-    minAppVersion: '2.5.3',          // 最小コアバージョン
+    minAppVersion: '2.5.4',          // 最小コアバージョン
     permissions: [],                 // 必要なChrome権限
     hooks: ['translate:text']        // リッスンするイベント
   }
@@ -183,7 +183,7 @@ class MyEngine {
     author: 'yourname',
     type: 'translator',
     description: 'DeepL API translation engine',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://api.deepl.com/*'],
     hooks: ['translate:text'],
     options: [
@@ -245,7 +245,7 @@ class MyMode {
     author: 'yourname',
     type: 'mode',
     description: 'Does something cool',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: []
   }

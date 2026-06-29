@@ -28,7 +28,7 @@ class MyModule {
     author: 'your-github-username',  // 作者
     type: 'translator',              // 模塊類型（見第二章）
     description: 'What this module does',  // 簡短描述（<=80 字）
-    minAppVersion: '2.5.3',          // 最低核心版本
+    minAppVersion: '2.5.4',          // 最低核心版本
     permissions: [],                 // 需要的 Chrome 權限
     hooks: ['translate:text']        // 監聽的事件
   }
@@ -187,7 +187,7 @@ class MyEngine {
     author: 'yourname',
     type: 'translator',
     description: 'DeepL API translation engine',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://api.deepl.com/*'],
     hooks: ['translate:text'],
     options: [
@@ -254,7 +254,7 @@ class MyMode {
     author: 'yourname',
     type: 'mode',
     description: 'Does something cool',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: []
   }

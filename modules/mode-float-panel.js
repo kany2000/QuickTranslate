@@ -12,7 +12,7 @@ class FloatPanelMode {
     author: 'QuickTranslate Team',
     type: 'mode',
     description: 'Ctrl+Shift+Q 打開浮動翻譯面板（三頁籤）',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: ['shortcut:trigger']
   }

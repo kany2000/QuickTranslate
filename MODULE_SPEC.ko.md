@@ -28,7 +28,7 @@ class MyModule {
     author: 'your-github-username',  // Author
     type: 'translator',              // Module type
     description: 'What this module does',  // Short description (<=80 chars)
-    minAppVersion: '2.5.3',          // Minimum core version
+    minAppVersion: '2.5.4',          // Minimum core version
     permissions: [],                 // Required Chrome permissions
     hooks: ['translate:text']        // Events to listen to
   }
@@ -185,7 +185,7 @@ class MyEngine {
     author: 'yourname',
     type: 'translator',
     description: 'DeepL API translation engine',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://api.deepl.com/*'],
     hooks: ['translate:text'],
     options: [
@@ -250,7 +250,7 @@ class MyMode {
     author: 'yourname',
     type: 'mode',
     description: 'Does something cool',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: []
   }

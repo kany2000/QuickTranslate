@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="GitHub Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-2.5.3-667EEA?style=for-the-badge" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-2.5.4-667EEA?style=for-the-badge" alt="Version"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="License"/>
 </p>
 

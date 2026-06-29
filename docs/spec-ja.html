@@ -31,7 +31,7 @@ node packages/create-qt-module/index.js
     author: 'your-github-username',  // 作者
     type: 'translator',              // モジュールタイプ
     description: 'What this module does',  // 短い説明（80字以内）
-    minAppVersion: '2.5.3',          // 最小コアバージョン
+    minAppVersion: '2.5.4',          // 最小コアバージョン
     permissions: [],                 // 必要なChrome権限
     hooks: ['translate:text']        // リッスンするイベント
   }
@@ -151,7 +151,7 @@ this.core.eventBus.once('translate:result', (data) =&gt; {})</code></pre>
     author: 'yourname',
     type: 'translator',
     description: 'DeepL API translation engine',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://api.deepl.com/*'],
     hooks: ['translate:text'],
     options: [
@@ -202,7 +202,7 @@ const config = await this.core.storage.get(key)
     author: 'yourname',
     type: 'mode',
     description: 'Does something cool',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: []
   }

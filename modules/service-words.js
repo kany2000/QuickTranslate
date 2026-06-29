@@ -11,7 +11,7 @@ class WordsService {
     type: 'service',
     required: true,
     description: '管理生詞本的存儲與查詢',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['storage'],
     hooks: ['words:get', 'words:add', 'words:remove', 'data:export', 'data:import']
   }
@@ -80,7 +80,7 @@ class WordsService {
           translationHistory: result.translationHistory || [],
           savedWords: result.savedWords || [],
           exportTime: new Date().toISOString(),
-          version: '2.5.3'
+          version: '2.5.4'
         }
         this.core.eventBus.emit('data:exported', { requestId: req.requestId, data })
       })

@@ -10,7 +10,7 @@ class GLMTranslatorModule {
     author: 'QuickTranslate Team',
     type: 'translator',
     description: '智譜 GLM 大模型翻譯引擎',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://open.bigmodel.cn/*'],
     hooks: ['translate:text'],
     options: [

@@ -13,7 +13,7 @@ class QuickPanelMode {
     author: 'QuickTranslate Team',
     type: 'mode',
     description: '選中網頁文字後自動顯示翻譯按鈕',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: [],
     hooks: ['text:selected', 'settings:changed']
   }

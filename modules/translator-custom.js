@@ -10,7 +10,7 @@ class CustomLLMModule {
     author: 'QuickTranslate Team',
     type: 'translator',
     description: 'OpenAI 兼容的自定義 LLM 翻譯引擎',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['<all_urls>'],
     hooks: ['translate:text'],
     options: [

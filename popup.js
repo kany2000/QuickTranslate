@@ -1457,7 +1457,7 @@ class PopupController {
     button.textContent = '錄製中';
 
     // 監聽按鍵
-    const handleKeyDown = (e) => {
+    const handleKeyDown = async (e) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -1474,7 +1474,7 @@ class PopupController {
 
       if (keys.length >= 2) {
         const shortcut = keys.join('+');
-        this.saveShortcut(shortcut);
+        await this.saveShortcut(shortcut);
         this.endShortcutRecording();
       }
 
@@ -1522,9 +1522,14 @@ class PopupController {
 
   async loadShortcutSetting() {
     try {
-      const result = await chrome.storage.local.get(['shortcutKey']);
-      const shortcut = result.shortcutKey || 'Alt+1';
+      // 從 chrome.commands 讀取實際快捷鍵（用户在 chrome://extensions/shortcuts 設的）
+      const commands = await chrome.commands.getAll();
+      const smartTranslate = commands.find(cmd => cmd.name === 'smart-translate');
+      const shortcut = smartTranslate?.shortcut || 'Alt+1';
       this.elements.shortcutKey.value = shortcut;
+
+      // 同步保存到 storage，方便其他邏輯讀取
+      await chrome.storage.local.set({ shortcutKey: shortcut });
     } catch (error) {
       console.error('Failed to load shortcut setting:', error);
       this.elements.shortcutKey.value = 'Alt+1';

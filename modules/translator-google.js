@@ -12,7 +12,7 @@ class GoogleTranslatorModule {
     author: 'QuickTranslate Team',
     type: 'translator',
     description: 'Google 免費翻譯引擎（默認）',
-    minAppVersion: '2.5.3',
+    minAppVersion: '2.5.4',
     permissions: ['https://translate.googleapis.com/*'],
     hooks: ['translate:text']
   }
