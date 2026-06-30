@@ -13,6 +13,15 @@
 </p>
 
 <p align="center">
+  🌐
+  <a href="README.md">简体中文</a> ·
+  <a href="https://github.com/kany2000/QuickTranslate">English</a> ·
+  <a href="https://qtrans.737703.xyz/landing-ja.html">日本語</a> ·
+  <a href="https://qtrans.737703.xyz/landing-ko.html">한국어</a> ·
+  <a href="https://qtrans.737703.xyz/landing-zh-TW.html">繁體中文</a>
+</p>
+
+<p align="center">
   <strong>🌐 浏览器划词即时翻译插件 · 支持多引擎 · 模块化可扩展</strong>
 </p>
 
