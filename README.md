@@ -15,10 +15,10 @@
 <p align="center">
   🌐
   <a href="README.md">简体中文</a> ·
-  <a href="https://github.com/kany2000/QuickTranslate">English</a> ·
-  <a href="https://qtrans.737703.xyz/landing-ja.html">日本語</a> ·
-  <a href="https://qtrans.737703.xyz/landing-ko.html">한국어</a> ·
-  <a href="https://qtrans.737703.xyz/landing-zh-TW.html">繁體中文</a>
+  <a href="README-en.md">English</a> ·
+  <a href="README-ja.md">日本語</a> ·
+  <a href="README-ko.md">한국어</a> ·
+  <a href="README-zh-TW.md">繁體中文</a>
 </p>
 
 <p align="center">
@@ -26,150 +26,113 @@
 </p>
 
 <p align="center">
-  <a href="#-features">Features</a> ·
-  <a href="#-module-system">Module System</a> ·
-  <a href="#-quick-start">Quick Start</a> ·
-  <a href="#-development">Development</a> ·
-  <a href="docs/spec.html">📖 Developer Docs</a>
+  <a href="#-功能">功能</a> ·
+  <a href="#-模块系统">模块系统</a> ·
+  <a href="#-快速开始">快速开始</a> ·
+  <a href="#-开发">开发</a> ·
+  <a href="docs/spec-zh-CN.html">📖 开发文档</a>
 </p>
 
 ---
 
-## ✨ Features
+## ✨ 功能
 
-| | Feature | Description |
+| | 功能 | 说明 |
 |---|---|---|
-| ⚡ | **Selection Translate** | Select any text → instant translation popup |
-| 🖱️ | **Hover Translate** | Hold Alt + hover over text, no selection needed |
-| 📷 | **Screenshot Translate** | Capture screen area → OCR → translate |
-| 🌐 | **Multi-Engine** | Google, Microsoft, GLM, Custom LLM, plus community modules |
-| 📚 | **History & Word Book** | Auto-save translation history, save words for review |
-| 🧩 | **Modular System** | Extend with plugins: engines, themes, modes — see below |
+| ⚡ | **划词翻译** | 选中文字 → 即时翻译弹出 |
+| 🖱️ | **悬浮翻译** | 按住 Alt 悬停文字，无需选中 |
+| 📷 | **截图翻译** | 截取屏幕区域 → OCR → 翻译 |
+| 🌐 | **多引擎** | Google、Microsoft、GLM、自定义 LLM 及社区模块 |
+| 📚 | **历史与生词本** | 自动保存翻译历史，收藏生词 |
+| 🧩 | **模块系统** | 通过插件扩展引擎、主题、模式 |
 
-## 🧩 Module System
+## 🧩 模块系统
 
-QuickTranslate 3.0 introduces a **full module ecosystem**. Built-in modules cover translation engines, interaction modes, and services. Third-party developers can create and distribute their own modules.
+QuickTranslate 3.0 引入完整的模块生态。内置模块覆盖翻译引擎、交互模式、服务。第三方开发者可创建和分发自己的模块。
 
-### Built-in Modules
+### 内置模块
 
-| Module | Type | Description |
+| 模块 | 类型 | 说明 |
 |---|---|---|
-| Google Translate | `translator` | Free Google Translate API |
-| Microsoft Translator | `translator` | Microsoft Translator API |
-| GLM | `translator` | Zhipu GLM large language model |
-| Custom LLM | `translator` | OpenAI-compatible custom LLM |
-| Selection Translate | `mode` | Text selection popup |
-| Float Panel | `mode` | Ctrl+Shift+Q floating panel |
-| History | `service` | Translation history storage |
-| Word Book | `service` | Saved words storage |
+| Google Translate | translator | 免费 Google 翻译 API |
+| Microsoft Translator | translator | Microsoft Translator API |
+| GLM 大模型 | translator | 智谱 GLM 大语言模型 |
+| 自定义 LLM | translator | OpenAI 兼容的自定义 LLM |
+| 划词翻译 | mode | 文字选择弹出面板 |
+| 浮动翻译面板 | mode | Ctrl+Shift+Q 浮动面板 |
+| 翻译历史 | service | 翻译历史存储 |
+| 生词本 | service | 生词收藏管理 |
 
-### For Developers
+### 开发者
 
 ```
 node packages/create-qt-module/index.js
 ```
 
-Generate a module template in 30 seconds. Import the `.qt-module` file directly into QuickTranslate.
+30 秒生成模块模板。导入 `.qt-module` 文件即可使用。
 
-📖 [Developer Documentation](docs/spec.html) · 📝 [Tutorial](docs/example.html) · 📦 [Store Guide](docs/store-guide.html)
+📖 [开发文档](docs/spec-zh-CN.html) · 📝 [教程](docs/example-zh-CN.html) · 📦 [发布指南](docs/store-guide-zh-CN.html)
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-### Install from Chrome Web Store
+### 从 Chrome 商店安装
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Install-brightgreen?style=for-the-badge&logo=google-chrome&logoColor=white)](https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba)
 
-### Or load unpacked (developer mode)
+### 或开发者模式加载
 
 ```bash
 git clone https://github.com/kany2000/QuickTranslate.git
 ```
 
-1. Open `chrome://extensions`
-2. Enable **Developer mode** (top right)
-3. Click **Load unpacked**
-4. Select the cloned directory
+1. 打开 `chrome://extensions`
+2. 开启 **开发者模式**
+3. 点击 **加载已解压的扩展程序**
+4. 选择克隆的目录
 
-### Default Shortcuts
+### 默认快捷键
 
-| Shortcut | Action |
+| 快捷键 | 操作 |
 |---|---|
-| `Alt+1` | Smart Translate (auto-detect → target language) |
-| `Ctrl+Shift+Q` | Open Float Panel |
+| `Alt+1` | 智能翻译（自动检测→目标语言）|
+| `Ctrl+Shift+Q` | 打开浮动面板 |
 
-## 🏗️ Architecture
+## 🛠️ 开发
 
-```
-┌──────────────────────────────────────────┐
-│              Popup UI (popup.html)        │
-├──────────────────────────────────────────┤
-│           Background Service Worker       │
-│  ┌──────────┐  ┌──────────┐  ┌────────┐ │
-│  │ EventBus  │  │ Module   │  │ Storage │ │
-│  │ pub/sub   │←→│ Loader   │←→│ Manager │ │
-│  └─────┬────┘  └──────────┘  └────────┘ │
-│        │                                │
-│  ┌─────┴──────┐  ┌──────────────────┐   │
-│  │ Translator │  │ Mode / Service   │   │
-│  │ Modules    │  │ Modules          │   │
-│  └────────────┘  └──────────────────┘   │
-├──────────────────────────────────────────┤
-│        Content Scripts (injected)        │
-│  quick-panel.js · float-panel.js        │
-│  content.js · tesseract.min.js          │
-└──────────────────────────────────────────┘
-```
-
-## 🛠️ Development
-
-### Project Structure
+### 项目结构
 
 ```
 QuickTranslate/
-├── core/                  # Module system core
-│   ├── event-bus.js       # Pub/sub event bus
-│   └── module-loader.js   # Module registry & lifecycle
-├── modules/               # Built-in modules
-│   ├── translator-*.js    # Translation engines
-│   ├── mode-*.js          # Interaction modes
-│   └── service-*.js       # Background services
+├── core/                  # 模块系统核心
+│   ├── event-bus.js       # 事件总线
+│   └── module-loader.js   # 模块注册与生命周期
+├── modules/               # 内置模块
+│   ├── translator-*.js    # 翻译引擎
+│   ├── mode-*.js          # 交互模式
+│   └── service-*.js       # 后台服务
 ├── packages/
-│   └── create-qt-module/  # CLI scaffold tool
-├── docs/                  # Developer documentation
-├── store/                 # Module store
-├── popup.html/js/css      # Extension popup
-├── background.js          # Service worker
-├── content.js / .css      # Screenshot capture
-├── quick-panel.js / .css  # Selection/Hover translate
-└── float-panel.js / .css  # Floating panel
+│   └── create-qt-module/  # CLI 脚手架
+├── docs/                  # 开发者文档
+├── store/                 # 模块商店
+├── popup.html/js/css      # 弹出窗口
+├── background.js          # 服务工作线程
+├── content.js             # 截图捕捉
+├── quick-panel.js         # 划词/悬浮翻译
+└── float-panel.js         # 浮动面板
 ```
 
-### Build Release
+### 构建发布
 
 ```bash
 powershell -File build-release.ps1 -Version "3.0.0"
 ```
 
-Output in `releases/`:
-- `QuickTranslate-v3.0.0-user.zip` — for Chrome Web Store
-- `QuickTranslate-v3.0.0-dev.zip` — with dev tools
+## 📄 许可证
 
-## 📦 Module Store
-
-Community modules are listed on the [project website](https://qtrans.737703.xyz/) and the `store/` directory.
-
-Want to publish your module? See [STORE_GUIDE.md](STORE_GUIDE.md).
-
-## 📄 License
-
-MIT — see [LICENSE](LICENSE).
+MIT — 详见 [LICENSE](LICENSE)。
 
 ---
 
 <p align="center">
   Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.0.0
-  <br>
-  <a href="https://github.com/kany2000/QuickTranslate/issues">Report Issue</a> ·
-  <a href="https://github.com/kany2000/QuickTranslate/discussions">Discussion</a> ·
-  <a href="https://qtrans.737703.xyz/">Website</a>
 </p>
