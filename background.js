@@ -257,7 +257,17 @@ class ScreenshotTranslator {
   async getModulesList(sendResponse) {
     try {
       const modules = await moduleLoader.getCombinedModuleList()
-      sendResponse({ success: true, modules })
+      const statsResult = await chrome.storage.local.get('moduleStats')
+      sendResponse({ success: true, modules, stats: statsResult.moduleStats || {} })
+    } catch (error) {
+      sendResponse({ success: false, error: error.message })
+    }
+  }
+
+  async getModuleStats(sendResponse) {
+    try {
+      const result = await chrome.storage.local.get('moduleStats')
+      sendResponse({ success: true, stats: result.moduleStats || {} })
     } catch (error) {
       sendResponse({ success: false, error: error.message })
     }
@@ -535,6 +545,9 @@ class ScreenshotTranslator {
           break;
         case 'getModules':
           this.getModulesList(sendResponse);
+          break;
+        case 'getModuleStats':
+          this.getModuleStats(sendResponse);
           break;
         case 'emitEvent':
           eventBus.emit(request.event, request.data);
@@ -837,6 +850,9 @@ class ScreenshotTranslator {
             break;
         }
       }
+
+      // 記錄翻譯統計
+      trackModuleUsage(apiProvider, result?.length || 0, true);
 
       sendResponse({
         success: true,
@@ -1366,11 +1382,16 @@ ${text}`;
     }
     }
 
+    // 多引擎統計
+    for (const [engine, text] of Object.entries(results)) {
+      if (text) trackModuleUsage(engine, text.length || 0, true)
+    }
+
     // 返回所有结果
     sendResponse({
       success: true,
       results: results,
-      errors: errors,
+      errors: {},
       sourceLang: sourceLang,
       targetLang: targetLang
     });
@@ -1475,4 +1496,52 @@ async function initModuleHost() {
   } catch (e) {
     console.warn('ModuleHost: init failed:', e.message)
   }
+
+  // 啟動心跳（每 25 秒 ping 一次，防止 Chrome 銷毀）
+  startModuleHeartbeat()
+}
+
+// 心跳機制：防止 offscreen document 被 Chrome 自動銷毀
+function startModuleHeartbeat() {
+  setInterval(async () => {
+    try {
+      await chrome.runtime.sendMessage({ action: 'ping', to: 'moduleHost' })
+    } catch {
+      // offscreen 已被銷毀，重建
+      try {
+        await chrome.offscreen.createDocument({
+          url: 'module-host.html',
+          reasons: ['DOM_OPERATION'],
+          justification: 'Keep module sandbox alive'
+        })
+        console.log('ModuleHost: recreated after heartbeat failure')
+      } catch (e) {
+        console.warn('ModuleHost: recreate failed:', e.message)
+      }
+    }
+  }, 25000)
+}
+
+// ===== 模塊用量統計 =====
+// 追蹤每個引擎的翻譯次數、字數、成功率
+eventBus.on('translate:result', (data) => {
+  trackModuleUsage(data.engine, data.result?.length || 0, true)
+})
+eventBus.on('translate:error', (data) => {
+  trackModuleUsage(data.engine, 0, false)
+})
+
+async function trackModuleUsage(engine, charCount, success) {
+  try {
+    const result = await chrome.storage.local.get('moduleStats')
+    const stats = result.moduleStats || {}
+    if (!stats[engine]) {
+      stats[engine] = { calls: 0, chars: 0, successes: 0, failures: 0 }
+    }
+    stats[engine].calls++
+    stats[engine].chars += charCount
+    if (success) stats[engine].successes++
+    else stats[engine].failures++
+    await chrome.storage.local.set({ moduleStats: stats })
+  } catch (e) { /* ignore */ }
 }

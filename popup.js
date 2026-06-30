@@ -1098,6 +1098,18 @@ class PopupController {
           </div>`;
         }
 
+        // 從 getModules 響應中提取統計資料
+        const engineName = moduleId.replace('engine-', '');
+        const statsData = response.stats || {};
+        const myStats = statsData[engineName] || statsData[moduleId];
+        const statsHtml = (myStats && myStats.calls > 0)
+          ? `<div class="module-stats-display" style="margin:8px 14px 0;padding:8px 14px;background:#f8f9fa;border-radius:8px;display:flex;gap:16px;font-size:10px;color:#6c757d">
+              <span>📊 ${myStats.calls} 次</span>
+              <span>✅ ${myStats.calls > 0 ? Math.round(myStats.successes/myStats.calls*100) : 0}%</span>
+              <span>📝 ${myStats.chars} 字</span>
+            </div>`
+          : '';
+
         const deleteHtml = mod.builtin ? '' : `<div style="margin-top:12px;padding-top:12px;border-top:1px solid #e9ecef">
             <button class="module-delete-btn" data-id="${moduleId}" style="width:100%;padding:8px 0;border:1px solid #fecaca;border-radius:8px;background:#fff;color:#dc2626;font-weight:700;cursor:pointer;font-size:11px">刪除此模塊</button>
           </div>`;
@@ -1109,6 +1121,7 @@ class PopupController {
           <div style="padding:14px">
             <form class="module-settings-form">${extraHtml}${fields}</form>
             <button class="module-settings-save" style="width:100%;padding:10px 0;border:none;border-radius:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-weight:700;cursor:pointer;font-size:12px;margin-top:8px">保存</button>
+            ${statsHtml}
             ${deleteHtml}
           </div>`;
 
@@ -1163,7 +1176,6 @@ class PopupController {
         if (delBtn) {
           delBtn.onclick = () => {
             if (!confirm('確定卸載此模塊？')) return;
-            // 立即清空界面
             settingsView.classList.add('hidden');
             settingsView.innerHTML = '';
             this.elements.modulesListFull.classList.remove('hidden');

@@ -42,6 +42,12 @@ window.addEventListener('message', function(event) {
 
 // 監聽 Service Worker 的評估請求
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  // 心跳 ping
+  if (request.action === 'ping' && request.to === 'moduleHost') {
+    sendResponse({ success: true, alive: true })
+    return true
+  }
+
   if (request.action === 'evaluateModule') {
     if (!sandboxReady) {
       sendResponse({ success: false, error: 'Sandbox not ready' })

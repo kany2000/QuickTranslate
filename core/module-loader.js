@@ -81,6 +81,32 @@ class ModuleLoader {
       await this.storage.set({ [settingKey]: enable })
     }
 
+    // 同步翻譯引擎開關到 apiProvider
+    if (!enable) {
+      const engineMap = {
+        'engine-google': 'google',
+        'engine-microsoft': 'microsoft',
+        'engine-glm': 'glm',
+        'engine-custom': 'custom'
+      }
+      const provider = engineMap[moduleId]
+      if (provider) {
+        const result = await this.storage.get('apiProvider')
+        const current = result.apiProvider || 'google'
+        if (current === provider) {
+          // 切換到第一個選中的翻譯引擎
+          const fallbacks = ['google', 'microsoft', 'glm', 'custom']
+          for (const fb of fallbacks) {
+            const fbId = 'engine-' + fb
+            if (fbId !== moduleId && toggles[fbId] !== false) {
+              await this.storage.set({ apiProvider: fb })
+              break
+            }
+          }
+        }
+      }
+    }
+
     if (enable) {
       // 激活
       const ModuleClass = this._moduleClasses.get(moduleId)
