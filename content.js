@@ -263,8 +263,8 @@ if (typeof window.ScreenshotCapture === 'undefined') {
             sendResponse({ success: true });
             break;
           default:
-            console.warn('Content: Unknown action:', request.action);
-            sendResponse({ error: 'Unknown action' });
+            // 靜默忽略其他 content script 的 action（quick-panel.js / float-panel.js 處理）
+            break;
         }
       } catch (error) {
         console.error('Content: Error handling message:', error);
