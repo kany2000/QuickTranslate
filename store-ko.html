@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="ko" data-theme="dark">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Module Store - QuickTranslate</title>
+<title>모듈 스토어 - QuickTranslate</title>
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -50,36 +50,36 @@ h1{font-size:28px;font-weight:800;margin-bottom:8px;background:linear-gradient(1
 .lang-tag.on{background:rgba(255,255,255,0.2)!important;color:#fff!important}
 @media(max-width:700px){.mt{grid-template-columns:1fr}.mg{grid-template-columns:1fr}}</style></head><body>
 <div class="nav">
-<span class="ttl">🧩 Module Store</span>
-<div class="lang-bar"><a href="store-zh-CN.html" class="lang-tag">简体中文</a><a href="store-zh-TW.html" class="lang-tag">繁體中文</a><a href="store.html" class="lang-tag on">English</a><a href="store-ja.html" class="lang-tag">日本語</a><a href="store-ko.html" class="lang-tag">한국어</a></div>
-<a href="index.html">🏠 Home</a>
-<a href="store.html">Store</a>
-<a href="docs/spec.html">📖 Docs</a>
+<span class="ttl">🧩 모듈 스토어</span>
+<div class="lang-bar"><a href="store-zh-CN.html" class="lang-tag">简体中文</a><a href="store-zh-TW.html" class="lang-tag">繁體中文</a><a href="store.html" class="lang-tag">English</a><a href="store-ja.html" class="lang-tag">日本語</a><a href="store-ko.html" class="lang-tag on">한국어</a></div>
+<a href="index.html">🏠 홈</a>
+<a href="store-ko.html">스토어</a>
+<a href="docs/spec-ko.html">📖 문서</a>
 </div>
 <div class="container">
-<h1>🧩 Module Store</h1>
-<p class="st">Browse community modules and extend QuickTranslate</p>
-<div class="fw" id="fw"><button class="fb on" data-f="all">All</button><button class="fb" data-f="translator">Translator</button><button class="fb" data-f="mode">Mode</button><button class="fb" data-f="renderer">Renderer</button><button class="fb" data-f="processor">Processor</button><button class="fb" data-f="service">Service</button><button class="fb" data-f="theme">Theme</button></div>
+<h1>🧩 모듈 스토어</h1>
+<p class="st">커뮤니티 모듈을 찾아 QuickTranslate를 확장하세요</p>
+<div class="fw" id="fw"><button class="fb on" data-f="all">전체</button><button class="fb" data-f="translator">번역 엔진</button><button class="fb" data-f="mode">모드</button><button class="fb" data-f="renderer">렌더러</button><button class="fb" data-f="processor">프로세서</button><button class="fb" data-f="service">서비스</button><button class="fb" data-f="theme">테마</button></div>
 <div class="mg" id="mg"></div>
 <div class="ss">
 <div style="font-size:40px;margin-bottom:12px">📤</div>
-<h2>Submit Your Module</h2>
-<p>Built a module? Share it with the community and help QuickTranslate grow!</p>
+<h2>모듈 제출</h2>
+<p>모듈을 개발하셨나요? 커뮤니티와 공유하세요!</p>
 <div class="sbtns">
-<a href="https://github.com/kany2000/QuickTranslate/issues/new?template=module-submission.yml" class="cbtn pb" target="_blank" style="font-size:13px;padding:10px 24px">📦 Submit via Issues (Simple)</a>
-<a href="store/submit-flow.md" class="cbtn sb" target="_blank" style="font-size:13px;padding:10px 24px">📖 Learn Both Methods</a>
+<a href="https://github.com/kany2000/QuickTranslate/issues/new?template=module-submission.yml" class="cbtn pb" target="_blank" style="font-size:13px;padding:10px 24px">📦 Issues로 제출 (간편)</a>
+<a href="store/submit-flow.md" class="cbtn sb" target="_blank" style="font-size:13px;padding:10px 24px">📖 두 방법 알아보기</a>
 </div>
 <div class="mt">
-<div class="mtc"><h3>📝 Method A: GitHub Issues <span class="te te1">Easy</span></h3><ol><li>Prepare your .qt-module file</li><li>Upload to GitHub Releases or your server</li><li>Open a new Issue with the template form</li><li>Fill in module name, ID, type, download URL</li><li>Admin reviews within 1-3 business days</li><li>Your module appears in the Store ✨</li></ol>
-<a href="https://github.com/kany2000/QuickTranslate/issues/new?template=module-submission.yml" class="cbtn pb" style="margin-top:12px;font-size:11px">📦 Submit Now</a></div>
-<div class="mtc"><h3>⚡ Method B: GitHub OAuth (Auto PR) <span class="te te2">Advanced</span></h3><ol><li>Click "Login with GitHub" to authorize</li><li>Upload your .qt-module file directly</li><li>System auto-validates the manifest</li><li>Auto-forks the repo and creates a PR</li><li>Admin reviews and merges</li><li>Your module goes live 🚀</li></ol>
-<a href="store/submit-flow.md" class="cbtn sb" style="margin-top:12px;font-size:11px">📖 Read Setup Guide</a></div>
+<div class="mtc"><h3>📝 방법 A: GitHub Issues <span class="te te1">간편</span></h3><ol><li>.qt-module 파일 준비</li><li>GitHub Releases 또는 서버에 업로드</li><li>새 Issue 열고 템플릿 작성</li><li>모듈 이름, ID, 유형, URL 입력</li><li>관리자 검토 (1-3 영업일)</li><li>모듈이 스토어에 등록 ✨</li></ol>
+<a href="https://github.com/kany2000/QuickTranslate/issues/new?template=module-submission.yml" class="cbtn pb" style="margin-top:12px;font-size:11px">📦 지금 제출</a></div>
+<div class="mtc"><h3>⚡ 방법 B: GitHub OAuth (자동 PR) <span class="te te2">고급</span></h3><ol><li>「GitHub 로그인」클릭하여 인증</li><li>.qt-module 파일 직접 업로드</li><li>시스템이 manifest 자동 검증</li><li>자동으로 포크 및 PR 생성</li><li>관리자 검토 후 병합</li><li>모듈 출시 🚀</li></ol>
+<a href="store/submit-flow.md" class="cbtn sb" style="margin-top:12px;font-size:11px">📖 설정 가이드 보기</a></div>
 </div></div></div>
 <script>var MS=[{id:"engine-echo",name:"Echo Translator",ver:"1.0.0",author:"QuickTranslate Team",type:"translator",desc:"Demo module for testing import flow",dl:"store/echo-translator.qt-module",size:"2.3 KB"}];
-var cf="all",fl={"all":"All","translator":"Translator","mode":"Mode","renderer":"Renderer","processor":"Processor","service":"Service","theme":"Theme"};
+var cf="all",fl={"all":"전체","translator":"번역 엔진","mode":"모드","renderer":"렌더러","processor":"프로세서","service":"서비스","theme":"테마"};
 var ft={"all":1,"translator":1,"mode":1,"renderer":1,"processor":1,"service":1,"theme":1};
 function rd(f){var g=document.getElementById("mg"),list=f==="all"?MS:MS.filter(function(m){return m.type===f});
-if(list.length===0){g.innerHTML='<div class="emp">\ud83d\udced No modules yet<br><a href="https://github.com/kany2000/QuickTranslate/issues/new?template=module-submission.yml" style="color:#667eea;font-weight:600">Be the first to submit one</a></div>';return}
-g.innerHTML=list.map(function(m){return'<div class="mc"><div class="ch"><span class="cn">'+m.name+'</span><span class="ct">'+m.type+'</span></div><p class="cd">'+m.desc+'</p><div class="cf"><span class="cm">'+m.author+' \u00b7 v'+m.ver+' \u00b7 '+(m.size||"?")+'</span><a href="'+m.dl+'" class="cbtn pb" target="_blank">\ud83d\udce5 Submit Now</a></div></div>'}).join("")}
+if(list.length===0){g.innerHTML='<div class="emp">\ud83d\udced 아직 모듈이 없습니다<br><a href="https://github.com/kany2000/QuickTranslate/issues/new?template=module-submission.yml" style="color:#667eea;font-weight:600">첫 번째 제출자가 되어보세요</a></div>';return}
+g.innerHTML=list.map(function(m){return'<div class="mc"><div class="ch"><span class="cn">'+m.name+'</span><span class="ct">'+m.type+'</span></div><p class="cd">'+m.desc+'</p><div class="cf"><span class="cm">'+m.author+' \u00b7 v'+m.ver+' \u00b7 '+(m.size||"?")+'</span><a href="'+m.dl+'" class="cbtn pb" target="_blank">\ud83d\udce5 지금 제출</a></div></div>'}).join("")}
 document.getElementById("fw").addEventListener("click",function(e){var b=e.target.closest(".fb");if(!b)return;document.querySelectorAll(".fb").forEach(function(x){x.classList.remove("on")});b.classList.add("on");rd(b.dataset.f)});
 rd("all");</script></body></html>
