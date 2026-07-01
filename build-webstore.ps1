@@ -27,7 +27,16 @@ $Files = @(
     "popup.css",
     "popup.js",
     "tesseract.min.js",
-    "i18n.js"
+    "i18n.js",
+    "sandbox.html",
+    "module-host.html",
+    "module-host.js"
+)
+
+$Directories = @(
+    "core",
+    "modules",
+    "icons"
 )
 
 $TempDir = Join-Path $ProjectRoot "_build_temp"
@@ -56,14 +65,16 @@ foreach ($file in $Files) {
     }
 }
 
-# Copy icons folder
-$IconsSrc = Join-Path $ProjectRoot "icons"
-if (Test-Path $IconsSrc) {
-    Copy-Item $IconsSrc $TempDir -Recurse
-    Write-Host "  + icons/" -ForegroundColor Green
-} else {
-    Write-Host "  ! icons/ NOT FOUND" -ForegroundColor Red
-    $missing = $true
+# Copy directories
+foreach ($dir in $Directories) {
+    $src = Join-Path $ProjectRoot $dir
+    if (Test-Path $src -PathType Container) {
+        Copy-Item $src $TempDir -Recurse
+        Write-Host "  + $dir/" -ForegroundColor Green
+    } else {
+        Write-Host "  ! $dir/ NOT FOUND" -ForegroundColor Red
+        $missing = $true
+    }
 }
 
 if ($missing) {
