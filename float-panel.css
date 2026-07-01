@@ -1,3 +1,30 @@
+/* === Dark Mode Theme Variables === */
+:root {
+  --qt-bg: #ffffff;
+  --qt-bg-secondary: #f8f9fa;
+  --qt-bg-tertiary: #f1f3f5;
+  --qt-text-primary: #333333;
+  --qt-text-secondary: #495057;
+  --qt-text-muted: #6c757d;
+  --qt-text-dim: #adb5bd;
+  --qt-border: #e9ecef;
+  --qt-border-strong: #dee2e6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --qt-bg: #1a1a2e;
+    --qt-bg-secondary: #2d2d44;
+    --qt-bg-tertiary: #3d3d56;
+    --qt-text-primary: #e0e0e0;
+    --qt-text-secondary: #c0c0c0;
+    --qt-text-muted: #a0a0a0;
+    --qt-text-dim: #6c757d;
+    --qt-border: #3d3d56;
+    --qt-border-strong: #4a4a66;
+  }
+}
+
 /**
  * FloatPanel - 独立翻译面板样式
  * Version: 2.5.0
@@ -9,7 +36,7 @@
   z-index: 9999999;
   width: 320px;
   height: 420px;
-  background: white;
+  background: var(--qt-bg);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -66,8 +93,8 @@
 /* Tab切换 */
 .float-panel-tabs {
   display: flex;
-  border-bottom: 1px solid #e9ecef;
-  background: #f8f9fa;
+  border-bottom: 1px solid var(--qt-border);
+  background: var(--qt-bg-secondary);
 }
 
 .float-lang-row {
@@ -81,10 +108,10 @@
 .float-target-lang {
   flex: 1;
   padding: 8px 10px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--qt-border);
   border-radius: 6px;
   font-size: 13px;
-  background: white;
+  background: var(--qt-bg);
   cursor: pointer;
   outline: none;
 }
@@ -104,7 +131,7 @@
   padding: 10px 8px;
   border: none;
   background: transparent;
-  color: #6c757d;
+  color: var(--qt-text-muted);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -113,14 +140,14 @@
 }
 
 .float-tab:hover {
-  color: #495057;
-  background: #e9ecef;
+  color: var(--qt-text-secondary);
+  background: var(--qt-bg-tertiary);
 }
 
 .float-tab.active {
   color: #667eea;
   border-bottom-color: #667eea;
-  background: white;
+  background: var(--qt-bg);
 }
 
 /* 内容区域 */
@@ -149,7 +176,7 @@
   width: 100%;
   height: 80px;
   padding: 10px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--qt-border);
   border-radius: 8px;
   font-size: 14px;
   resize: none;
@@ -188,21 +215,21 @@
 
 /* 翻译结果区 */
 .float-result-area {
-  background: #f8f9fa;
+  background: var(--qt-bg-secondary);
   border-radius: 8px;
   padding: 12px;
 }
 
 .float-result-label {
   font-size: 12px;
-  color: #6c757d;
+  color: var(--qt-text-muted);
   margin-bottom: 6px;
 }
 
 .float-result-text {
   font-size: 14px;
   line-height: 1.6;
-  color: #333;
+  color: var(--qt-text-primary);
   min-height: 40px;
   word-wrap: break-word;
 }
@@ -225,8 +252,8 @@
 .float-save-btn {
   flex: 1;
   padding: 6px 12px;
-  border: 1px solid #e9ecef;
-  background: white;
+  border: 1px solid var(--qt-border);
+  background: var(--qt-bg);
   border-radius: 6px;
   font-size: 12px;
   cursor: pointer;
@@ -235,7 +262,7 @@
 
 .float-copy-btn:hover,
 .float-save-btn:hover {
-  background: #f8f9fa;
+  background: var(--qt-bg-secondary);
   border-color: #667eea;
   color: #667eea;
 }
@@ -253,10 +280,10 @@
   align-items: center;
   padding-bottom: 8px;
   margin-bottom: 8px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--qt-border);
   font-size: 13px;
   font-weight: 600;
-  color: #495057;
+  color: var(--qt-text-secondary);
 }
 
 .float-clear-btn {
@@ -280,7 +307,7 @@
 
 .float-empty {
   text-align: center;
-  color: #adb5bd;
+  color: var(--qt-text-dim);
   padding: 30px 0;
   font-size: 13px;
 }
@@ -288,7 +315,7 @@
 /* 列表项 */
 .float-list-item {
   padding: 10px;
-  background: #f8f9fa;
+  background: var(--qt-bg-secondary);
   border-radius: 8px;
   margin-bottom: 8px;
   cursor: pointer;
@@ -296,13 +323,13 @@
 }
 
 .float-list-item:hover {
-  background: #e9ecef;
+  background: var(--qt-bg-tertiary);
   transform: translateY(-1px);
 }
 
 .float-item-original {
   font-size: 13px;
-  color: #333;
+  color: var(--qt-text-primary);
   margin-bottom: 4px;
   word-wrap: break-word;
 }
@@ -315,7 +342,7 @@
 
 .float-item-time {
   font-size: 10px;
-  color: #adb5bd;
+  color: var(--qt-text-dim);
   margin-top: 4px;
 }
 
@@ -342,7 +369,7 @@
 
 .float-panel-content::-webkit-scrollbar-track,
 .float-list::-webkit-scrollbar-track {
-  background: #f1f3f5;
+  background: var(--qt-bg-tertiary);
   border-radius: 3px;
 }
 

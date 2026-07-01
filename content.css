@@ -1,3 +1,24 @@
+/* === Dark Mode Theme Variables === */
+:root {
+  --qt-modal-bg: #ffffff;
+  --qt-modal-bg-secondary: #f8f9fa;
+  --qt-modal-text: #333333;
+  --qt-modal-text-muted: #666666;
+  --qt-modal-border: #e0e0e0;
+  --qt-modal-overlay: rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --qt-modal-bg: #1a1a2e;
+    --qt-modal-bg-secondary: #2d2d44;
+    --qt-modal-text: #e0e0e0;
+    --qt-modal-text-muted: #a0a0a0;
+    --qt-modal-border: #3d3d56;
+    --qt-modal-overlay: rgba(0, 0, 0, 0.8);
+  }
+}
+
 /* 截圖覆蓋層樣式 */
 .screenshot-overlay {
   position: fixed !important;
@@ -97,7 +118,7 @@
 
 .screenshot-message.warning {
   background-color: #fbbc04 !important;
-  color: #333 !important;
+  color: var(--qt-modal-text) !important;
 }
 
 .screenshot-message.error {
@@ -126,7 +147,7 @@
 }
 
 .modal-content {
-  background: white !important;
+  background: var(--qt-modal-bg) !important;
   border-radius: 12px !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
   max-width: 600px !important;
@@ -146,22 +167,22 @@
   justify-content: space-between !important;
   align-items: center !important;
   padding: 20px 24px !important;
-  border-bottom: 1px solid #e0e0e0 !important;
-  background-color: #f8f9fa !important;
+  border-bottom: 1px solid var(--qt-modal-border) !important;
+  background-color: var(--qt-modal-bg-secondary) !important;
 }
 
 .modal-header h3 {
   margin: 0 !important;
   font-size: 18px !important;
   font-weight: 600 !important;
-  color: #333 !important;
+  color: var(--qt-modal-text) !important;
 }
 
 .close-btn {
   background: none !important;
   border: none !important;
   font-size: 24px !important;
-  color: #666 !important;
+  color: var(--qt-modal-text-muted) !important;
   cursor: pointer !important;
   padding: 0 !important;
   width: 32px !important;
@@ -174,7 +195,7 @@
 }
 
 .close-btn:hover {
-  background-color: #e0e0e0 !important;
+  background-color: var(--qt-modal-border) !important;
 }
 
 .modal-body {
@@ -194,19 +215,19 @@
 .text-section label {
   display: block !important;
   font-weight: 600 !important;
-  color: #333 !important;
+  color: var(--qt-modal-text) !important;
   margin-bottom: 8px !important;
   font-size: 14px !important;
 }
 
 .text-content {
-  background-color: #f8f9fa !important;
-  border: 1px solid #e0e0e0 !important;
+  background-color: var(--qt-modal-bg-secondary) !important;
+  border: 1px solid var(--qt-modal-border) !important;
   border-radius: 6px !important;
   padding: 12px !important;
   font-size: 14px !important;
   line-height: 1.5 !important;
-  color: #333 !important;
+  color: var(--qt-modal-text) !important;
   white-space: pre-wrap !important;
   word-wrap: break-word !important;
   min-height: 60px !important;

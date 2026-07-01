@@ -9,7 +9,10 @@ importScripts(
   'modules/mode-quick-panel.js',
   'modules/mode-float-panel.js',
   'modules/service-history.js',
-  'modules/service-words.js'
+  'modules/service-words.js',
+  'modules/processor-sanitizer.js',
+  'modules/processor-code-protector.js',
+  'modules/service-cache.js'
 )
 
 // ===== 模塊系統初始化 =====
@@ -23,6 +26,9 @@ moduleLoader.register(QuickPanelMode)
 moduleLoader.register(FloatPanelMode)
 moduleLoader.register(HistoryService)
 moduleLoader.register(WordsService)
+moduleLoader.register(SanitizerProcessor)
+moduleLoader.register(CodeProtectorProcessor)
+moduleLoader.register(TranslationCacheService)
 
 // 截圖翻譯器後台服務
 console.log('Background script loading...');
@@ -35,6 +41,7 @@ class ScreenshotTranslator {
     this.MAX_HISTORY = 500; // 历史记录和生词本最大条数
     this.setupMessageListeners();
     this.setupInstallListener();
+    this.setupContextMenuHandler();
     // 检查是否是首次启动（开发者模式下 onInstalled 不会触发）
     this.checkFirstRun();
     console.log('ScreenshotTranslator initialized');
@@ -119,6 +126,10 @@ class ScreenshotTranslator {
   setupInstallListener() {
     chrome.runtime.onInstalled.addListener((details) => {
       console.log('Extension installed or updated:', details);
+
+      // 建立右键菜单
+      this.createContextMenu()
+
       if (details.reason === 'install') {
         // 使用 storage 存储安装标记，popup 打开时会检查
         chrome.storage.local.set({ shouldShowWelcome: true });
@@ -147,8 +158,82 @@ class ScreenshotTranslator {
             });
           });
         }, 5000);
+      } else if (details.reason === 'update') {
+        // 更新时重建右键菜单
+        chrome.contextMenus.removeAll(() => this.createContextMenu())
       }
     });
+  }
+
+  // ===== 右键菜单 =====
+  createContextMenu() {
+    chrome.contextMenus.removeAll(() => {
+      chrome.contextMenus.create({
+        id: 'qt-translate-selection',
+        title: 'QuickTranslate 翻譯「%s」',
+        contexts: ['selection']
+      })
+      chrome.contextMenus.create({
+        id: 'qt-translate-selection-multi',
+        title: 'QuickTranslate 多引擎翻譯「%s」',
+        contexts: ['selection']
+      })
+      console.log('Context menu created')
+    })
+  }
+
+  setupContextMenuHandler() {
+    chrome.contextMenus.onClicked.addListener((info, tab) => {
+      if (!info.selectionText || !tab?.id) return
+
+      const text = info.selectionText.trim()
+      if (!text) return
+
+      if (info.menuItemId === 'qt-translate-selection') {
+        this._handleContextTranslate(text, tab.id, false)
+      } else if (info.menuItemId === 'qt-translate-selection-multi') {
+        this._handleContextTranslate(text, tab.id, true)
+      }
+    })
+  }
+
+  async _handleContextTranslate(text, tabId, multiEngine) {
+    try {
+      const settings = await this.getUserSettings()
+      const targetLang = settings.targetLanguage || 'zh-TW'
+
+      // 先发 loading 状态
+      chrome.tabs.sendMessage(tabId, {
+        action: 'showContextTranslation',
+        status: 'loading',
+        text
+      }).catch(() => {})
+
+      // 单引擎翻译
+      const result = await new Promise((resolve, reject) => {
+        this.translateText(text, 'auto', targetLang, (response) => {
+          if (response?.success) resolve(response.translatedText)
+          else reject(new Error(response?.error || '翻译失败'))
+        })
+      })
+
+      chrome.tabs.sendMessage(tabId, {
+        action: 'showContextTranslation',
+        status: 'done',
+        text,
+        result,
+        targetLang
+      }).catch(() => {})
+
+    } catch (error) {
+      console.error('Context menu translate error:', error)
+      chrome.tabs.sendMessage(tabId, {
+        action: 'showContextTranslation',
+        status: 'error',
+        text,
+        error: error.message
+      }).catch(() => {})
+    }
   }
 
   // 根据浏览器语言设置默认 UI 语言
@@ -781,9 +866,103 @@ class ScreenshotTranslator {
     return toggles[moduleId] !== false
   }
 
+  // ===== 文本預處理管道（淨化 → 代碼保護） =====
+  async _preprocessText(text) {
+    let current = text
+
+    // 1. 淨化
+    try {
+      const result = await this._emitAndWait('preprocess:sanitize', 'preprocess:sanitized', { text: current })
+      if (result && result.text) current = result.text
+    } catch { /* 如果模塊未激活或出錯，跳過 */ }
+
+    // 2. 代碼保護
+    try {
+      const result = await this._emitAndWait('preprocess:protect', 'preprocess:protected', { text: current })
+      if (result && result.text) {
+        current = result.text
+        this._codePlaceholders = result.placeholders || {}
+      }
+    } catch { /* 沒有代碼保護模塊，跳過 */ }
+
+    return current
+  }
+
+  // ===== 文本後處理管道（恢復代碼） =====
+  async _postprocessText(text) {
+    if (!this._codePlaceholders || Object.keys(this._codePlaceholders).length === 0) {
+      return text
+    }
+    try {
+      const result = await this._emitAndWait('postprocess:restore', 'postprocess:restored', {
+        text,
+        placeholders: this._codePlaceholders
+      })
+      if (result && result.text) {
+        this._codePlaceholders = null
+        return result.text
+      }
+    } catch { /* 跳過 */ }
+    this._codePlaceholders = null
+    return text
+  }
+
+  // ===== 緩存查詢 =====
+  async _checkCache(text, from, to) {
+    try {
+      const result = await this._emitAndWait('cache:get', 'cache:got', { text, from, to })
+      if (result && result.hit) return result.result
+    } catch { /* 跳過 */ }
+    return null
+  }
+
+  // ===== 緩存寫入 =====
+  async _setCache(text, from, to, result) {
+    try {
+      await this._emitAndWait('cache:set', 'cache:setted', { text, from, to, result })
+    } catch { /* 跳過 */ }
+  }
+
+  // ===== EventBus 請求/響應輔助 =====
+  async _emitAndWait(requestEvent, responseEvent, payload, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+      const requestId = 'pp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)
+      const timer = setTimeout(() => {
+        unsub()
+        reject(new Error('timeout'))
+      }, timeout)
+      const unsub = eventBus.on(responseEvent, (data) => {
+        if (data.requestId === requestId) {
+          clearTimeout(timer)
+          unsub()
+          resolve(data)
+        }
+      })
+      eventBus.emit(requestEvent, { ...payload, requestId })
+    })
+  }
+
   async translateText(text, sourceLang, targetLang, sendResponse) {
+    let processedText = text
     try {
       console.log(`Background: Translating "${text}" from ${sourceLang} to ${targetLang}`);
+
+      // ===== Step 1: 預處理文本（淨化 + 代碼保護） =====
+      processedText = await this._preprocessText(text)
+
+      // ===== Step 2: 檢查緩存 =====
+      const cached = await this._checkCache(processedText, sourceLang, targetLang)
+      if (cached !== null) {
+        console.log('Background: Cache hit, returning cached result')
+        sendResponse({
+          success: true,
+          translatedText: cached,
+          sourceLang,
+          targetLang,
+          fromCache: true
+        })
+        return
+      }
 
       // 获取用户设置的 API Provider
       const settings = await this.getUserSettings();
@@ -798,7 +977,7 @@ class ScreenshotTranslator {
       const modEntry = moduleLoader.getModule(moduleId)
       if (modEntry && modEntry.instance) {
         try {
-          result = await this._translateViaEventBus(text, sourceLang, targetLang, moduleId)
+          result = await this._translateViaEventBus(processedText, sourceLang, targetLang, moduleId)
           console.log('Background: Translated via EventBus module:', moduleId)
         } catch (ebError) {
           console.warn('Background: EventBus translation failed, falling back:', ebError.message)
@@ -822,11 +1001,11 @@ class ScreenshotTranslator {
             if (!glmApiKey) {
               throw new Error('GLM API Key 未设置，请在设置中配置');
             }
-            result = await this.callGLMTranslate(text, sourceLang, targetLang, glmApiKey);
+            result = await this.callGLMTranslate(processedText, sourceLang, targetLang, glmApiKey);
             break;
 
           case 'microsoft':
-            result = await this.callMicrosoftTranslate(text, sourceLang, targetLang);
+            result = await this.callMicrosoftTranslate(processedText, sourceLang, targetLang);
             break;
 
           case 'custom':
@@ -841,18 +1020,24 @@ class ScreenshotTranslator {
               throw new Error('LLM 自定义配置不完整，请检查 API Key、Base URL 和模型名称');
             }
             console.log('Background: Calling Custom LLM with model:', llmConfig.model);
-            result = await this.callCustomLLMTranslate(text, sourceLang, targetLang, customApiKey, llmConfig);
+            result = await this.callCustomLLMTranslate(processedText, sourceLang, targetLang, customApiKey, llmConfig);
             break;
 
           case 'google':
           default:
-            result = await this.callGoogleTranslate(text, sourceLang, targetLang);
+            result = await this.callGoogleTranslate(processedText, sourceLang, targetLang);
             break;
         }
       }
 
       // 記錄翻譯統計
       trackModuleUsage(apiProvider, result?.length || 0, true);
+
+      // ===== Step 3: 後處理（恢復代碼等） =====
+      result = await this._postprocessText(result)
+
+      // ===== Step 4: 寫入緩存 =====
+      this._setCache(processedText, sourceLang, targetLang, result).catch(() => {})
 
       sendResponse({
         success: true,
@@ -866,8 +1051,8 @@ class ScreenshotTranslator {
       // 尝试备用翻译服务
       try {
         console.log('Background: Trying backup translation service...');
-        const backupResult = await this.callBackupTranslateService(text, sourceLang, targetLang);
-        if (backupResult && backupResult.text && backupResult.text !== text) {
+        const backupResult = await this.callBackupTranslateService(processedText, sourceLang, targetLang);
+        if (backupResult && backupResult.text && backupResult.text !== processedText) {
           console.log('Background: Backup translation successful via', backupResult.service, ':', backupResult.text);
           sendResponse({
             success: true,
@@ -906,47 +1091,70 @@ class ScreenshotTranslator {
     return translatedText;
   }
 
-  // Google 翻译（免费）
+  // Google 翻译（免费，含 429 自动重试）
   async callGoogleTranslate(text, sourceLang, targetLang) {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(text)}`;
-    console.log('Background: Google Translate URL:', url);
+    const RETRY_DELAYS = [1000, 3000, 5000]
+    let lastError
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
+    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+      try {
+        const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${sourceLang}&tl=${targetLang}&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(text)}`;
+        console.log('Background: Google Translate URL:', url);
 
-    console.log('Background: Google Translate response status:', response.status);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          }
+        });
 
-    if (!response.ok) {
-      throw new Error(`Google Translate HTTP error! status: ${response.status}`);
-    }
+        console.log('Background: Google Translate response status:', response.status);
 
-    const data = await response.json();
-    console.log('Background: Google Translate response data:', data);
-
-    // 解析Google翻譯的響應格式
-    if (data && data[0] && Array.isArray(data[0])) {
-      let translatedText = '';
-      for (const segment of data[0]) {
-        if (segment && segment[0]) {
-          translatedText += segment[0];
+        if (response.status === 429 && attempt < RETRY_DELAYS.length) {
+          const delay = RETRY_DELAYS[attempt]
+          console.warn(`Background: Google Translate 429 (attempt ${attempt + 1}), retrying in ${delay}ms...`)
+          await new Promise(r => setTimeout(r, delay))
+          continue
         }
-      }
-      let result = translatedText.trim();
-      // 格式化中文结果，添加词间空格
-      result = this.formatChineseResult(text, result, sourceLang);
-      console.log('Background: Google Translate result:', result);
 
-      if (result && result !== text) {
-        console.log('Background: Google translation successful');
-        return result;
+        if (!response.ok) {
+          throw new Error(`Google Translate HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Background: Google Translate response data:', data);
+
+        // 解析Google翻譯的響應格式
+        if (data && data[0] && Array.isArray(data[0])) {
+          let translatedText = '';
+          for (const segment of data[0]) {
+            if (segment && segment[0]) {
+              translatedText += segment[0];
+            }
+          }
+          let result = translatedText.trim();
+          // 格式化中文结果，添加词间空格
+          result = this.formatChineseResult(text, result, sourceLang);
+          console.log('Background: Google Translate result:', result);
+
+          if (result && result !== text) {
+            console.log('Background: Google translation successful');
+            return result;
+          }
+        }
+
+        throw new Error('Google translation failed - invalid response format');
+      } catch (err) {
+        console.error('Background: Google Translate attempt failed:', err.message);
+        lastError = err
+        if (err.message.includes('429') && attempt < RETRY_DELAYS.length) {
+          continue
+        }
+        throw err
       }
     }
 
-    throw new Error('Google translation failed - invalid response format');
+    throw lastError || new Error('Google Translate max retries exceeded')
   }
 
   // Microsoft Translator（需要 API Key）

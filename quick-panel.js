@@ -1,6 +1,6 @@
 /**
  * QuickTranslate - Quick Translation Panel
- * Version: 3.0.0
+ * Version: 3.1.0
  * 快捷翻译面板 - 选中文字即可快速翻译
  */
 
@@ -232,6 +232,8 @@ class QuickTranslationPanel {
       if (request.action === 'languageChanged') {
         console.log('Quick panel: language changed to', request.language);
         this.lang = request.language;
+      } else if (request.action === 'showContextTranslation') {
+        this.handleContextTranslation(request);
       }
       return true;
     });
@@ -1506,6 +1508,169 @@ class QuickTranslationPanel {
         }
       }
     });
+  }
+
+  // ===== 右键翻译结果气泡 =====
+  handleContextTranslation(request) {
+    // 移除旧气泡
+    const old = document.getElementById('qt-context-toast')
+    if (old) old.remove()
+
+    const toast = document.createElement('div')
+    toast.id = 'qt-context-toast'
+    toast.className = 'qt-context-toast'
+
+    if (request.status === 'loading') {
+      toast.innerHTML = `
+        <div class="qt-context-header qt-context-drag">
+          <span class="qt-context-engine">QuickTranslate</span>
+          <button class="qt-context-close">&times;</button>
+        </div>
+        <div class="qt-context-body">
+          <div class="qt-context-loading">
+            <span class="qt-context-spinner"></span>
+            翻译中...
+          </div>
+        </div>
+      `
+    } else if (request.status === 'done') {
+      toast.innerHTML = `
+        <div class="qt-context-header qt-context-drag">
+          <span class="qt-context-engine">QuickTranslate</span>
+          <button class="qt-context-close">&times;</button>
+        </div>
+        <div class="qt-context-body">
+          <div class="qt-context-label">原文</div>
+          <div class="qt-context-original">${this._escapeHtml(request.text)}</div>
+          <div class="qt-context-divider"></div>
+          <div class="qt-context-label">译文</div>
+          <div class="qt-context-result">${this._escapeHtml(request.result)}</div>
+        </div>
+        <div class="qt-context-footer">
+          <button class="qt-context-copy-btn">📋 复制</button>
+          <button class="qt-context-save-btn">⭐ 收藏</button>
+        </div>
+      `
+      // 复制
+      toast.querySelector('.qt-context-copy-btn').onclick = (e) => {
+        e.stopPropagation()
+        navigator.clipboard.writeText(request.result).then(() => {
+          const btn = toast.querySelector('.qt-context-copy-btn')
+          btn.textContent = '✅ 已复制'
+          setTimeout(() => btn.textContent = '📋 复制', 2000)
+        })
+      }
+      // 收藏
+      toast.querySelector('.qt-context-save-btn').onclick = (e) => {
+        e.stopPropagation()
+        chrome.runtime.sendMessage({
+          action: 'addToSavedWords',
+          item: { original: request.text, translation: request.result, sourceLang: 'auto', targetLang: request.targetLang }
+        })
+        const btn = toast.querySelector('.qt-context-save-btn')
+        btn.textContent = '✅ 已收藏'
+        setTimeout(() => btn.textContent = '⭐ 收藏', 2000)
+      }
+    } else if (request.status === 'error') {
+      toast.innerHTML = `
+        <div class="qt-context-header qt-context-drag">
+          <span class="qt-context-engine">QuickTranslate</span>
+          <button class="qt-context-close">&times;</button>
+        </div>
+        <div class="qt-context-body">
+          <div class="qt-context-error">翻译失败</div>
+        </div>
+      `
+    }
+
+    // 关闭按钮
+    const closeBtn = toast.querySelector('.qt-context-close')
+    if (closeBtn) {
+      closeBtn.onclick = (e) => {
+        e.stopPropagation()
+        toast.remove()
+      }
+    }
+
+    // 自动关闭（成功后 15 秒）
+    if (request.status === 'done') {
+      setTimeout(() => {
+        if (toast.parentNode) toast.remove()
+      }, 15000)
+    }
+
+    document.body.appendChild(toast)
+
+    // 定位在选中文字附近
+    const selection = window.getSelection()
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0)
+      const rect = range.getBoundingClientRect()
+      if (rect && rect.top > 0) {
+        const toastW = 340
+        let left = rect.left
+        let top = rect.bottom + 8
+        // 超出右边界则贴在右边
+        if (left + toastW > window.innerWidth - 10) {
+          left = window.innerWidth - toastW - 10
+        }
+        // 超出下边界则显示在选中文字上方
+        if (top + 350 > window.innerHeight) {
+          top = rect.top - 10
+        }
+        toast.style.left = Math.max(10, left) + 'px'
+        toast.style.top = Math.max(10, top) + 'px'
+      }
+    }
+
+    // 拖动功能
+    this._makeDraggable(toast, toast.querySelector('.qt-context-drag'))
+  }
+
+  _makeDraggable(el, handle) {
+    if (!handle) return
+    let isDragging = false
+    let startX, startY, origX, origY
+
+    const onStart = (e) => {
+      if (e.target.closest('.qt-context-close, .qt-context-copy-btn, .qt-context-save-btn')) return
+      isDragging = true
+      const rect = el.getBoundingClientRect()
+      origX = rect.left
+      origY = rect.top
+      startX = e.clientX
+      startY = e.clientY
+      el.style.cursor = 'grabbing'
+      el.style.transition = 'none'
+    }
+
+    const onMove = (e) => {
+      if (!isDragging) return
+      e.preventDefault()
+      const dx = e.clientX - startX
+      const dy = e.clientY - startY
+      el.style.left = (origX + dx) + 'px'
+      el.style.top = (origY + dy) + 'px'
+    }
+
+    const onEnd = () => {
+      isDragging = false
+      el.style.cursor = ''
+      el.style.transition = ''
+    }
+
+    handle.addEventListener('mousedown', onStart)
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onEnd)
+  }
+
+  _escapeHtml(text) {
+    if (!text) return ''
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
   }
 }
 

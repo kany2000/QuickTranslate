@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.0.0-667EEA?style=for-the-badge" alt="Version 3.0.0"/>
+  <img src="https://img.shields.io/badge/version-3.1.0-667EEA?style=for-the-badge" alt="Version 3.1.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/module%20system-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -40,6 +40,10 @@
 | 📷 | 스크린샷 번역 | 영역 캡처 → OCR → 번역 |
 | 🌐 | 멀티 엔진 | Google, Microsoft, GLM, Custom LLM |
 | 📚 | 기록 및 단어장 | 번역 기록 저장, 단어 저장 |
+| 🌙 | 다크 모드 | 시스템 설정 자동 연동, 모든 패널 지원 |
+| 🧹 | 텍스트 정리 | 불필요한 공백·줄바꿈·HTML 개체 자동 제거 |
+| 💾 | 번역 캐시 | 동일한 문장 API 재호출 없이 빠르게 |
+| 🖱️ | 우클릭 번역 | 텍스트 선택 → 우클릭 → 번역 |
 | 🧩 | 모듈 시스템 | 플러그인으로 확장 가능 |
 
 ## 🧩 모듈 시스템
@@ -93,5 +97,5 @@ MIT — LICENSE 참조.
 ---
 
 <p align="center">
-  Made with ❤️ by kany2000 · QuickTranslate v3.0.0
+  Made with ❤️ by kany2000 · QuickTranslate v3.1.0
 </p>

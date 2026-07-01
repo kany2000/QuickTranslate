@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.0.0-667EEA?style=for-the-badge" alt="Version 3.0.0"/>
+  <img src="https://img.shields.io/badge/version-3.1.0-667EEA?style=for-the-badge" alt="Version 3.1.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/module%20system-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -40,6 +40,10 @@
 | 📷 | スクリーンショット翻訳 | 画面領域をキャプチャ → OCR → 翻訳 |
 | 🌐 | マルチエンジン | Google、Microsoft、GLM、カスタムLLM |
 | 📚 | 履歴と単語帳 | 翻訳履歴の保存、単語の保存 |
+| 🌙 | ダークモード | システム設定に自動追従、全パネル対応 |
+| 🧹 | テキスト整形 | 余分な空白・改行・HTML実体を自動除去 |
+| 💾 | 翻訳キャッシュ | 同じ文章はAPIを再呼び出しせず高速化 |
+| 🖱️ | 右クリック翻訳 | テキスト選択 → 右クリック → 翻訳 |
 | 🧩 | モジュールシステム | プラグインで拡張可能 |
 
 ## 🧩 モジュールシステム
@@ -93,5 +97,5 @@ MIT — LICENSE をご覧ください。
 ---
 
 <p align="center">
-  Made with ❤️ by kany2000 · QuickTranslate v3.0.0
+  Made with ❤️ by kany2000 · QuickTranslate v3.1.0
 </p>

@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.0.0-667EEA?style=for-the-badge" alt="Version 3.0.0"/>
+  <img src="https://img.shields.io/badge/version-3.1.0-667EEA?style=for-the-badge" alt="Version 3.1.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/模組系統-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -44,6 +44,10 @@
 | 🌐 | **多引擎** | Google、Microsoft、GLM、自訂 LLM 及社群模組 |
 | 📚 | **歷史與生詞本** | 自動儲存翻譯歷史，收藏生詞 |
 | 🧩 | **模組系統** | 透過外掛擴充引擎、主題、模式 |
+| 🌙 | **暗色模式** | 跟隨系統自動切換，四個面板全支援 |
+| 🧹 | **文字淨化** | 自動清理多餘空白、換行、HTML 實體 |
+| 💾 | **翻譯快取** | 相同文字不重複請求 API，翻譯更快 |
+| 🖱️ | **右鍵翻譯** | 選中文字 → 右鍵 → 快速翻譯 |
 
 ## 🧩 模組系統
 
@@ -96,5 +100,5 @@ MIT — 詳見 LICENSE。
 ---
 
 <p align="center">
-  Made with ❤️ by kany2000 · QuickTranslate v3.0.0
+  Made with ❤️ by kany2000 · QuickTranslate v3.1.0
 </p>

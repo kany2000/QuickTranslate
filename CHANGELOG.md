@@ -5,6 +5,22 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 並且本項目遵循 [語義化版本](https://semver.org/lang/zh-CN/).
 
+## [3.1.0] - 2026-07-01
+
+### ✨ 新增 / Added
+- **🌙 暗色模式**：跟隨系統自動切換，popup/快捷面板/浮動面板/截圖界面全部支援
+- **🧹 文本淨化處理器**：自動清理多餘空格、換行、HTML 實體
+- **💾 翻譯快取服務**：LRU 快取 200 條，相同文字不重複請求 API
+- **🖱️ 右鍵翻譯**：選中文字後右鍵 QuickTranslate，支援單引擎/多引擎
+- **🛡️ 代碼保護處理器**：反引號代碼塊自動保護，翻譯後恢復
+
+### 🔧 修復 / Fixed
+- **Google 翻譯 429 限流**：改用 `clients5.google.com` + `dict-chrome-ex` 參數，加 3 次自動重試
+
+### 🏗️ 架構
+- 新增 `modules/processor-*.js` — 處理器類模塊（preprocessor/postprocessor 管道）
+- 新增 `modules/service-cache.js` — 翻譯快取服務模塊
+
 ## [2.5.0] - 2026-05-23
 
 ### ✨ 新增 / Added

@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.0.0-667EEA?style=for-the-badge" alt="Version 3.0.0"/>
+  <img src="https://img.shields.io/badge/version-3.1.0-667EEA?style=for-the-badge" alt="Version 3.1.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/模块系统-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -45,6 +45,10 @@
 | 🌐 | **多引擎** | Google、Microsoft、GLM、自定义 LLM 及社区模块 |
 | 📚 | **历史与生词本** | 自动保存翻译历史，收藏生词 |
 | 🧩 | **模块系统** | 通过插件扩展引擎、主题、模式 |
+| 🌙 | **暗色模式** | 跟随系统自动切换，四个面板全支持 |
+| 🧹 | **文本净化** | 自动清理多余空格、换行、HTML 实体 |
+| 💾 | **翻译缓存** | 相同文字不重复请求 API，翻译更快 |
+| 🖱️ | **右键翻译** | 选中文字 → 右键 → 快速翻译 |
 
 ## 🧩 模块系统
 
@@ -62,6 +66,9 @@ QuickTranslate 3.0 引入完整的模块生态。内置模块覆盖翻译引擎�
 | 浮动翻译面板 | mode | Ctrl+Shift+Q 浮动面板 |
 | 翻译历史 | service | 翻译历史存储 |
 | 生词本 | service | 生词收藏管理 |
+| 文本净化 | processor | 自动清理选中文本的格式 |
+| 代码保护 | processor | 保护代码块不被翻译引擎破坏 |
+| 翻译缓存 | service | LRU 缓存，200 条加速 |
 
 ### 开发者
 
@@ -109,7 +116,8 @@ QuickTranslate/
 ├── modules/               # 内置模块
 │   ├── translator-*.js    # 翻译引擎
 │   ├── mode-*.js          # 交互模式
-│   └── service-*.js       # 后台服务
+│   ├── service-*.js       # 后台服务
+│   └── processor-*.js     # 文本处理器
 ├── packages/
 │   └── create-qt-module/  # CLI 脚手架
 ├── docs/                  # 开发者文档
@@ -124,7 +132,7 @@ QuickTranslate/
 ### 构建发布
 
 ```bash
-powershell -File build-release.ps1 -Version "3.0.0"
+powershell -File build-release.ps1 -Version "3.1.0"
 ```
 
 ## 📄 许可证
@@ -134,5 +142,5 @@ MIT — 详见 [LICENSE](LICENSE)。
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.0.0
+  Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.1.0
 </p>

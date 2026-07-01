@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.0.0-667EEA?style=for-the-badge" alt="Version 3.0.0"/>
+  <img src="https://img.shields.io/badge/version-3.1.0-667EEA?style=for-the-badge" alt="Version 3.1.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/module%20system-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -45,6 +45,10 @@
 | 🌐 | Multi-Engine | Google, Microsoft, GLM, Custom LLM, community modules |
 | 📚 | History & Word Book | Auto-save history, save words |
 | 🧩 | Module System | Extend with plugins |
+| 🌙 | Dark Mode | Auto-switch with system theme, all panels |
+| 🧹 | Text Sanitizer | Auto-clean whitespace, line breaks, HTML entities |
+| 💾 | Translation Cache | Skip API for repeated text, faster translations |
+| 🖱️ | Context Menu | Right-click → Quick Translate
 
 ## 🧩 Module System
 
@@ -104,5 +108,5 @@ MIT — see LICENSE.
 ---
 
 <p align="center">
-  Made with ❤️ by kany2000 · QuickTranslate v3.0.0
+  Made with ❤️ by kany2000 · QuickTranslate v3.1.0
 </p>
