@@ -147,6 +147,7 @@ class PopupController {
       fetchModels: document.getElementById('fetch-models'),
       quickPanelEnabled: document.getElementById('quick-panel-enabled'),
       hoverTranslationEnabled: document.getElementById('hover-translation-enabled'),
+      inlineTranslateEnabled: document.getElementById('inline-translate-enabled'),
       multiEngineEnabled: document.getElementById('multi-engine-enabled'),
       minSelectionLength: document.getElementById('min-selection-length'),
       autoCopy: document.getElementById('auto-copy'),
@@ -630,6 +631,7 @@ class PopupController {
     // 更新快捷面板設置
     this.elements.quickPanelEnabled.checked = this.settings.quickPanelEnabled !== false;
     this.elements.hoverTranslationEnabled.checked = this.settings.hoverTranslationEnabled || false;
+    this.elements.inlineTranslateEnabled.checked = this.settings.inlineTranslateEnabled || false;
     this.elements.multiEngineEnabled.checked = this.settings.multiEngineEnabled || false;
     this.elements.minSelectionLength.value = this.settings.minSelectionLength || 2;
 
@@ -727,7 +729,8 @@ class PopupController {
         targetLanguage: this.elements.targetLanguage.value,
         ocrLanguage: this.elements.ocrLanguage.value,
         quickPanelEnabled: this.elements.quickPanelEnabled.checked,
-        hoverTranslationEnabled: this.elements.hoverTranslationEnabled.checked
+        hoverTranslationEnabled: this.elements.hoverTranslationEnabled.checked,
+        inlineTranslateEnabled: this.elements.inlineTranslateEnabled.checked
       };
 
       // 顯示保存中狀態
