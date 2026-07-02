@@ -12,7 +12,8 @@ importScripts(
   'modules/service-words.js',
   'modules/processor-sanitizer.js',
   'modules/processor-code-protector.js',
-  'modules/service-cache.js'
+  'modules/service-cache.js',
+  'modules/mode-inline-translate.js'
 )
 
 // ===== 模塊系統初始化 =====
@@ -29,6 +30,7 @@ moduleLoader.register(WordsService)
 moduleLoader.register(SanitizerProcessor)
 moduleLoader.register(CodeProtectorProcessor)
 moduleLoader.register(TranslationCacheService)
+moduleLoader.register(InlineTranslateMode)
 
 // 截圖翻譯器後台服務
 console.log('Background script loading...');

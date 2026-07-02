@@ -217,6 +217,13 @@ class QuickTranslationPanel {
         this.multiEngineEnabled = changes.multiEngineEnabled.newValue;
         console.log('Quick panel: multiEngineEnabled changed to', this.multiEngineEnabled);
       }
+      if (changes.inlineTranslateEnabled) {
+        this.inlineTranslateEnabled = changes.inlineTranslateEnabled.newValue;
+        console.log('Quick panel: inlineTranslateEnabled changed to', this.inlineTranslateEnabled);
+        if (!this.inlineTranslateEnabled) {
+          this.hideInlineResult()
+        }
+      }
       if (changes.targetLanguage) {
         this.targetLanguage = changes.targetLanguage.newValue;
         console.log('Quick panel: targetLanguage changed to', this.targetLanguage);
@@ -246,7 +253,8 @@ class QuickTranslationPanel {
       'hoverTranslationEnabled',
       'multiEngineEnabled',
       'targetLanguage',
-      'apiProvider'
+      'apiProvider',
+      'inlineTranslateEnabled'
     ]);
 
     this.isEnabled = settings.quickPanelEnabled !== false; // 默认启用
@@ -255,6 +263,7 @@ class QuickTranslationPanel {
     this.multiEngineEnabled = settings.multiEngineEnabled || false; // 默认关闭
     this.targetLanguage = settings.targetLanguage || 'zh-CN';
     this.apiProvider = settings.apiProvider || 'google';
+    this.inlineTranslateEnabled = settings.inlineTranslateEnabled || false; // 默认关闭
   }
 
   // 从 background 获取用户界面语言
@@ -778,6 +787,11 @@ class QuickTranslationPanel {
       
       // 显示翻译按钮
       this.showButton(e.clientX, e.clientY);
+
+      // 内联翻译模式：选中后自动翻译
+      if (this.inlineTranslateEnabled) {
+        this.triggerInlineTranslate(selectedText, range);
+      }
     }, 100);
   }
 
@@ -1414,6 +1428,11 @@ class QuickTranslationPanel {
     if (this.button && !this.button.contains(e.target)) {
       this.hideButton();
     }
+    // 点击内联翻译浮窗外部时关闭
+    const inlineToast = document.getElementById('qt-inline-toast')
+    if (inlineToast && !inlineToast.contains(e.target)) {
+      this.hideInlineResult()
+    }
   }
 
   copyToClipboard(text) {
@@ -1662,6 +1681,136 @@ class QuickTranslationPanel {
     handle.addEventListener('mousedown', onStart)
     document.addEventListener('mousemove', onMove)
     document.addEventListener('mouseup', onEnd)
+  }
+
+  // ===== 内联翻译（选中自动翻译） =====
+  triggerInlineTranslate(text, range) {
+    this.hideInlineResult()
+
+    const rect = range.getBoundingClientRect()
+    this.showInlineResult('loading', { text, rect })
+
+    chrome.storage.local.get('targetLanguage', (result) => {
+      const targetLang = result.targetLanguage || 'zh-CN'
+
+      chrome.runtime.sendMessage({
+        action: 'translateText',
+        text: text,
+        sourceLang: 'auto',
+        targetLang: targetLang
+      }, (response) => {
+        if (chrome.runtime.lastError || !response || !response.success) {
+          this.showInlineResult('error', {
+            text, rect,
+            error: response?.error || '翻译失败'
+          })
+          return
+        }
+        this.showInlineResult('done', {
+          text, rect,
+          result: response.translatedText,
+          targetLang
+        })
+      })
+    })
+  }
+
+  showInlineResult(status, data) {
+    this.hideInlineResult()
+
+    const toast = document.createElement('div')
+    toast.id = 'qt-inline-toast'
+    toast.className = 'qt-inline-toast'
+
+    if (status === 'loading') {
+      toast.innerHTML = `
+        <div class="qt-inline-header qt-inline-drag">
+          <span class="qt-inline-engine">QuickTranslate</span>
+          <button class="qt-inline-close">&times;</button>
+        </div>
+        <div class="qt-inline-body">
+          <div class="qt-inline-loading">
+            <span class="qt-inline-spinner"></span>
+            翻译中...
+          </div>
+        </div>
+      `
+    } else if (status === 'done') {
+      toast.innerHTML = `
+        <div class="qt-inline-header qt-inline-drag">
+          <span class="qt-inline-engine">QuickTranslate</span>
+          <button class="qt-inline-close">&times;</button>
+        </div>
+        <div class="qt-inline-body">
+          <div class="qt-inline-label">原文</div>
+          <div class="qt-inline-original">${this._escapeHtml(data.text)}</div>
+          <div class="qt-inline-divider"></div>
+          <div class="qt-inline-label">译文</div>
+          <div class="qt-inline-result-text">${this._escapeHtml(data.result)}</div>
+        </div>
+        <div class="qt-inline-footer">
+          <button class="qt-inline-copy-btn">📋 复制</button>
+          <button class="qt-inline-save-btn">⭐ 收藏</button>
+        </div>
+      `
+      toast.querySelector('.qt-inline-copy-btn').onclick = (e) => {
+        e.stopPropagation()
+        navigator.clipboard.writeText(data.result).then(() => {
+          const btn = toast.querySelector('.qt-inline-copy-btn')
+          btn.textContent = '✅ 已复制'
+          setTimeout(() => btn.textContent = '📋 复制', 2000)
+        })
+      }
+      toast.querySelector('.qt-inline-save-btn').onclick = (e) => {
+        e.stopPropagation()
+        chrome.runtime.sendMessage({
+          action: 'addToSavedWords',
+          item: { original: data.text, translation: data.result, sourceLang: 'auto', targetLang: data.targetLang }
+        })
+        const btn = toast.querySelector('.qt-inline-save-btn')
+        btn.textContent = '✅ 已收藏'
+        setTimeout(() => btn.textContent = '⭐ 收藏', 2000)
+      }
+    } else if (status === 'error') {
+      toast.innerHTML = `
+        <div class="qt-inline-header qt-inline-drag">
+          <span class="qt-inline-engine">QuickTranslate</span>
+          <button class="qt-inline-close">&times;</button>
+        </div>
+        <div class="qt-inline-body">
+          <div class="qt-inline-error">${this._escapeHtml(data.error || '翻译失败')}</div>
+        </div>
+      `
+    }
+
+    toast.querySelector('.qt-inline-close').onclick = (e) => {
+      e.stopPropagation()
+      this.hideInlineResult()
+    }
+
+    document.body.appendChild(toast)
+
+    const rect = data.rect
+    if (rect) {
+      const toastW = 340
+      let left = rect.left
+      let top = rect.bottom + 8
+      if (left + toastW > window.innerWidth - 10) {
+        left = window.innerWidth - toastW - 10
+      }
+      if (top + 350 > window.innerHeight) {
+        top = rect.top - 10
+      }
+      toast.style.left = Math.max(10, left) + 'px'
+      toast.style.top = Math.max(10, top) + 'px'
+    }
+
+    this._makeDraggable(toast, toast.querySelector('.qt-inline-drag'))
+  }
+
+  hideInlineResult() {
+    const el = document.getElementById('qt-inline-toast')
+    if (el) el.remove()
   }
 
   _escapeHtml(text) {
