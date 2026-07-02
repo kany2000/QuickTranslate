@@ -1783,9 +1783,15 @@ class QuickTranslationPanel {
       `
     }
 
-    toast.querySelector('.qt-inline-close').onclick = (e) => {
-      e.stopPropagation()
-      this.hideInlineResult()
+    const closeBtn = toast.querySelector('.qt-inline-close')
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation()
+        this.hideInlineResult()
+      })
+      closeBtn.addEventListener('mousedown', (e) => {
+        e.stopPropagation()
+      })
     }
 
     document.body.appendChild(toast)
