@@ -1745,7 +1745,7 @@ class QuickTranslationPanel {
       toast.innerHTML =
         '<div class="qt-inline-header qt-inline-drag">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
-          '<button class="qt-inline-close">&times;</button>' +
+          '<button class="qt-inline-close" onclick="var e=document.getElementById(\'qt-inline-toast\');if(e)e.remove()">&times;</button>' +
         '</div>' +
         '<div class="qt-inline-body">' +
           '<div class="qt-inline-loading">' +
@@ -1757,7 +1757,7 @@ class QuickTranslationPanel {
       toast.innerHTML =
         '<div class="qt-inline-header qt-inline-drag">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
-          '<button class="qt-inline-close">&times;</button>' +
+          '<button class="qt-inline-close" onclick="var e=document.getElementById(\'qt-inline-toast\');if(e)e.remove()">&times;</button>' +
         '</div>' +
         '<div class="qt-inline-body">' +
           '<div class="qt-inline-label">原文</div>' +
@@ -1774,7 +1774,7 @@ class QuickTranslationPanel {
       toast.innerHTML =
         '<div class="qt-inline-header qt-inline-drag">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
-          '<button class="qt-inline-close">&times;</button>' +
+          '<button class="qt-inline-close" onclick="var e=document.getElementById(\'qt-inline-toast\');if(e)e.remove()">&times;</button>' +
         '</div>' +
         '<div class="qt-inline-body">' +
           '<div class="qt-inline-error">' + this._escapeHtml(data.error || '翻译失败') + '</div>' +
