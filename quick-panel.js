@@ -1777,13 +1777,15 @@ class QuickTranslationPanel {
 
     document.body.appendChild(toast)
 
-    // 关闭 — 直接删除元素，不经过任何方法
-    const closeBtn = document.querySelector('#qt-inline-toast .qt-inline-close')
-    if (closeBtn) {
-      closeBtn.onclick = function() {
-        const el = document.getElementById('qt-inline-toast')
-        if (el) el.remove()
+    // 关闭 — 事件委託，不綁定元素
+    if (!this._inlineCloseHandler) {
+      this._inlineCloseHandler = (e) => {
+        if (e.target.closest('#qt-inline-toast .qt-inline-close')) {
+          const el = document.getElementById('qt-inline-toast')
+          if (el) el.remove()
+        }
       }
+      document.addEventListener('click', this._inlineCloseHandler)
     }
 
     // 复制/收藏
