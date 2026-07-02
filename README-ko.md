@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.1.0-667EEA?style=for-the-badge" alt="Version 3.1.0"/>
+  <img src="https://img.shields.io/badge/version-3.2.0-667EEA?style=for-the-badge" alt="Version 3.2.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/module%20system-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -97,5 +97,5 @@ MIT — LICENSE 참조.
 ---
 
 <p align="center">
-  Made with ❤️ by kany2000 · QuickTranslate v3.1.0
+  Made with ❤️ by kany2000 · QuickTranslate v3.2.0
 </p>
