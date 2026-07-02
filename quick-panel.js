@@ -753,8 +753,8 @@ class QuickTranslationPanel {
   }
 
   handleTextSelection(e) {
-    // 如果功能未启用，直接返回
-    if (!this.isEnabled) return;
+    // 划词翻译和内联翻译都关闭时再返回
+    if (!this.isEnabled && !this.inlineTranslateEnabled) return;
     
     // 延迟检查，确保选择完成
     setTimeout(() => {
@@ -1753,24 +1753,26 @@ class QuickTranslationPanel {
           <button class="qt-inline-save-btn">⭐ 收藏</button>
         </div>
       `
-      toast.querySelector('.qt-inline-copy-btn').onclick = (e) => {
+      const inlineCopyBtn = toast.querySelector('.qt-inline-copy-btn')
+      if (inlineCopyBtn) inlineCopyBtn.addEventListener('click', (e) => {
         e.stopPropagation()
+        e.preventDefault()
         navigator.clipboard.writeText(data.result).then(() => {
-          const btn = toast.querySelector('.qt-inline-copy-btn')
-          btn.textContent = '✅ 已复制'
-          setTimeout(() => btn.textContent = '📋 复制', 2000)
+          inlineCopyBtn.textContent = '✅ 已复制'
+          setTimeout(() => inlineCopyBtn.textContent = '📋 复制', 2000)
         })
-      }
-      toast.querySelector('.qt-inline-save-btn').onclick = (e) => {
+      })
+      const inlineSaveBtn = toast.querySelector('.qt-inline-save-btn')
+      if (inlineSaveBtn) inlineSaveBtn.addEventListener('click', (e) => {
         e.stopPropagation()
+        e.preventDefault()
         chrome.runtime.sendMessage({
           action: 'addToSavedWords',
           item: { original: data.text, translation: data.result, sourceLang: 'auto', targetLang: data.targetLang }
         })
-        const btn = toast.querySelector('.qt-inline-save-btn')
-        btn.textContent = '✅ 已收藏'
-        setTimeout(() => btn.textContent = '⭐ 收藏', 2000)
-      }
+        inlineSaveBtn.textContent = '✅ 已收藏'
+        setTimeout(() => inlineSaveBtn.textContent = '⭐ 收藏', 2000)
+      })
     } else if (status === 'error') {
       toast.innerHTML = `
         <div class="qt-inline-header qt-inline-drag">
