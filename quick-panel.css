@@ -714,13 +714,17 @@
 }
 
 .qt-inline-close {
-  background: rgba(255, 255, 255, 0.2);
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.25);
   border: none;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   width: 24px;
   height: 24px;
-  border-radius: 6px;
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -728,6 +732,7 @@
   padding: 0;
   line-height: 1;
   transition: all 0.2s;
+  font-weight: bold;
 }
 
 .qt-inline-close:hover {
