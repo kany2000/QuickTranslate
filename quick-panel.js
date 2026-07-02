@@ -1652,7 +1652,7 @@ class QuickTranslationPanel {
     let startX, startY, origX, origY
 
     const onStart = (e) => {
-      if (e.target.closest('.qt-context-close, .qt-context-copy-btn, .qt-context-save-btn')) return
+      if (e.target.closest('.qt-context-close, .qt-context-copy-btn, .qt-context-save-btn, .qt-inline-close, .qt-inline-copy-btn, .qt-inline-save-btn')) return
       isDragging = true
       const rect = el.getBoundingClientRect()
       origX = rect.left
