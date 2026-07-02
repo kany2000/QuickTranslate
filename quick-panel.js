@@ -753,51 +753,46 @@ class QuickTranslationPanel {
   }
 
   handleTextSelection(e) {
-    // 划词翻译和内联翻译都关闭时再返回
-    if (!this.isEnabled && !this.inlineTranslateEnabled) return;
-
-    // 延迟检查，确保选择完成
+    // 直接從 storage 讀取開關狀態，不依賴緩存
     setTimeout(() => {
-      const selection = window.getSelection();
-      const selectedText = selection.toString().trim();
-      
-      // 检查选择的文字是否符合条件
-      if (selectedText.length < this.minSelectionLength) {
-        this.hideButton();
-        return;
-      }
-      
-      // 检查是否在输入框中选择（避免干扰正常编辑）
-      const activeElement = document.activeElement;
-      if (activeElement && (
-        activeElement.tagName === 'INPUT' ||
-        activeElement.tagName === 'TEXTAREA' ||
-        activeElement.isContentEditable
-      )) {
-        return;
-      }
-      
-      // 保存当前选择及位置
-      const range = selection.getRangeAt(0);
-      this.currentSelection = {
-        text: selectedText,
-        range: range,
-        rect: range.getBoundingClientRect()
-      };
-      
-      // 划词按钮 — 每次重新读取开关状态
-      if (this.isEnabled) {
-        chrome.storage.local.get('quickPanelEnabled', (r) => {
-          if (r.quickPanelEnabled !== false) {
-            this.showButton(e.clientX, e.clientY);
-          }
-        });
-      }
+      chrome.storage.local.get(['quickPanelEnabled', 'inlineTranslateEnabled'], (r) => {
+        const qpOn = r.quickPanelEnabled !== false
+        const inOn = r.inlineTranslateEnabled || false
 
-      // 内联翻译模式：选中后自动翻译
-      if (this.inlineTranslateEnabled) {
-        this.triggerInlineTranslate(selectedText, range);
-      }
+        if (!qpOn && !inOn) return
+
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+
+        if (selectedText.length < this.minSelectionLength) {
+          this.hideButton();
+          return;
+        }
+
+        const activeElement = document.activeElement;
+        if (activeElement && (
+          activeElement.tagName === 'INPUT' ||
+          activeElement.tagName === 'TEXTAREA' ||
+          activeElement.isContentEditable
+        )) {
+          return;
+        }
+
+        const range = selection.getRangeAt(0);
+        this.currentSelection = {
+          text: selectedText,
+          range: range,
+          rect: range.getBoundingClientRect()
+        };
+
+        if (qpOn) {
+          this.showButton(e.clientX, e.clientY);
+        }
+
+        if (inOn) {
+          this.triggerInlineTranslate(selectedText, range);
+        }
+      })
     }, 100);
   }
 
