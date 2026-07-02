@@ -1434,6 +1434,12 @@ class QuickTranslationPanel {
     if (this.button && !this.button.contains(e.target)) {
       this.hideButton();
     }
+    // 内联翻译关闭按钮 — 用 mousedown 确保响应
+    if (e.target.closest('.qt-inline-close')) {
+      const el = document.getElementById('qt-inline-toast')
+      if (el) el.remove()
+      return
+    }
     // 点击内联翻译浮窗外部时关闭
     const inlineToast = document.getElementById('qt-inline-toast')
     if (inlineToast && !inlineToast.contains(e.target)) {
@@ -1776,17 +1782,6 @@ class QuickTranslationPanel {
     }
 
     document.body.appendChild(toast)
-
-    // 关闭 — 事件委託，不綁定元素
-    if (!this._inlineCloseHandler) {
-      this._inlineCloseHandler = (e) => {
-        if (e.target.closest('.qt-inline-close') && document.getElementById('qt-inline-toast')) {
-          const el = document.getElementById('qt-inline-toast')
-          if (el) el.remove()
-        }
-      }
-      document.addEventListener('click', this._inlineCloseHandler)
-    }
 
     // 复制/收藏
     const self = this
