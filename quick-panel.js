@@ -1743,22 +1743,22 @@ class QuickTranslationPanel {
 
     if (status === 'loading') {
       toast.innerHTML =
-        '<div class="qt-inline-header qt-inline-drag">' +
+        '<div class="qt-inline-header qt-inline-close-header">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
         '</div>' +
-        '<div class="qt-inline-body">' +
+        '<div class="qt-inline-body qt-inline-drag">' +
           '<div class="qt-inline-loading">' +
             '<span class="qt-inline-spinner"></span>' +
             '翻译中...' +
           '</div>' +
         '</div>' +
-        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>'
+        ''
     } else if (status === 'done') {
       toast.innerHTML =
-        '<div class="qt-inline-header qt-inline-drag">' +
+        '<div class="qt-inline-header qt-inline-close-header">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
         '</div>' +
-        '<div class="qt-inline-body">' +
+        '<div class="qt-inline-body qt-inline-drag">' +
           '<div class="qt-inline-label">原文</div>' +
           '<div class="qt-inline-original">' + this._escapeHtml(this._inlineText) + '</div>' +
           '<div class="qt-inline-divider"></div>' +
@@ -1769,37 +1769,29 @@ class QuickTranslationPanel {
           '<button class="qt-inline-copy-btn">📋 复制</button>' +
           '<button class="qt-inline-save-btn">⭐ 收藏</button>' +
         '</div>' +
-        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>'
+        ''
     } else {
       toast.innerHTML =
-        '<div class="qt-inline-header qt-inline-drag">' +
+        '<div class="qt-inline-header qt-inline-close-header">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
         '</div>' +
-        '<div class="qt-inline-body">' +
+        '<div class="qt-inline-body qt-inline-drag">' +
           '<div class="qt-inline-error">' + this._escapeHtml(data.error || '翻译失败') + '</div>' +
         '</div>' +
-        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>'
+        ''
     }
 
     document.body.appendChild(toast)
 
-    // 关闭 — capture 階段，先於所有其他 handler
-    if (!this._inlineCaptureHandler) {
-      this._inlineCaptureHandler = (e) => {
+    // 点击 header → 关闭
+    const closeHeader = toast.querySelector('.qt-inline-close-header')
+    if (closeHeader) {
+      closeHeader.style.cursor = 'pointer'
+      closeHeader.addEventListener('click', function() {
         const el = document.getElementById('qt-inline-toast')
-        if (el && e.target.closest && e.target.closest('.qt-inline-close')) {
-          el.remove()
-        }
-      }
-      document.addEventListener('click', this._inlineCaptureHandler, true)
+        if (el) el.remove()
+      })
     }
-
-    // 备用：点击 toast 自身也可关闭
-    toast.addEventListener('click', function(e) {
-      if (e.target.closest('.qt-inline-close')) {
-        this.remove()
-      }
-    })
 
     // 复制/收藏
     const self = this
