@@ -1743,7 +1743,6 @@ class QuickTranslationPanel {
 
     if (status === 'loading') {
       toast.innerHTML =
-        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>' +
         '<div class="qt-inline-header qt-inline-drag">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
         '</div>' +
@@ -1752,10 +1751,10 @@ class QuickTranslationPanel {
             '<span class="qt-inline-spinner"></span>' +
             '翻译中...' +
           '</div>' +
-        '</div>'
+        '</div>' +
+        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>'
     } else if (status === 'done') {
       toast.innerHTML =
-        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>' +
         '<div class="qt-inline-header qt-inline-drag">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
         '</div>' +
@@ -1769,16 +1768,17 @@ class QuickTranslationPanel {
         '<div class="qt-inline-footer">' +
           '<button class="qt-inline-copy-btn">📋 复制</button>' +
           '<button class="qt-inline-save-btn">⭐ 收藏</button>' +
-        '</div>'
+        '</div>' +
+        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>'
     } else {
       toast.innerHTML =
-        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>' +
         '<div class="qt-inline-header qt-inline-drag">' +
           '<span class="qt-inline-engine">QuickTranslate</span>' +
         '</div>' +
         '<div class="qt-inline-body">' +
           '<div class="qt-inline-error">' + this._escapeHtml(data.error || '翻译失败') + '</div>' +
-        '</div>'
+        '</div>' +
+        '<div class="qt-inline-close" onclick="var t=document.getElementById(\'qt-inline-toast\');if(t)t.remove()">×</div>'
     }
 
     document.body.appendChild(toast)
