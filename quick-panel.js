@@ -1783,7 +1783,18 @@ class QuickTranslationPanel {
 
     document.body.appendChild(toast)
 
-    // 关闭
+    // 关闭 — capture 階段，先於所有其他 handler
+    if (!this._inlineCaptureHandler) {
+      this._inlineCaptureHandler = (e) => {
+        const el = document.getElementById('qt-inline-toast')
+        if (el && e.target.closest && e.target.closest('.qt-inline-close')) {
+          el.remove()
+        }
+      }
+      document.addEventListener('click', this._inlineCaptureHandler, true)
+    }
+
+    // 备用：点击 toast 自身也可关闭
     toast.addEventListener('click', function(e) {
       if (e.target.closest('.qt-inline-close')) {
         this.remove()
