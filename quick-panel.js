@@ -1780,7 +1780,7 @@ class QuickTranslationPanel {
     // 关闭 — 事件委託，不綁定元素
     if (!this._inlineCloseHandler) {
       this._inlineCloseHandler = (e) => {
-        if (e.target.closest('#qt-inline-toast .qt-inline-close')) {
+        if (e.target.closest('.qt-inline-close') && document.getElementById('qt-inline-toast')) {
           const el = document.getElementById('qt-inline-toast')
           if (el) el.remove()
         }
