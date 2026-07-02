@@ -1434,8 +1434,8 @@ class QuickTranslationPanel {
     if (this.button && !this.button.contains(e.target)) {
       this.hideButton();
     }
-    // 内联翻译关闭按钮 — 用 mousedown 确保响应
-    if (e.target.closest('.qt-inline-close')) {
+    // 内联翻译：点击 header 关闭（mousedown 阶段，更快速）
+    if (e.target.closest('.qt-inline-close-header')) {
       const el = document.getElementById('qt-inline-toast')
       if (el) el.remove()
       return
@@ -1751,8 +1751,7 @@ class QuickTranslationPanel {
             '<span class="qt-inline-spinner"></span>' +
             '翻译中...' +
           '</div>' +
-        '</div>' +
-        ''
+        '</div>'
     } else if (status === 'done') {
       toast.innerHTML =
         '<div class="qt-inline-header qt-inline-close-header">' +
@@ -1768,8 +1767,7 @@ class QuickTranslationPanel {
         '<div class="qt-inline-footer">' +
           '<button class="qt-inline-copy-btn">📋 复制</button>' +
           '<button class="qt-inline-save-btn">⭐ 收藏</button>' +
-        '</div>' +
-        ''
+        '</div>'
     } else {
       toast.innerHTML =
         '<div class="qt-inline-header qt-inline-close-header">' +
@@ -1777,8 +1775,7 @@ class QuickTranslationPanel {
         '</div>' +
         '<div class="qt-inline-body qt-inline-drag">' +
           '<div class="qt-inline-error">' + this._escapeHtml(data.error || '翻译失败') + '</div>' +
-        '</div>' +
-        ''
+        '</div>'
     }
 
     document.body.appendChild(toast)
