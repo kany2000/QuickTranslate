@@ -13,6 +13,7 @@
     "contextMenus"
   ],
   "host_permissions": [
+    "https://translate.googleapis.com/*",
     "https://clients5.google.com/*",
     "https://api.mymemory.translated.net/*",
     "https://api.cognitive.microsofttranslator.com/*",

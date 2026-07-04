@@ -1097,64 +1097,68 @@ class ScreenshotTranslator {
 
   // Google 翻译（免费，含 429 自动重试）
   async callGoogleTranslate(text, sourceLang, targetLang) {
-    const RETRY_DELAYS = [1000, 3000, 5000]
+    const RETRY_DELAYS = [1500, 3000, 5000]
+    const URLS = [
+      `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(text)}`,
+      `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${sourceLang}&tl=${targetLang}&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(text)}`
+    ]
     let lastError
 
     for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
-      try {
-        const url = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=${sourceLang}&tl=${targetLang}&dt=t&ie=UTF-8&oe=UTF-8&q=${encodeURIComponent(text)}`;
-        console.log('Background: Google Translate URL:', url);
+      for (const url of URLS) {
+        try {
+          console.log('Background: Google Translate URL:', url);
 
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+          });
+
+          console.log('Background: Google Translate response status:', response.status);
+
+          if (response.status === 429 && attempt < RETRY_DELAYS.length) {
+            const delay = RETRY_DELAYS[attempt]
+            console.warn(`Background: Google Translate 429 on ${url}, retry ${attempt + 1} in ${delay}ms...`)
+            await new Promise(r => setTimeout(r, delay))
+            continue
           }
-        });
 
-        console.log('Background: Google Translate response status:', response.status);
+          if (!response.ok) {
+            lastError = new Error(`Google Translate HTTP error! status: ${response.status}`);
+            continue
+          }
 
-        if (response.status === 429 && attempt < RETRY_DELAYS.length) {
-          const delay = RETRY_DELAYS[attempt]
-          console.warn(`Background: Google Translate 429 (attempt ${attempt + 1}), retrying in ${delay}ms...`)
-          await new Promise(r => setTimeout(r, delay))
-          continue
-        }
+          const data = await response.json();
+          console.log('Background: Google Translate response data:', data);
 
-        if (!response.ok) {
-          throw new Error(`Google Translate HTTP error! status: ${response.status}`);
-        }
+          if (data && data[0] && Array.isArray(data[0])) {
+            let translatedText = '';
+            for (const segment of data[0]) {
+              if (segment && segment[0]) {
+                translatedText += segment[0];
+              }
+            }
+            let result = translatedText.trim();
+            result = this.formatChineseResult(text, result, sourceLang);
+            console.log('Background: Google Translate result:', result);
 
-        const data = await response.json();
-        console.log('Background: Google Translate response data:', data);
-
-        // 解析Google翻譯的響應格式
-        if (data && data[0] && Array.isArray(data[0])) {
-          let translatedText = '';
-          for (const segment of data[0]) {
-            if (segment && segment[0]) {
-              translatedText += segment[0];
+            if (result && result !== text) {
+              console.log('Background: Google translation successful');
+              return result;
             }
           }
-          let result = translatedText.trim();
-          // 格式化中文结果，添加词间空格
-          result = this.formatChineseResult(text, result, sourceLang);
-          console.log('Background: Google Translate result:', result);
 
-          if (result && result !== text) {
-            console.log('Background: Google translation successful');
-            return result;
+          lastError = new Error('Google translation failed - invalid response format');
+        } catch (err) {
+          console.error('Background: Google Translate attempt failed:', err.message);
+          lastError = err
+          if (err.message.includes('429')) {
+            await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt] || 3000))
+            continue
           }
         }
-
-        throw new Error('Google translation failed - invalid response format');
-      } catch (err) {
-        console.error('Background: Google Translate attempt failed:', err.message);
-        lastError = err
-        if (err.message.includes('429') && attempt < RETRY_DELAYS.length) {
-          continue
-        }
-        throw err
       }
     }
 
