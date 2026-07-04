@@ -1567,6 +1567,7 @@ ${text}`;
   // 多引擎翻译 - 同时调用多个翻译服务
   async translateMultiEngine(text, sourceLang, targetLang, includeLLM, sendResponse) {
     const results = {};
+    const errors = {};
     const toggles = (await chrome.storage.local.get('moduleToggles')).moduleToggles || {};
 
     // 0. 获取用户设置
@@ -1644,9 +1645,9 @@ ${text}`;
 
     // 返回所有结果
     sendResponse({
-      success: true,
+      success: Object.keys(results).length > 0,
       results: results,
-      errors: {},
+      errors: errors,
       sourceLang: sourceLang,
       targetLang: targetLang
     });
