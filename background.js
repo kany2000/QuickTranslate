@@ -956,7 +956,7 @@ class ScreenshotTranslator {
 
       // 获取用户设置的 API Provider（需在緩存檢查之前）
       const settings = await this.getUserSettings();
-      const apiProvider = settings.apiProvider || 'google';
+      let apiProvider = settings.apiProvider || 'google';
 
       // ===== Step 2: 檢查緩存 =====
       const cached = await this._checkCache(processedText, sourceLang, targetLang, apiProvider)
