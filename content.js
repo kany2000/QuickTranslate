@@ -2111,6 +2111,17 @@ if (typeof window.ScreenshotCapture === 'undefined') {
         console.log(`Content: Calling Google Translate API - ${sourceLang} -> ${targetLang}`);
         console.log('Content: Text to translate:', text);
 
+        const { multiEngineEnabled } = await chrome.storage.local.get('multiEngineEnabled');
+        if (multiEngineEnabled) {
+          const multiResp = await chrome.runtime.sendMessage({
+            action: 'translateMultiEngine', text, sourceLang, targetLang,
+            includeLLM: true
+          });
+          const first = multiResp?.results ? Object.values(multiResp.results).find(v => v) : null;
+          if (first) return first;
+          throw new Error(multiResp?.error || '所有引擎均失败');
+        }
+
         // 由于CORS限制，content script无法直接调用Google API
         // 改为通过background script调用
         console.log('Content: Sending translation request to background script');

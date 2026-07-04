@@ -1,4 +1,13 @@
 // ===== 模塊系統核心 =====
+self.addEventListener('unhandledrejection', (event) => {
+  console.warn('Background: Unhandled rejection:', event.reason?.message || event.reason)
+  event.preventDefault()
+})
+self.addEventListener('error', (event) => {
+  console.error('Background: Uncaught error:', event.message || event.error)
+  event.preventDefault()
+})
+
 importScripts(
   'core/event-bus.js',
   'core/module-loader.js',
