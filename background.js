@@ -1073,6 +1073,15 @@ class ScreenshotTranslator {
     } catch (error) {
       console.error('Background: Translation error:', error);
 
+      // 所有引擎已關閉時，跳過備用服務，直接報錯
+      if (error.message.includes('所有翻譯引擎均已關閉')) {
+        sendResponse({
+          success: false,
+          error: error.message
+        })
+        return
+      }
+
       // 尝试备用翻译服务
       try {
         console.log('Background: Trying backup translation service...');
