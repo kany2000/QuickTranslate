@@ -912,18 +912,18 @@ class ScreenshotTranslator {
   }
 
   // ===== 緩存查詢 =====
-  async _checkCache(text, from, to) {
+  async _checkCache(text, from, to, engine) {
     try {
-      const result = await this._emitAndWait('cache:get', 'cache:got', { text, from, to })
+      const result = await this._emitAndWait('cache:get', 'cache:got', { text, from, to, engine })
       if (result && result.hit) return result.result
     } catch { /* 跳過 */ }
     return null
   }
 
   // ===== 緩存寫入 =====
-  async _setCache(text, from, to, result) {
+  async _setCache(text, from, to, result, engine) {
     try {
-      await this._emitAndWait('cache:set', 'cache:setted', { text, from, to, result })
+      await this._emitAndWait('cache:set', 'cache:setted', { text, from, to, result, engine })
     } catch { /* 跳過 */ }
   }
 
@@ -955,7 +955,7 @@ class ScreenshotTranslator {
       processedText = await this._preprocessText(text)
 
       // ===== Step 2: 檢查緩存 =====
-      const cached = await this._checkCache(processedText, sourceLang, targetLang)
+      const cached = await this._checkCache(processedText, sourceLang, targetLang, apiProvider)
       if (cached !== null) {
         console.log('Background: Cache hit, returning cached result')
         sendResponse({
@@ -973,6 +973,15 @@ class ScreenshotTranslator {
       const apiProvider = settings.apiProvider || 'google';
 
       console.log('Background: Using API provider:', apiProvider);
+
+      // 檢查所有翻譯引擎是否都已關閉
+      const allToggles = await chrome.storage.local.get('moduleToggles')
+      const toggles = allToggles.moduleToggles || {}
+      const anyEngineOn = ['google', 'microsoft', 'glm', 'custom']
+        .some(e => toggles['engine-' + e] !== false)
+      if (!anyEngineOn) {
+        throw new Error('所有翻譯引擎均已關閉，請在 🧩 模塊系統中至少啟用一個翻譯引擎')
+      }
 
       let result;
 
@@ -1041,7 +1050,7 @@ class ScreenshotTranslator {
       result = await this._postprocessText(result)
 
       // ===== Step 4: 寫入緩存 =====
-      this._setCache(processedText, sourceLang, targetLang, result).catch(() => {})
+      this._setCache(processedText, sourceLang, targetLang, result, apiProvider).catch(() => {})
 
       sendResponse({
         success: true,

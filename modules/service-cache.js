@@ -34,7 +34,7 @@ class TranslationCacheService {
     this._unsubs.push(
       this.core.eventBus.on('cache:get', async (req) => {
         try {
-          const key = this._makeKey(req.text, req.from, req.to)
+          const key = this._makeKey(req.text, req.from, req.to, req.engine)
           const entry = this._cache.get(key)
           if (entry) {
             this._cache.delete(key)
@@ -65,7 +65,7 @@ class TranslationCacheService {
     this._unsubs.push(
       this.core.eventBus.on('cache:set', async (req) => {
         try {
-          const key = this._makeKey(req.text, req.from, req.to)
+          const key = this._makeKey(req.text, req.from, req.to, req.engine)
           this._cache.set(key, { result: req.result, ts: Date.now() })
 
           if (this._cache.size > this.MAX_ENTRIES) {
@@ -107,8 +107,8 @@ class TranslationCacheService {
     this._unsubs = []
   }
 
-  _makeKey(text, from, to) {
-    return `${from}|${to}|${text.slice(0, 500)}`
+  _makeKey(text, from, to, engine) {
+    return `${engine || 'default'}|${from}|${to}|${text.slice(0, 500)}`
   }
 
   async _loadCache() {
