@@ -954,6 +954,10 @@ class ScreenshotTranslator {
       // ===== Step 1: 預處理文本（淨化 + 代碼保護） =====
       processedText = await this._preprocessText(text)
 
+      // 获取用户设置的 API Provider（需在緩存檢查之前）
+      const settings = await this.getUserSettings();
+      const apiProvider = settings.apiProvider || 'google';
+
       // ===== Step 2: 檢查緩存 =====
       const cached = await this._checkCache(processedText, sourceLang, targetLang, apiProvider)
       if (cached !== null) {
@@ -967,10 +971,6 @@ class ScreenshotTranslator {
         })
         return
       }
-
-      // 获取用户设置的 API Provider
-      const settings = await this.getUserSettings();
-      const apiProvider = settings.apiProvider || 'google';
 
       console.log('Background: Using API provider:', apiProvider);
 
@@ -1022,8 +1022,20 @@ class ScreenshotTranslator {
             break;
 
           case 'custom':
-            const customApiKey = settings.apiKeys?.custom;
-            const llmConfig = settings.llmConfig || {};
+            let customApiKey = settings.apiKeys?.custom;
+            let llmConfig = settings.llmConfig || {};
+            // 如果主设置中没有，尝试从模块设置中读取
+            if (!customApiKey || !llmConfig.baseUrl || !llmConfig.model) {
+              const modCfg = await chrome.storage.local.get('moduleSettings.engine-custom')
+              const ms = modCfg['moduleSettings.engine-custom']
+              if (ms) {
+                customApiKey = customApiKey || ms.apiKey
+                llmConfig = {
+                  baseUrl: llmConfig.baseUrl || ms.baseUrl,
+                  model: llmConfig.model || ms.model
+                }
+              }
+            }
             console.log('Background: Custom LLM config:', {
               hasApiKey: !!customApiKey,
               baseUrl: llmConfig.baseUrl || 'not set',
