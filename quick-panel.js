@@ -1694,30 +1694,54 @@ class QuickTranslationPanel {
   triggerInlineTranslate(text, range) {
     this._inlineText = text
     this._inlineRect = range.getBoundingClientRect()
-    this._inlinePos = null // 清除保存位置，用选中位置
+    this._inlinePos = null
 
     this._showInlineToast('loading', {})
 
-    chrome.storage.local.get('targetLanguage', (result) => {
+    chrome.storage.local.get(['targetLanguage', 'multiEngineEnabled'], (result) => {
       const targetLang = result.targetLanguage || 'zh-CN'
+      const multiOn = result.multiEngineEnabled || false
       this._inlineTargetLang = targetLang
 
-      chrome.runtime.sendMessage({
-        action: 'translateText',
-        text: text,
-        sourceLang: 'auto',
-        targetLang: targetLang
-      }, (response) => {
-        if (chrome.runtime.lastError || !response || !response.success) {
-          this._showInlineToast('error', {
-            error: response?.error || '翻译失败'
-          })
-          return
-        }
-        this._showInlineToast('done', {
-          result: response.translatedText
+      if (multiOn) {
+        chrome.runtime.sendMessage({
+          action: 'translateMultiEngine',
+          text: text,
+          sourceLang: 'auto',
+          targetLang: targetLang,
+          includeLLM: true
+        }, (response) => {
+          if (chrome.runtime.lastError || !response || !response.success) {
+            this._showInlineToast('error', {
+              error: response?.error || '翻译失败'
+            })
+            return
+          }
+          const firstResult = Object.values(response.results || {}).find(v => v)
+          if (firstResult) {
+            this._showInlineToast('done', { result: firstResult })
+          } else {
+            this._showInlineToast('error', { error: '所有引擎均失败' })
+          }
         })
-      })
+      } else {
+        chrome.runtime.sendMessage({
+          action: 'translateText',
+          text: text,
+          sourceLang: 'auto',
+          targetLang: targetLang
+        }, (response) => {
+          if (chrome.runtime.lastError || !response || !response.success) {
+            this._showInlineToast('error', {
+              error: response?.error || '翻译失败'
+            })
+            return
+          }
+          this._showInlineToast('done', {
+            result: response.translatedText
+          })
+        })
+      }
     })
   }
 
