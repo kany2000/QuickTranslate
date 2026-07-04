@@ -1705,6 +1705,8 @@ moduleLoader.loadAll().then(results => {
 
   // 啟動 offscreen document（用於沙箱評估第三方模塊）
   initModuleHost()
+}).catch(err => {
+  console.error('Module system init failed:', err)
 })
 
 // 初始化 offscreen document（模塊沙箱橋接器）
