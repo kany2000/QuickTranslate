@@ -974,13 +974,27 @@ class ScreenshotTranslator {
 
       console.log('Background: Using API provider:', apiProvider);
 
-      // 檢查所有翻譯引擎是否都已關閉
+      // 檢查翻譯引擎狀態
       const allToggles = await chrome.storage.local.get('moduleToggles')
       const toggles = allToggles.moduleToggles || {}
-      const anyEngineOn = ['google', 'microsoft', 'glm', 'custom']
-        .some(e => toggles['engine-' + e] !== false)
-      if (!anyEngineOn) {
-        throw new Error('所有翻譯引擎均已關閉，請在 🧩 模塊系統中至少啟用一個翻譯引擎')
+
+      // 如果選中的引擎已關閉，自動切換到第一個可用的
+      const modId = this._providerToModuleId(apiProvider)
+      if (modId && !(await this._isModuleEnabled(modId))) {
+        const fallbackOrder = ['google', 'microsoft', 'glm', 'custom']
+        let switched = false
+        for (const fb of fallbackOrder) {
+          if (toggles['engine-' + fb] !== false) {
+            apiProvider = fb
+            await chrome.storage.local.set({ apiProvider: fb })
+            console.log('Background: Auto-switched to available engine:', apiProvider)
+            switched = true
+            break
+          }
+        }
+        if (!switched) {
+          throw new Error('所有翻譯引擎均已關閉，請在 🧩 模塊系統中至少啟用一個翻譯引擎')
+        }
       }
 
       let result;
@@ -998,13 +1012,8 @@ class ScreenshotTranslator {
         }
       }
 
-      // 如果 EventBus 失敗或沒有對應模塊，檢查開關再回退到 switch-case
+      // 如果 EventBus 失敗或沒有對應模塊，回退到 switch-case
       if (result === null || result === undefined) {
-        // 如果模塊被用戶手動關閉，跳過舊方法
-        const modId = this._providerToModuleId(apiProvider)
-        if (modId && !(await this._isModuleEnabled(modId))) {
-          throw new Error(`模塊「${apiProvider}」已關閉，請在 🧩 模塊系統中啟用`)
-        }
 
         // 回退到舊的 switch-case
         // 根据 API Provider 选择翻译方法
