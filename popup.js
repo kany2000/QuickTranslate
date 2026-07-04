@@ -165,7 +165,10 @@ class PopupController {
       this.startCapture();
     });
 
-    
+    // 設置按鈕
+    this.elements.settingsBtn.addEventListener('click', () => {
+      this.showSettingsModal();
+    });
 
     // 高級設置內歷史記錄折疊/展開
     this.elements.historySectionToggle.addEventListener('click', () => {
