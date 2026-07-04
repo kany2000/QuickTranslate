@@ -1569,85 +1569,67 @@ ${text}`;
     const results = {};
     const errors = {};
     const toggles = (await chrome.storage.local.get('moduleToggles')).moduleToggles || {};
-
-    // 0. 获取用户设置
     const settings = await this.getUserSettings();
 
-    // 1. Google 翻译（检查開關）
-    if (toggles['engine-google'] !== false) {
-      try {
-        const googleResult = await this.callGoogleTranslate(text, sourceLang, targetLang);
-        results.google = googleResult;
-      } catch (e) {
-        results.google = null;
+    // 1. Google（与 LLM 并行）
+    const googleTask = (async () => {
+      if (toggles['engine-google'] !== false) {
+        try { results.google = await this.callGoogleTranslate(text, sourceLang, targetLang); }
+        catch (e) { errors.google = e.message; }
       }
-    }
+    })();
 
-    // 2. Microsoft 翻译（檢查開關 + API Key）
-    const microsoftApiKey = settings.apiKeys?.microsoft;
-    if (microsoftApiKey && toggles['engine-microsoft'] !== false) {
-      try {
-        const microsoftResult = await this.callMicrosoftTranslate(text, sourceLang, targetLang, microsoftApiKey);
-        results.microsoft = microsoftResult;
-      } catch (e) {
-        results.microsoft = null;
+    // 2. Microsoft（仅当有 API Key）
+    const msTask = (async () => {
+      const ak = settings.apiKeys?.microsoft;
+      if (ak && toggles['engine-microsoft'] !== false) {
+        try { results.microsoft = await this.callMicrosoftTranslate(text, sourceLang, targetLang, ak); }
+        catch (e) { errors.microsoft = e.message; }
       }
-    }
+    })();
 
-    // 3. LLM 引擎（并行调用）
+    // 3. LLM 引擎（并行）
+    const llmTasks = [];
     if (includeLLM) {
-      const tasks = []
-
-      if (toggles["engine-custom"] !== false) {
-        tasks.push(
-          (async () => {
-            try {
-              const ms = await chrome.storage.local.get(["apiKeys", "llmConfig", "moduleSettings.engine-custom"]);
-              const ak = ms.apiKeys?.custom || ms["moduleSettings.engine-custom"]?.apiKey;
-              const c = ms.llmConfig || {};
-              const bu = c.baseUrl || ms["moduleSettings.engine-custom"]?.baseUrl;
-              const m = c.model || ms["moduleSettings.engine-custom"]?.model;
-              if (ak && bu && m) {
-                results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: m });
-              } else {
-                errors.llm = "LLM 配置不完整";
-              }
-            } catch (e) { errors.llm = e.message; }
-          })()
-        )
+      if (toggles['engine-custom'] !== false) {
+        llmTasks.push((async () => {
+          try {
+            const s = await chrome.storage.local.get(['apiKeys', 'llmConfig', 'moduleSettings.engine-custom']);
+            const ak = s.apiKeys?.custom || s['moduleSettings.engine-custom']?.apiKey;
+            const cfg = s.llmConfig || {};
+            const bu = cfg.baseUrl || s['moduleSettings.engine-custom']?.baseUrl;
+            const mod = cfg.model || s['moduleSettings.engine-custom']?.model;
+            if (ak && bu && mod) {
+              results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: mod });
+            } else { errors.llm = 'LLM 配置不完整'; }
+          } catch (e) { errors.llm = e.message; }
+        })());
       }
 
-      if (toggles["engine-glm"] !== false) {
-        tasks.push(
-          (async () => {
-            try {
-              const ms = await chrome.storage.local.get(["apiKeys", "moduleSettings.engine-glm"]);
-              const ak = ms.apiKeys?.glm || ms["moduleSettings.engine-glm"]?.apiKey;
-              if (ak) results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, ak);
-            } catch (e) { errors.glm = e.message; }
-          })()
-        )
+      if (toggles['engine-glm'] !== false) {
+        llmTasks.push((async () => {
+          try {
+            const s = await chrome.storage.local.get(['apiKeys', 'moduleSettings.engine-glm']);
+            const ak = s.apiKeys?.glm || s['moduleSettings.engine-glm']?.apiKey;
+            if (ak) results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, ak);
+          } catch (e) { errors.glm = e.message; }
+        })());
       }
-
-      await Promise.all(tasks)
     }
 
-    // 多引擎統計
-    for (const [engine, text] of Object.entries(results)) {
-      if (text) trackModuleUsage(engine, text.length || 0, true)
+    // 并行等待所有任务
+    await Promise.all([googleTask, msTask, ...llmTasks]);
+
+    for (const [k, v] of Object.entries(results)) {
+      if (v) trackModuleUsage(k, v.length || 0, true);
     }
 
-    // 返回所有结果
     sendResponse({
       success: Object.keys(results).length > 0,
-      results: results,
-      errors: errors,
-      sourceLang: sourceLang,
-      targetLang: targetLang
+      results, errors,
+      sourceLang, targetLang
     });
-  }
-
-  async callBackupTranslateService(text, sourceLang, targetLang) {
+  }  async callBackupTranslateService(text, sourceLang, targetLang) {
     const errors = [];
 
     // 备用服务1: MyMemory
