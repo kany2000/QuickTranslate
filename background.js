@@ -1594,59 +1594,42 @@ ${text}`;
       }
     }
 
-    // 3. EventBus 引擎（檢查開關）
+    // 3. LLM 引擎（并行调用）
     if (includeLLM) {
-      // Custom LLM
-      if (toggles['engine-custom'] !== false) {
-        const customMod = moduleLoader.getModule('engine-custom');
-        if (customMod) {
-        try {
-          const llmResult = await this._translateViaEventBus(text, sourceLang, targetLang, 'engine-custom');
-          if (llmResult) results.llm = llmResult;
-        } catch (e) {
-          // EventBus 失敗，嘗試直接調用（從標準設定或 moduleSettings 讀取）
-          try {
-            const modSettings = await chrome.storage.local.get(['apiKeys', 'llmConfig', 'moduleSettings.engine-custom']);
-            const apiKey = modSettings.apiKeys?.custom || modSettings['moduleSettings.engine-custom']?.apiKey;
-            const config = modSettings.llmConfig || {};
-            const baseUrl = config.baseUrl || modSettings['moduleSettings.engine-custom']?.baseUrl;
-            const model = config.model || modSettings['moduleSettings.engine-custom']?.model;
-            if (apiKey && baseUrl && model) {
-              results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, apiKey, { baseUrl, model });
-            }
-          } catch (e2) { /* 都不行就算了 */ }
-        }
-      }
-      // 直接调用（绕过 EventBus / 模块加载状态）
-      try {
-        const ms = await chrome.storage.local.get(['apiKeys', 'llmConfig', 'moduleSettings.engine-custom']);
-        const ak = ms.apiKeys?.custom || ms['moduleSettings.engine-custom']?.apiKey;
-        const c = ms.llmConfig || {};
-        const bu = c.baseUrl || ms['moduleSettings.engine-custom']?.baseUrl;
-        const m = c.model || ms['moduleSettings.engine-custom']?.model;
-        if (ak && bu && m) {
-          results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: m });
-        }
-      } catch (e) { errors.llm = e.message; }
+      const tasks = []
+
+      if (toggles["engine-custom"] !== false) {
+        tasks.push(
+          (async () => {
+            try {
+              const ms = await chrome.storage.local.get(["apiKeys", "llmConfig", "moduleSettings.engine-custom"]);
+              const ak = ms.apiKeys?.custom || ms["moduleSettings.engine-custom"]?.apiKey;
+              const c = ms.llmConfig || {};
+              const bu = c.baseUrl || ms["moduleSettings.engine-custom"]?.baseUrl;
+              const m = c.model || ms["moduleSettings.engine-custom"]?.model;
+              if (ak && bu && m) {
+                results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: m });
+              } else {
+                errors.llm = "LLM 配置不完整";
+              }
+            } catch (e) { errors.llm = e.message; }
+          })()
+        )
       }
 
-      // GLM
-      if (toggles['engine-glm'] !== false) {
-        const glmMod = moduleLoader.getModule('engine-glm');
-        if (glmMod) {
-        try {
-          const glmResult = await this._translateViaEventBus(text, sourceLang, targetLang, 'engine-glm');
-          if (glmResult) results.glm = glmResult;
-        } catch (e) {
-          // GLM 回退
-          try {
-            const modSettings = await chrome.storage.local.get(['apiKeys', 'moduleSettings.engine-glm']);
-            const apiKey = modSettings.apiKeys?.glm || modSettings['moduleSettings.engine-glm']?.apiKey;
-            if (apiKey) results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, apiKey);
-          } catch (e2) {}
-        }
+      if (toggles["engine-glm"] !== false) {
+        tasks.push(
+          (async () => {
+            try {
+              const ms = await chrome.storage.local.get(["apiKeys", "moduleSettings.engine-glm"]);
+              const ak = ms.apiKeys?.glm || ms["moduleSettings.engine-glm"]?.apiKey;
+              if (ak) results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, ak);
+            } catch (e) { errors.glm = e.message; }
+          })()
+        )
       }
-    }
+
+      await Promise.all(tasks)
     }
 
     // 多引擎統計
