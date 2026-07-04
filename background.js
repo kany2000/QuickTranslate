@@ -1628,6 +1628,7 @@ ${text}`;
           results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: m });
         }
       } catch (e) { errors.llm = e.message; }
+      }
 
       // GLM
       if (toggles['engine-glm'] !== false) {
