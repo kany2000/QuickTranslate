@@ -1617,7 +1617,17 @@ ${text}`;
           } catch (e2) { /* 都不行就算了 */ }
         }
       }
-      }
+      // 直接调用（绕过 EventBus / 模块加载状态）
+      try {
+        const ms = await chrome.storage.local.get(['apiKeys', 'llmConfig', 'moduleSettings.engine-custom']);
+        const ak = ms.apiKeys?.custom || ms['moduleSettings.engine-custom']?.apiKey;
+        const c = ms.llmConfig || {};
+        const bu = c.baseUrl || ms['moduleSettings.engine-custom']?.baseUrl;
+        const m = c.model || ms['moduleSettings.engine-custom']?.model;
+        if (ak && bu && m) {
+          results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: m });
+        }
+      } catch (e) { errors.llm = e.message; }
 
       // GLM
       if (toggles['engine-glm'] !== false) {
