@@ -31,6 +31,19 @@ class CustomLLMModule {
   }
 
   async onActivate() {
+    // 同步模块设置到主设置（如果主设置未配置）
+    try {
+      const s = await this.core.storage.get(['apiKeys', 'llmConfig', 'moduleSettings.engine-custom'])
+      if ((!s.apiKeys?.custom || !s.llmConfig?.baseUrl) && s['moduleSettings.engine-custom']) {
+        const ms = s['moduleSettings.engine-custom']
+        await this.core.storage.set({
+          apiKeys: { ...s.apiKeys, custom: ms.apiKey },
+          llmConfig: { baseUrl: ms.baseUrl, model: ms.model }
+        })
+        console.log('CustomLLM: synced module settings to main settings')
+      }
+    } catch (e) { /* ignore */ }
+
     this._unsub = this.core.eventBus.on('translate:text', async (req) => {
       if (req.target && req.target !== 'engine-custom') return
       try {
