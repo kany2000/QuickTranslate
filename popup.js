@@ -165,15 +165,7 @@ class PopupController {
       this.startCapture();
     });
 
-    // 快速保存基本設置
-    this.elements.quickSave.addEventListener('click', () => {
-      this.quickSaveBasicSettings();
-    });
-
-    // 設置按鈕
-    this.elements.settingsBtn.addEventListener('click', () => {
-      this.showSettingsModal();
-    });
+    
 
     // 高級設置內歷史記錄折疊/展開
     this.elements.historySectionToggle.addEventListener('click', () => {
@@ -629,9 +621,6 @@ class PopupController {
     this.elements.autoCopy.checked = this.settings.autoCopy || false;
 
     // 更新快捷面板設置
-    this.elements.quickPanelEnabled.checked = this.settings.quickPanelEnabled !== false;
-    this.elements.hoverTranslationEnabled.checked = this.settings.hoverTranslationEnabled || false;
-    this.elements.inlineTranslateEnabled.checked = this.settings.inlineTranslateEnabled || false;
     this.elements.multiEngineEnabled.checked = this.settings.multiEngineEnabled || false;
     this.elements.minSelectionLength.value = this.settings.minSelectionLength || 2;
 
@@ -723,53 +712,7 @@ class PopupController {
     }
   }
 
-  async quickSaveBasicSettings() {
-    try {
-      const basicSettings = {
-        targetLanguage: this.elements.targetLanguage.value,
-        ocrLanguage: this.elements.ocrLanguage.value,
-        quickPanelEnabled: this.elements.quickPanelEnabled.checked,
-        hoverTranslationEnabled: this.elements.hoverTranslationEnabled.checked,
-        inlineTranslateEnabled: this.elements.inlineTranslateEnabled.checked
-      };
 
-      // 顯示保存中狀態
-      const saveBtn = this.elements.quickSave;
-      const originalText = saveBtn.querySelector('.btn-text').textContent;
-      saveBtn.querySelector('.btn-text').textContent = '保存中...';
-      saveBtn.disabled = true;
-
-      chrome.runtime.sendMessage({
-        action: 'saveSettings',
-        settings: basicSettings
-      }, (response) => {
-        if (response && response.success) {
-          // 更新本地設置
-          this.settings = { ...this.settings, ...basicSettings };
-
-          // 顯示成功狀態
-          saveBtn.classList.add('saved');
-          saveBtn.querySelector('.btn-text').textContent = '已保存';
-          this.showStatus('基本設置已保存', 'success');
-
-          // 恢復按鈕狀態
-          setTimeout(() => {
-            saveBtn.classList.remove('saved');
-            saveBtn.querySelector('.btn-text').textContent = originalText;
-            saveBtn.disabled = false;
-            this.hideUnsavedChanges();
-          }, 1500);
-        } else {
-          this.showStatus('保存失敗', 'error');
-          saveBtn.querySelector('.btn-text').textContent = originalText;
-          saveBtn.disabled = false;
-        }
-      });
-    } catch (error) {
-      console.error('Failed to save basic settings:', error);
-      this.showStatus('保存失敗: ' + error.message, 'error');
-    }
-  }
 
   showUnsavedChanges() {
     const saveBtn = this.elements.quickSave;
