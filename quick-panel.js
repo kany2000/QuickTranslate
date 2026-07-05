@@ -1201,7 +1201,7 @@ class QuickTranslationPanel {
     if (hasJapanese) return 'ja';
     if (hasKorean) return 'ko';
     if (hasChinese) return 'zh-CN';
-    if (hasEnglish) return 'en';
+    if (hasEnglish) return 'auto';
     
     return 'auto';
   }

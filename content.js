@@ -4,7 +4,6 @@
   if (!orig.__qtPatched) {
     chrome.runtime.sendMessage = function(msg, cb) {
       const doIt = (retries) => {
-        // Callback mode
         if (typeof cb === 'function') {
           try {
             return orig.call(chrome.runtime, msg, function(resp) {
@@ -21,19 +20,18 @@
           }
           return;
         }
-        // Promise mode
         try {
           return orig.call(chrome.runtime, msg).catch(e => {
             if (String(e.message).includes('context invalidated') && retries > 0) {
               return new Promise(r => setTimeout(r, 300)).then(() => doIt(retries - 1));
             }
             throw e;
-          });
+          }).catch(() => {});
         } catch(e) {
           if (String(e.message).includes('context invalidated') && retries > 0) {
             return new Promise(r => setTimeout(r, 300)).then(() => doIt(retries - 1));
           }
-          throw e;
+          return Promise.resolve();
         }
       };
       return doIt(3);
@@ -606,7 +604,7 @@ if (typeof window.ScreenshotCapture === 'undefined') {
 
     getPreciseTextFromArea(rect) {
       try {
-        const tolerance = 5;
+        const tolerance = 2;
         const nodeData = new Map();
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
           acceptNode: (n) => {
@@ -1969,10 +1967,10 @@ if (typeof window.ScreenshotCapture === 'undefined') {
         return 'ko';
       }
 
-      // 第三優先：英文字符
+      // 第三優先：拉丁文字（含德語、法語、西語等）
       if (isEnglish || englishCount > 0) {
-        console.log('Content: Detected English');
-        return 'en';
+        console.log('Content: Detected Latin script, using auto-detect');
+        return 'auto';
       }
 
       // 最後：中文字符
