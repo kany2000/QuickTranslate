@@ -606,85 +606,59 @@ if (typeof window.ScreenshotCapture === 'undefined') {
 
     getPreciseTextFromArea(rect) {
       try {
-        // 創建一個虛擬的選擇框來精確匹配用戶選擇的區域
-        const tolerance = 5; // 5像素的容差
-
-        // 獲取所有文字節點及其位置信息
-        const textNodes = this.getAllTextNodes();
-        const selectedTexts = [];
-
-        for (const textNode of textNodes) {
-          // 跳過我們自己的覆蓋層
-          if (this.isInOverlay(textNode)) {
-            continue;
+        const tolerance = 5;
+        const chars = [];
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+          acceptNode: (n) => {
+            if (n.textContent.trim().length === 0) return NodeFilter.FILTER_REJECT;
+            let p = n.parentNode;
+            while (p) { if (p.id === 'screenshot-overlay') return NodeFilter.FILTER_REJECT; p = p.parentNode; }
+            return NodeFilter.FILTER_ACCEPT;
           }
-
-          // 檢查文字節點是否在選中區域內
-          const nodeRects = this.getTextNodeRects(textNode);
-
-          for (const nodeRect of nodeRects) {
-            if (this.isRectInSelectedArea(nodeRect, rect, tolerance)) {
-              const text = textNode.textContent;
-              if (text && text.trim()) {
-                selectedTexts.push({
-                  text: text,
-                  top: nodeRect.top,
-                  left: nodeRect.left,
-                  bottom: nodeRect.bottom
-                });
-              }
-              break; // 找到一個匹配的就跳出
-            }
-          }
-        }
-
-        // 如果沒有找到文字節點，嘗試元素級別的檢查
-        if (selectedTexts.length === 0) {
-          return this.getTextFromElementsInArea(rect);
-        }
-
-        // 按位置排序並保留換行結構
-        selectedTexts.sort((a, b) => {
-          // 先按Y坐標排序（上到下）
-          const yDiff = a.top - b.top;
-          if (Math.abs(yDiff) > 10) { // 如果Y坐標差距大於10px，認為是不同行
-            return yDiff;
-          }
-          // 同一行內按X坐標排序（左到右）
-          return a.left - b.left;
         });
 
-        // 組合文字，保留換行
-        const lines = [];
-        let currentLine = [];
-        let lastBottom = -1;
-
-        for (const item of selectedTexts) {
-          // 如果是新行（Y坐標差距較大）
-          if (lastBottom >= 0 && item.top > lastBottom + 10) {
-            if (currentLine.length > 0) {
-              lines.push(currentLine.join(' ').trim());
-              currentLine = [];
-            }
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const text = node.textContent;
+          for (let i = 0; i < text.length; i++) {
+            try {
+              const range = document.createRange();
+              range.setStart(node, i);
+              range.setEnd(node, i + 1);
+              const r = range.getBoundingClientRect();
+              if (r.width > 0 && r.height > 0) {
+                const overlap = !(r.right < rect.left - tolerance || r.left > rect.left + rect.width + tolerance || r.bottom < rect.top - tolerance || r.top > rect.top + rect.height + tolerance);
+                if (overlap) {
+                  chars.push({ ch: text[i], top: r.top, left: r.left, bottom: r.bottom });
+                }
+              }
+            } catch(e) { /* ignore */ }
           }
-          
-          currentLine.push(item.text.trim());
-          lastBottom = item.bottom;
         }
 
-        // 添加最後一行
-        if (currentLine.length > 0) {
-          lines.push(currentLine.join(' ').trim());
+        if (chars.length === 0) return this.getTextFromElementsInArea(rect);
+
+        chars.sort((a, b) => {
+          const y = a.top - b.top;
+          return Math.abs(y) > 8 ? y : a.left - b.left;
+        });
+
+        let result = '';
+        let lastTop = -1, lastBottom = -1;
+        for (const c of chars) {
+          if (lastBottom >= 0 && c.top > lastBottom + 8) result += '\n';
+          else if (lastTop >= 0 && c.left > lastTop + (c.top - (lastBottom || c.top)) * 0.5) result += ' ';
+          result += c.ch;
+          lastTop = c.left + 4;
+          lastBottom = c.bottom;
         }
 
-        // 用換行符連接各行
-        const result = lines.join('\n').trim();
-        console.log('Content: Found precise text with formatting:', result);
-        return result;
+        return result.trim();
       } catch (error) {
         console.error('Error in getPreciseTextFromArea:', error);
         return '';
       }
+    }      }
     }
 
     getAllTextNodes() {
