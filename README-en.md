@@ -64,6 +64,10 @@ QuickTranslate 3.0 introduces a full module ecosystem. Built-in modules cover tr
 | Custom LLM | translator | OpenAI-compatible custom LLM |
 | Selection Translate | mode | Text selection popup |
 | Float Panel | mode | Ctrl+Shift+Q floating panel |
+| Select-to-Translate | mode | Auto-translate on selection |
+| Text Sanitizer | processor | Auto-clean text formatting |
+| Code Protector | processor | Protect code blocks from translation |
+| Translation Cache | service | LRU cache, 200 entries |
 | History | service | Translation history storage |
 | Word Book | service | Saved words storage |
 
