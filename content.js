@@ -607,7 +607,7 @@ if (typeof window.ScreenshotCapture === 'undefined') {
     getPreciseTextFromArea(rect) {
       try {
         const tolerance = 5;
-        const chars = [];
+        const nodeData = new Map();
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
           acceptNode: (n) => {
             if (n.textContent.trim().length === 0) return NodeFilter.FILTER_REJECT;
@@ -622,38 +622,37 @@ if (typeof window.ScreenshotCapture === 'undefined') {
           const text = node.textContent;
           for (let i = 0; i < text.length; i++) {
             try {
-              const range = document.createRange();
-              range.setStart(node, i);
-              range.setEnd(node, i + 1);
-              const r = range.getBoundingClientRect();
-              if (r.width > 0 && r.height > 0) {
-                const overlap = !(r.right < rect.left - tolerance || r.left > rect.left + rect.width + tolerance || r.bottom < rect.top - tolerance || r.top > rect.top + rect.height + tolerance);
-                if (overlap) {
-                  chars.push({ ch: text[i], top: r.top, left: r.left, bottom: r.bottom, node: node });
+              const r = document.createRange();
+              r.setStart(node, i);
+              r.setEnd(node, i + 1);
+              const cr = r.getBoundingClientRect();
+              if (cr.width > 0 && cr.height > 0) {
+                if (!(cr.right < rect.left - tolerance || cr.left > rect.left + rect.width + tolerance || cr.bottom < rect.top - tolerance || cr.top > rect.top + rect.height + tolerance)) {
+                  if (!nodeData.has(node)) {
+                    nodeData.set(node, { firstIdx: i, lastIdx: i, top: cr.top, left: cr.left, bottom: cr.bottom, text: text });
+                  } else {
+                    const d = nodeData.get(node);
+                    d.firstIdx = Math.min(d.firstIdx, i);
+                    d.lastIdx = Math.max(d.lastIdx, i);
+                  }
                 }
               }
             } catch(e) { /* ignore */ }
           }
         }
 
-        if (chars.length === 0) return this.getTextFromElementsInArea(rect);
+        if (nodeData.size === 0) return this.getTextFromElementsInArea(rect);
 
-        // 按节点分组：有字符被选中的节点，提取完整文本
-        const nodeTexts = new Map();
-        const seenNodes = new Set();
-        for (const c of chars) {
-          if (!seenNodes.has(c.node)) {
-            seenNodes.add(c.node);
-            nodeTexts.set(c.node, {
-              text: c.node.textContent,
-              top: c.top,
-              left: c.left,
-              bottom: c.bottom
-            });
-          }
+        const results = [];
+        for (const [, data] of nodeData) {
+          results.push({
+            text: data.text.substring(data.firstIdx, data.lastIdx + 1),
+            top: data.top,
+            left: data.left,
+            bottom: data.bottom
+          });
         }
 
-        const results = Array.from(nodeTexts.values());
         results.sort((a, b) => {
           const y = a.top - b.top;
           return Math.abs(y) > 10 ? y : a.left - b.left;
