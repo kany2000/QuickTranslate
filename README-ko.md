@@ -26,6 +26,9 @@
 </p>
 
 <p align="center">
+  <a href="#-기능">기능</a> ·
+  <a href="#-모듈-시스템">모듈 시스템</a> ·
+  <a href="#-빠른-시작">빠른 시작</a> ·
   <a href="docs/spec-ko.html">📖 개발자 문서</a>
 </p>
 

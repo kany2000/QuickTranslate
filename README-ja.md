@@ -26,6 +26,9 @@
 </p>
 
 <p align="center">
+  <a href="#-機能">機能</a> ·
+  <a href="#-モジュールシステム">モジュールシステム</a> ·
+  <a href="#-クイックスタート">クイックスタート</a> ·
   <a href="docs/spec-ja.html">📖 開発者ドキュメント</a>
 </p>
 
