@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <strong>🌐 ブラウザテキスト選択翻訳 · マルチエンジン · モジュール拡張可能</strong>
+  <strong>🧩 モジュール式翻訳プラグイン · 全機能をモジュールシステムで管理 · 自由にON/OFF、拡張可能</strong>
 </p>
 
 <p align="center">

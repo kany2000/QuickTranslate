@@ -65,5 +65,9 @@ key.pem
 build-release.sh
 build-release.ps1
 
+# 發布說明（本地保留，不上傳 GitHub）
+RELEASE_NOTES_*
+!RELEASE_NOTES_v3.0.0.md
+
 # Issues 目錄
 issues/

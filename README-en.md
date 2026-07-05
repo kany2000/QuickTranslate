@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <strong>🌐 Browser text selection translator · Multi-engine · Modular & extensible</strong>
+  <strong>🧩 Modular browser translation · All features managed by the module system · Toggle on/off, extend as needed</strong>
 </p>
 
 <p align="center">

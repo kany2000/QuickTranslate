@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <strong>🌐 瀏覽器划詞即時翻譯 · 支援多引擎 · 模組化可擴展</strong>
+  <strong>🧩 模組化瀏覽器翻譯 · 所有功能由模組系統統一管理 · 自由開關、按需擴展</strong>
 </p>
 
 <p align="center">

@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <strong>🌐 브라우저 텍스트 선택 번역 · 멀티 엔진 · 모듈 확장 가능</strong>
+  <strong>🧩 모듈식 브라우저 번역 · 모든 기능을 모듈 시스템으로 관리 · 자유롭게 ON/OFF, 확장 가능</strong>
 </p>
 
 <p align="center">
