@@ -37,22 +37,22 @@
 
 ## ✨ Features
 
-| | Feature | Description |
-|---|---|---|
-| ⚡ | Selection Translate | Select any text, instant translation popup |
-| 🖱️ | Hover Translate | Hold Alt + hover, no selection needed |
-| 📷 | Screenshot Translate | Capture area → OCR → translate |
-| 🌐 | Multi-Engine | Google, Microsoft, GLM, Custom LLM, community modules |
-| 📚 | History & Word Book | Auto-save history, save words |
-| 🧩 | Module System | Extend with plugins |
-| 🌙 | Dark Mode | Auto-switch with system theme, all panels |
-| 🧹 | Text Sanitizer | Auto-clean whitespace, line breaks, HTML entities |
-| 💾 | Translation Cache | Skip API for repeated text, faster translations |
-| 🖱️ | Context Menu | Right-click → Quick Translate
+| | Feature | Module Type | Description |
+|---|---|---|---|
+| ⚡ | Selection Translate | mode | Select any text, instant translation popup |
+| 🖱️ | Hover Translate | mode | Hold Alt + hover, no selection needed |
+| 📝 | Select-to-Translate | mode | Auto-translate on selection, result popup |
+| 📷 | Screenshot Translate | built-in | Capture area → OCR → translate |
+| 🌐 | Multi-Engine | translator | Compare Google / LLM results side by side |
+| 🧹 | Text Sanitizer | processor | Auto-clean whitespace, line breaks, HTML entities |
+| 🛡️ | Code Protector | processor | Protect code blocks from translation |
+| 💾 | Translation Cache | service | LRU cache, faster repeated translations |
+| 📚 | History & Word Book | service | Auto-save history, save words |
+| 🌙 | Dark Mode | style | Follows system theme automatically |
 
-## 🧩 Module System
+## 🧩 Module System (Core Architecture)
 
-QuickTranslate 3.0 introduces a full module ecosystem. Built-in modules cover translation engines, interaction modes, and services. Third-party developers can create and distribute their own modules.
+QuickTranslate 3.0 introduces a complete module ecosystem. **Everything is a module** — selection translate, hover translate, select-to-translate, translation engines, text processors, background services — all managed by the module system. Users can toggle each module on/off freely in 🧩 Module System, no need to switch between multiple settings pages.
 
 ### Built-in Modules
 
