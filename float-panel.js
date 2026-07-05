@@ -1,3 +1,47 @@
+
+(function() {
+  const orig = chrome.runtime.sendMessage;
+  if (!orig.__qtPatched) {
+    chrome.runtime.sendMessage = function(msg, cb) {
+      const doIt = (retries) => {
+        // Callback mode
+        if (typeof cb === 'function') {
+          try {
+            return orig.call(chrome.runtime, msg, function(resp) {
+              if (chrome.runtime.lastError && String(chrome.runtime.lastError.message).includes('context invalidated') && retries > 0) {
+                setTimeout(() => doIt(retries - 1), 300);
+                return;
+              }
+              cb(resp);
+            });
+          } catch(e) {
+            if (String(e.message).includes('context invalidated') && retries > 0) {
+              setTimeout(() => doIt(retries - 1), 300);
+            }
+          }
+          return;
+        }
+        // Promise mode
+        try {
+          return orig.call(chrome.runtime, msg).catch(e => {
+            if (String(e.message).includes('context invalidated') && retries > 0) {
+              return new Promise(r => setTimeout(r, 300)).then(() => doIt(retries - 1));
+            }
+            throw e;
+          });
+        } catch(e) {
+          if (String(e.message).includes('context invalidated') && retries > 0) {
+            return new Promise(r => setTimeout(r, 300)).then(() => doIt(retries - 1));
+          }
+          throw e;
+        }
+      };
+      return doIt(3);
+    };
+    chrome.runtime.sendMessage.__qtPatched = true;
+  }
+})();
+
 /**
  * FloatPanel - 独立翻译面板
  * Version: 3.3.0
