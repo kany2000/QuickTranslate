@@ -64,7 +64,7 @@ const translations = {
     'opt.custom': 'LLM 自定义 (OpenAI 兼容)',
     'opt.enableQuickPanel': '启用划词翻译 (选中文字即可翻译)',
     'opt.enableHover': '启用悬浮翻译 (按 Alt 键悬停翻译)',
-    'opt.enableInline': '启用内联翻译 (选中后自动翻译)',
+    'opt.enableInline': '启用选词即译 (选中后自动翻译)',
     'opt.multiEngine': '多引擎结果对比',
     'opt.autoCopy': '自动复制翻译结果',
 
@@ -243,7 +243,7 @@ const translations = {
     'opt.custom': 'LLM 自訂 (OpenAI 相容)',
     'opt.enableQuickPanel': '啟用划詞翻譯 (選中文字即可翻譯)',
     'opt.enableHover': '啟用懸浮翻譯 (按 Alt 鍵懸停翻譯)',
-    'opt.enableInline': '啟用內聯翻譯 (選中後自動翻譯)',
+    'opt.enableInline': '啟用選詞即譯 (選中後自動翻譯)',
     'opt.multiEngine': '多引擎結果對比',
     'opt.autoCopy': '自動複製翻譯結果',
 
@@ -422,7 +422,7 @@ const translations = {
     'opt.custom': 'Custom LLM (OpenAI Compatible)',
     'opt.enableQuickPanel': 'Enable Selection Translate (translate on text selection)',
     'opt.enableHover': 'Enable Hover Translation (Alt key)',
-    'opt.enableInline': 'Enable Inline Translate (auto-translate on select)',
+    'opt.enableInline': 'Enable Select-to-Translate',
     'opt.multiEngine': 'Multi-Engine Comparison',
     'opt.autoCopy': 'Auto Copy Translation',
 
@@ -601,7 +601,7 @@ const translations = {
     'opt.custom': 'カスタムLLM (OpenAI互換)',
     'opt.enableQuickPanel': '選択翻訳を有効化 (テキスト選択で翻訳)',
     'opt.enableHover': 'ホバー翻訳を有効化 (Altキー)',
-    'opt.enableInline': 'インライン翻訳を有効化 (選択後自動翻訳)',
+    'opt.enableInline': '選択即翻訳を有効化',
     'opt.multiEngine': 'マルチエンジン比較',
     'opt.autoCopy': '翻訳結果を自動コピー',
 
@@ -780,7 +780,7 @@ const translations = {
     'opt.custom': '사용자 정의 LLM (OpenAI 호환)',
     'opt.enableQuickPanel': '선택 번역 활성화 (텍스트 선택 시 번역)',
     'opt.enableHover': '호버 번역 활성화 (Alt 키)',
-    'opt.enableInline': '인라인 번역 활성화 (선택 후 자동 번역)',
+    'opt.enableInline': '선택즉번역 활성화',
     'opt.multiEngine': '멀티 엔진 비교',
     'opt.autoCopy': '번역 결과 자동 복사',
 

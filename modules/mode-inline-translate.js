@@ -8,7 +8,7 @@
 class InlineTranslateMode {
   static manifest = {
     id: 'mode-inline-translate',
-    name: '內聯翻譯',
+    name: '选词即译',
     version: '1.0.0',
     author: 'QuickTranslate Team',
     type: 'mode',
