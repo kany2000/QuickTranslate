@@ -5,6 +5,22 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 並且本項目遵循 [語義化版本](https://semver.org/lang/zh-CN/).
 
+## [3.3.0] - 2026-07-02
+
+### ✨ 新增 / Added
+- **模塊名稱 i18n**：所有內置模塊名稱現在支援 5 種界面語言
+- **全局錯誤捕獲**：Service Worker 穩定性提升，不再因未處理的 rejection 崩潰
+- **截圖翻譯支援多引擎**：截圖翻譯現在也會檢查多引擎開關
+
+### 🔧 修復 / Fixed
+- 高級設置按鈕在 UI 清理後無法點擊
+- 多引擎對比下 LLM 結果不顯示
+- Extension context invalidated 導致的 Service Worker 崩潰
+- 模塊系統中「內聯翻譯」更名為「選詞即譯」
+
+### 🏗️ 變更
+- 移除彈窗主界面的模式開關，統一由 🧩 模塊系統管理
+
 ## [3.2.0] - 2026-07-02
 
 ### ✨ 新增 / Added
