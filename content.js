@@ -658,7 +658,6 @@ if (typeof window.ScreenshotCapture === 'undefined') {
         console.error('Error in getPreciseTextFromArea:', error);
         return '';
       }
-    }      }
     }
 
     getAllTextNodes() {
