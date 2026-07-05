@@ -629,7 +629,7 @@ if (typeof window.ScreenshotCapture === 'undefined') {
               if (r.width > 0 && r.height > 0) {
                 const overlap = !(r.right < rect.left - tolerance || r.left > rect.left + rect.width + tolerance || r.bottom < rect.top - tolerance || r.top > rect.top + rect.height + tolerance);
                 if (overlap) {
-                  chars.push({ ch: text[i], top: r.top, left: r.left, bottom: r.bottom });
+                  chars.push({ ch: text[i], top: r.top, left: r.left, bottom: r.bottom, node: node });
                 }
               }
             } catch(e) { /* ignore */ }
@@ -638,19 +638,33 @@ if (typeof window.ScreenshotCapture === 'undefined') {
 
         if (chars.length === 0) return this.getTextFromElementsInArea(rect);
 
-        chars.sort((a, b) => {
+        // 按节点分组：有字符被选中的节点，提取完整文本
+        const nodeTexts = new Map();
+        const seenNodes = new Set();
+        for (const c of chars) {
+          if (!seenNodes.has(c.node)) {
+            seenNodes.add(c.node);
+            nodeTexts.set(c.node, {
+              text: c.node.textContent,
+              top: c.top,
+              left: c.left,
+              bottom: c.bottom
+            });
+          }
+        }
+
+        const results = Array.from(nodeTexts.values());
+        results.sort((a, b) => {
           const y = a.top - b.top;
-          return Math.abs(y) > 8 ? y : a.left - b.left;
+          return Math.abs(y) > 10 ? y : a.left - b.left;
         });
 
         let result = '';
-        let lastTop = -1, lastBottom = -1;
-        for (const c of chars) {
-          if (lastBottom >= 0 && c.top > lastBottom + 8) result += '\n';
-          else if (lastTop >= 0 && c.left > lastTop + (c.top - (lastBottom || c.top)) * 0.5) result += ' ';
-          result += c.ch;
-          lastTop = c.left + 4;
-          lastBottom = c.bottom;
+        let lastBottom = -1;
+        for (const item of results) {
+          if (lastBottom >= 0 && item.top > lastBottom + 10) result += '\n';
+          result += item.text.trim() + '\n';
+          lastBottom = item.bottom;
         }
 
         return result.trim();
