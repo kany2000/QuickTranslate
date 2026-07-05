@@ -5,6 +5,14 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 並且本項目遵循 [語義化版本](https://semver.org/lang/zh-CN/).
 
+## [3.3.1] - 2026-07-05
+
+### 🔧 修復 / Fixed
+- **截圖翻譯精度**：框選文字提取改為字符級定位，不再整段提取
+- **語言檢測**：拉丁文字統一使用 `auto`，德語/法語等不再被誤判為英文
+- **Extension context invalidated**：Promise 拒絕靜默處理，不再彈出 Uncaught error
+- **Service Worker 穩定性**：全局錯誤捕獲，未處理的 rejection 不再崩潰 SW
+
 ## [3.3.0] - 2026-07-02
 
 ### ✨ 新增 / Added
