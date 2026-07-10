@@ -5,6 +5,12 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 並且本項目遵循 [語義化版本](https://semver.org/lang/zh-CN/).
 
+## [3.3.2] - 2026-07-10
+
+### 🔧 修復 / Fixed
+- **模塊開關失效**：修復划詞翻譯模塊開關後無法使用的問題（popup.js 中 DOM 元素不存在導致 TypeError 阻止了 toggleModule 消息發送）
+- **設置保存崩潰**：修復高級設置中 quickPanelEnabled / hoverTranslationEnabled 因 DOM 缺失而崩潰的問題
+
 ## [3.3.1] - 2026-07-05
 
 ### 🔧 修復 / Fixed

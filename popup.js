@@ -213,7 +213,6 @@ class PopupController {
       // 先同步更新本地設置，保證 UI 即時響應
       if (moduleId === 'mode-quick-panel') {
         this.settings.quickPanelEnabled = enable;
-        this.elements.quickPanelEnabled.checked = enable;
       }
       if (moduleId === 'mode-float-panel') {
         this.settings.floatPanelEnabled = enable;
@@ -226,7 +225,6 @@ class PopupController {
           // 恢復本地設置
           if (moduleId === 'mode-quick-panel') {
             this.settings.quickPanelEnabled = !enable;
-            this.elements.quickPanelEnabled.checked = !enable;
           }
         }
       });
@@ -773,8 +771,8 @@ class PopupController {
         ocrLanguage: this.elements.ocrLanguage.value,
         apiProvider: provider,
         autoCopy: this.elements.autoCopy.checked,
-        quickPanelEnabled: this.elements.quickPanelEnabled.checked,
-        hoverTranslationEnabled: this.elements.hoverTranslationEnabled.checked,
+        quickPanelEnabled: this.elements.quickPanelEnabled ? this.elements.quickPanelEnabled.checked : (this.settings.quickPanelEnabled !== false),
+        hoverTranslationEnabled: this.elements.hoverTranslationEnabled ? this.elements.hoverTranslationEnabled.checked : (this.settings.hoverTranslationEnabled || false),
         multiEngineEnabled: this.elements.multiEngineEnabled.checked,
         minSelectionLength: parseInt(this.elements.minSelectionLength.value) || 2,
         apiKeys: apiKeys,

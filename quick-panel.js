@@ -44,7 +44,7 @@
 
 /**
  * QuickTranslate - Quick Translation Panel
- * Version: 3.3.1
+ * Version: 3.3.2
  * 快捷翻译面板 - 选中文字即可快速翻译
  */
 
