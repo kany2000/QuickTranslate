@@ -2195,55 +2195,23 @@ if (result && result !== text) {
 
       } catch (error) {
         console.error('Content: Google Translate API error:', error);
-
-        // 如果Google API失敗，嘗試使用備用的翻譯服務
-        console.log('Content: Google Translate failed, trying backup service...');
-        return await this.callBackupTranslateService(text, sourceLang, targetLang);
-      }
-    }
-
-    async callBackupTranslateService(text, sourceLang, targetLang) {
-      try {
-        console.log(`Content: Trying backup translation service - ${sourceLang} -> ${targetLang}`);
-
-        // 使用MyMemory翻譯API作為備用
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
-        console.log('Content: Backup service URL:', url);
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        console.log('Content: Backup service response:', data);
-
-        if (data && data.responseData && data.responseData.translatedText) {
-          const result = data.responseData.translatedText;
-          console.log('Content: Backup service result:', result);
-
-          // 檢查翻譯質量和語言正確性
-          if (result && result !== text && !result.includes('MYMEMORY WARNING')) {
-            // 验证翻译结果是否真的是目标语言
-            if (targetLang.startsWith('zh')) {
-              const chineseChars = (result.match(/[\u4e00-\u9fff]/g) || []).length;
-              console.log(`Content: Backup result has ${chineseChars} Chinese characters`);
-
-              if (chineseChars > 0) {
-                console.log('Content: Backup service SUCCESS - has Chinese characters');
-                return result;
-              } else {
-                console.log('Content: Backup service FAILED - no Chinese characters in result');
-                throw new Error('Backup translation result has no Chinese characters');
-              }
-            } else {
-              return result;
-            }
+        // 兜底统一交由 background 的 translateText 处理（其内部已含 MyMemory 备用服务），
+        // 避免 content script 内再维护一份重复的 MyMemory 实现
+        console.log('Content: Google Translate failed, routing backup through background...');
+        try {
+          const backupResp = await chrome.runtime.sendMessage({
+            action: 'translateText',
+            text,
+            sourceLang,
+            targetLang
+          });
+          if (backupResp && backupResp.success && backupResp.translatedText) {
+            return backupResp.translatedText.trim();
           }
+        } catch (backupErr) {
+          console.warn('Content: Background backup translation also failed:', backupErr);
         }
-
-        throw new Error('Backup service failed');
-      } catch (error) {
-        console.error('Content: Backup translation service error:', error);
-        console.log('Content: Backup service failed, will use fallback translation');
-        return null;
+        throw error;
       }
     }
 

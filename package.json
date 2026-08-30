@@ -1,0 +1,16 @@
+{
+  "name": "quicktranslate",
+  "version": "3.3.2",
+  "private": true,
+  "description": "QuickTranslate 快译 - 模块化浏览器翻译扩展 (Manifest V3)",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{js,json,css,md,html}\"",
+    "check": "node scripts/syntax-check.js"
+  },
+  "devDependencies": {
+    "eslint": "^9.10.0",
+    "prettier": "^3.3.0"
+  }
+}

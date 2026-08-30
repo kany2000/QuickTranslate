@@ -52,6 +52,10 @@ config/secrets.js
 coverage/
 .nyc_output/
 
+# Lint / 格式化緩存
+.eslintcache
+.prettierignore
+
 # 備份文件
 *.bak
 *.backup
