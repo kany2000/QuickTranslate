@@ -41,7 +41,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["tesseract.min.js", "content.js", "quick-panel.js", "float-panel.js"],
+      "js": ["tesseract.min.js", "content-japanese.js", "content.js", "quick-panel.js", "float-panel.js"],
       "css": ["content.css", "quick-panel.css", "float-panel.css"],
       "run_at": "document_idle",
       "all_frames": false
