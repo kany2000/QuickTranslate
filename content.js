@@ -3760,8 +3760,18 @@ if (result && result !== text) {
   window.ScreenshotCapture = ScreenshotCapture;
 
   // --- Task B (Stages 1+2): mount extracted Japanese/Korean/English engine ---
+  // NOTE: class methods are NON-enumerable, so Object.assign() copies nothing.
+  // Use getOwnPropertyNames + defineProperty to mount them onto the prototype.
   if (typeof window.JapaneseMethods !== 'undefined') {
-    Object.assign(ScreenshotCapture.prototype, window.JapaneseMethods.prototype);
+    const jpProto = window.JapaneseMethods.prototype;
+    for (const name of Object.getOwnPropertyNames(jpProto)) {
+      if (name === 'constructor') continue;
+      Object.defineProperty(
+        ScreenshotCapture.prototype,
+        name,
+        Object.getOwnPropertyDescriptor(jpProto, name)
+      );
+    }
   }
 
 }
