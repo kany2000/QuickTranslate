@@ -1,6 +1,6 @@
 {
   "name": "quicktranslate",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "private": true,
   "description": "QuickTranslate 快译 - 模块化浏览器翻译扩展 (Manifest V3)",
   "scripts": {

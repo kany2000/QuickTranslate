@@ -47,7 +47,7 @@ const HOVER_BUBBLE_LINGER_MS = 2000;
 
 /**
  * QuickTranslate - Quick Translation Panel
- * Version: 3.3.2
+ * Version: 3.3.3
  * 快捷翻译面板 - 选中文字即可快速翻译
  */
 
