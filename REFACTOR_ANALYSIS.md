@@ -84,7 +84,7 @@ for (const name of Object.getOwnPropertyNames(jpProto)) {
 
 ## 建议的下一步（待用户确认）
 
-- **B 浏览器回归（最后一步）**：重新加载插件，用 `window.` 前缀自检（`typeof window.ScreenshotCapture.prototype.translateJapaneseToChinese === 'function'`）或离线截图跑一次本地日语引擎，彻底闭环 B。在线路径你已测过没问题。
+- **B 浏览器回归（最后一步）**：重新加载插件，在 DevTools Console 把「执行上下文」切到内容脚本世界后做裸名自检（`typeof ScreenshotCapture.prototype.translateJapaneseToChinese === 'function'`），或直接离线截图跑一次本地日语引擎，彻底闭环 B。在线路径你已测过没问题。
 - 后续 Stage 3/4（DOM 文本抽取引擎、结果弹窗 UI 外提）视回归结果再推进，均用同源型挂载式；每步先备份、独立提交、可回滚，并跑 `npm test` 确认挂载回归。
 - 不建议做 C（删 background switch-case 会破坏多引擎对比）。
 
@@ -92,19 +92,28 @@ for (const name of Object.getOwnPropertyNames(jpProto)) {
 
 在页面 DevTools 控制台直接敲 `typeof ScreenshotCapture` 会报 `ReferenceError: ScreenshotCapture is not defined` —— **这不是 bug，是隔离世界导致的可见性问题**：
 
-- Chrome 扩展的 content script 运行在「隔离世界」，其顶层 `class ScreenshotCapture` / `JapaneseMethods` 是隔离世界内的词法绑定，不在页面的主世界全局作用域里，所以页面控制台（默认在主世界求值）看不到。
-- 但代码里显式把它们挂到了共享的 `window` 上（content.js:3760 `window.ScreenshotCapture`、:3781 `window.screenshotCaptureInstance` 实例、content-japanese.js:2600 `window.JapaneseMethods`）；`window` 是跨世界共享对象，所以可用 `window.` 前缀访问。
+- Chrome 扩展的 content script 运行在「隔离世界」，其顶层 `class ScreenshotCapture` / `JapaneseMethods` 是隔离世界内的词法绑定，不在页面的主世界全局作用域里，所以页面控制台（默认在主世界求值）看不到 `ScreenshotCapture` 这种**词法绑定**。
+- 代码里虽然显式赋值了 `window.ScreenshotCapture = ScreenshotCapture`（content.js:2586）、`window.screenshotCaptureInstance`（:2607）、`window.JapaneseMethods`/`window.TextExtractMethods`（各拆分文件末尾）——但**隔离世界里每个世界各自持有一份 `window` 属性层，内容脚本对 `window` 的赋值对页面主世界不可见**。因此在页面主世界控制台里用 `window.ScreenshotCapture` 依然是 `undefined`（正是你遇到的 `Cannot read properties of undefined (reading 'prototype')`）。**`window.` 前缀救不了跨世界可见性。**
 
-**正确的控制台自检（用 `window.` 前缀）**：
+**正确的两种验证方式（二选一即可）**：
 
+**① 真正有用的控制台自检 —— 切换「执行上下文」到内容脚本世界**
+页面主世界控制台看不到内容脚本。解决办法是让 DevTools 在内容脚本世界求值：
+1. F12 打开 DevTools → 切到 **Console** 面板。
+2. 看 Console 面板**左上角**有个下拉（默认显示当前页面地址，如 `https://...` 或 `top`）。点开它。
+3. 在下拉里找一个**以 `content.js` / `content-japanese.js` / `content-text-extract.js` 命名、或归属本扩展**的上下文项，选中它（切到内容脚本世界后，词法绑定 `ScreenshotCapture` 才可见）。
+4. 现在**不要写 `window.` 前缀**，直接输裸名：
 ```js
-typeof window.ScreenshotCapture                                   // 期望 "function"
-typeof window.screenshotCaptureInstance                            // 期望 "object"
-typeof window.ScreenshotCapture.prototype.translateJapaneseToChinese  // 期望 "function"
-// 直接对真实实例调用：既验证挂载、又跑通引擎
-window.screenshotCaptureInstance.translateJapaneseToChinese('日本語を勉強します')
-// 期望：返回含中文的结果（如带「日语/学习」），不报错、不为 undefined
+typeof ScreenshotCapture                                            // 期望 "function"
+typeof ScreenshotCapture.prototype.extractTextFromArea              // 期望 "function"  (Stage 3 抽取引擎)
+typeof ScreenshotCapture.prototype.translateJapaneseToChinese       // 期望 "function"  (日语引擎)
 ```
+> 若下拉里没有内容脚本上下文（少数 Chrome 版本/配置看不到），直接用方法 ②，不必纠结。
 
-- 若 `window.ScreenshotCapture` 仍 `undefined`：点控制台顶部的「执行上下文」下拉（显示页面 URL / top），切到扩展 / content script 上下文再试；或直接用「离线截图翻译」（DevTools → Network → Offline 节流，框选日文含假名区域）做端到端验证——这条不依赖控制台世界，最权威。
+**② 真实功能测试（最权威、零控制台技巧，强烈推荐）**
+不依赖任何控制台世界，直接触发真实代码路径，挂载一旦失败会当场抛 `is not a function`：
+- 验证 `extractTextFromArea`（Stage 3 抽引擎）：在任意网页**选中一段文字**触发划词/选区翻译，或**截图翻译框选文本区域**；能正常出结果、控制台无报错即证明挂载成功。
+- 验证 `translateJapaneseToChinese`（日语引擎）：DevTools → **Network** → 节流设为 **Offline**（或 Block 翻译 API 域名）强制走本地兜底；打开含**假名**的日文页面（如日文维基词条）截图翻译框选日文；出现本地词典中文结果、无报错即证明日语引擎挂载成功。
+
+> 代码层已用 Node `vm` 沙箱实测（回归脚本 `scripts/regression-jp-engine.js` PASS：JP 引擎 50/50 + DOM 引擎 30/30 挂载、端到端日语翻译跑通），所以挂载逻辑本身正确；以上浏览器步骤是最终闭环确认。
 - 隔离世界可见性不影响功能本身：在线翻译走 background 主路径，本地日语引擎仅在在线失败时经 `fallbackTranslate` 兜底触发。
