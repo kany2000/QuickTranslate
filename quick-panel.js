@@ -42,6 +42,9 @@
   }
 })();
 
+// 悬停气泡：鼠标移开 / 松开 Alt 后的停留宽限时长（毫秒）
+const HOVER_BUBBLE_LINGER_MS = 2000;
+
 /**
  * QuickTranslate - Quick Translation Panel
  * Version: 3.3.2
@@ -395,6 +398,8 @@ class QuickTranslationPanel {
     if (e.key !== 'Alt') return;
     console.log('Quick panel: Alt key down');
     this.altWasPressed = true;
+    // 按下 Alt 即刻翻译光标下的词，无需再移动鼠标（lastMouseX/Y 已持续更新且有坐标守卫）
+    this.doHoverTranslate();
   }
 
   handleHoverKeyUp(e) {
@@ -407,9 +412,15 @@ class QuickTranslationPanel {
       this.hoverTimeout = null;
     }
 
-    // 隐藏气泡并清除状态
-    this.hideHoverBubble();
-    this.currentText = '';
+    // 松开 Alt：若翻译仍在进行，等结果出来再按宽限期隐藏；否则延迟 HOVER_BUBBLE_LINGER_MS 再隐藏
+    // 注意：此处不立即清空 currentText，否则结果渲染时会因 text !== currentText 被跳过；清空由 hideHoverBubble 完成
+    if (this._hoverPendingText) {
+      this._hoverHideOnResult = true;
+      this._hoverHideOnResultDelay = HOVER_BUBBLE_LINGER_MS;
+    } else {
+      if (this.hoverBubbleHideTimer) clearTimeout(this.hoverBubbleHideTimer);
+      this.hoverBubbleHideTimer = setTimeout(() => this.hideHoverBubble(), HOVER_BUBBLE_LINGER_MS);
+    }
   }
 
   handleHoverMove(e) {
@@ -433,7 +444,16 @@ class QuickTranslationPanel {
     const text = this.getWordAtPoint(x, y);
 
     if (!text || text.length < 2) {
-      this.hideHoverBubble();
+      // 鼠标移到空白处：若翻译仍在进行，等结果出来再按宽限期隐藏；否则延迟 HOVER_BUBBLE_LINGER_MS 再隐藏
+      if (this.hoverBubble && this.hoverBubble.style.display !== 'none') {
+        if (this._hoverPendingText) {
+          this._hoverHideOnResult = true;
+          this._hoverHideOnResultDelay = HOVER_BUBBLE_LINGER_MS;
+        } else {
+          if (this.hoverBubbleHideTimer) clearTimeout(this.hoverBubbleHideTimer);
+          this.hoverBubbleHideTimer = setTimeout(() => this.hideHoverBubble(), HOVER_BUBBLE_LINGER_MS);
+        }
+      }
       return;
     }
 
@@ -449,7 +469,9 @@ class QuickTranslationPanel {
 
     if (text === this.currentText && this.hoverBubble.style.display !== 'none') {
       this.hoverBubble.style.display = 'block';
-      // 重置10秒自动隐藏计时器
+      // 重置10秒自动隐藏计时器（用户仍悬停在同一词上，取消之前的"待结果后隐藏"宽限）
+      this._hoverHideOnResult = false;
+      this._hoverHideOnResultDelay = null;
       if (this.hoverBubbleHideTimer) {
         clearTimeout(this.hoverBubbleHideTimer);
       }
@@ -463,13 +485,11 @@ class QuickTranslationPanel {
     resultEl.innerHTML = `<span class="hover-loading">${this.t('quick.msg.translating')}</span>`;
     this.hoverBubble.style.display = 'block';
 
-    // 10秒后自动隐藏气泡
-    if (this.hoverBubbleHideTimer) {
-      clearTimeout(this.hoverBubbleHideTimer);
-    }
-    this.hoverBubbleHideTimer = setTimeout(() => {
-      this.hideHoverBubble();
-    }, 10000);
+    // 翻译进行中：结果回来前不启动消失倒计时（由 performHoverTranslate 在结果渲染后启动）
+    // 用户又悬停了新词，取消之前的"待结果后隐藏"宽限标记
+    this._hoverPendingText = text;
+    this._hoverHideOnResult = false;
+    this._hoverHideOnResultDelay = null;
 
     this.performHoverTranslate(text);
   }
@@ -484,14 +504,13 @@ class QuickTranslationPanel {
           this._hoverTranslation = multiResult.results.google || Object.values(multiResult.results)[0] || text;
           this.showMultiEngineHoverResults(multiResult, text);
         }
-        return;
       } else {
         translatedText = await this.translateText(text);
-      }
-      if (this.hoverBubble && text === this.currentText) {
-        this._hoverTranslation = translatedText;
-        const resultEl = this.hoverBubble.querySelector('.hover-result');
-        resultEl.textContent = translatedText;
+        if (this.hoverBubble && text === this.currentText) {
+          this._hoverTranslation = translatedText;
+          const resultEl = this.hoverBubble.querySelector('.hover-result');
+          resultEl.textContent = translatedText;
+        }
       }
     } catch (error) {
       if (this.hoverBubble && text === this.currentText) {
@@ -499,6 +518,22 @@ class QuickTranslationPanel {
         const resultEl = this.hoverBubble.querySelector('.hover-result');
         resultEl.innerHTML = `<span class="hover-error">${error.message}</span>`;
       }
+    }
+    // 翻译结果已渲染（或确认无需渲染）后，才开始计算消失倒计时
+    if (this._hoverPendingText === text) this._hoverPendingText = null;
+    this._startHoverHideAfterResult(text);
+  }
+
+  // 结果渲染后启动消失倒计时：若用户已移走/松手则按宽限期，否则按 10 秒兜底
+  _startHoverHideAfterResult(text) {
+    if (!(this.hoverBubble && text === this.currentText)) return;
+    if (this.hoverBubbleHideTimer) clearTimeout(this.hoverBubbleHideTimer);
+    if (this._hoverHideOnResult) {
+      this.hoverBubbleHideTimer = setTimeout(() => this.hideHoverBubble(), this._hoverHideOnResultDelay || HOVER_BUBBLE_LINGER_MS);
+      this._hoverHideOnResult = false;
+      this._hoverHideOnResultDelay = null;
+    } else {
+      this.hoverBubbleHideTimer = setTimeout(() => this.hideHoverBubble(), 10000);
     }
   }
 

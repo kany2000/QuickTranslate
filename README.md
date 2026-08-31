@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.3.2-667EEA?style=for-the-badge" alt="Version 3.3.2"/>
+  <img src="https://img.shields.io/badge/version-3.3.3-667EEA?style=for-the-badge" alt="Version 3.3.3"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/模块系统-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -103,6 +103,7 @@ git clone https://github.com/kany2000/QuickTranslate.git
 | 快捷键 | 操作 |
 |---|---|
 | `Alt+1` | 智能翻译（自动检测→目标语言）|
+| `Alt` + 悬停 | 悬浮翻译（需先在设置中启用）|
 | `Ctrl+Shift+Q` | 打开浮动面板 |
 
 ## 🛠️ 开发
@@ -133,7 +134,7 @@ QuickTranslate/
 ### 构建发布
 
 ```bash
-powershell -File build-release.ps1 -Version "3.3.2"
+powershell -File build-release.ps1 -Version "3.3.3"
 ```
 
 ## 📄 许可证
@@ -143,5 +144,5 @@ MIT — 详见 [LICENSE](LICENSE)。
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.3.2
+  Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.3.3
 </p>

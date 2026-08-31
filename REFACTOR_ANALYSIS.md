@@ -27,7 +27,7 @@
 | 项 | 风险 | 状态 |
 |---|---|---|
 | A. 删除 `content.js` 冗余 mymemory 兜底，统一依赖 background 兜底 | 中 | ✅ **已完成 + 浏览器验证通过**（2026-08-30）：`callGoogleTranslate` 的 catch 改为统一走 background `translateText`，并删除 content 内 `callBackupTranslateService` 方法 |
-| B. 拆分 `content.js`（6387 行 god-class，原型挂载式） | 高（已用原型挂载式降至低） | ✅ **Stages 1+2 已完成 + 关键 bug 已修复**（2026-08-31）；**Stage 3 已完成**（2026-08-31）：DOM 文本抽取引擎外提到 `content-text-extract.js`，content.js 3773→2597 行；挂载改用 `getOwnPropertyNames`+`defineProperty`（见下） |
+| B. 拆分 `content.js`（6387 行 god-class，原型挂载式） | 高（已用原型挂载式降至低） | ✅ **Stages 1+2 已完成 + 关键 bug 已修复**（2026-08-31）；**Stage 3 已完成**（2026-08-31，浏览器验证零报错）；**Stage 4 已完成**（2026-08-31）：结果弹窗/overlay 渲染引擎外提到 `content-ui.js`，content.js 2610→2124 行；挂载均用 `getOwnPropertyNames`+`defineProperty`（见下） |
 | C. 移除 background switch-case 兜底 | 高 | **不建议**（会破坏多引擎对比） |
 
 ## Task B 拆分实施（原型挂载式，Stages 1+2）
@@ -42,9 +42,9 @@
 - 提交：`c8ea4d3`（回滚主锚点：`pre-task-b` tag）。
 
 **待做（后续 Stage，同法可继续）**：
-- Stage 3 ✅ **已完成**（2026-08-31）：DOM 文本抽取引擎（`content.js` 原 L590–L1777，约 1188 行、30 个方法）外提到 `content-text-extract.js`（`class TextExtractMethods`）。`content.js` 从 3783 → **2597 行**；manifest 在 `content.js` 之前加载 `content-text-extract.js`；回归测试已扩展覆盖（30/30 挂载）。提交前回滚锚点 `pre-stage-3` tag。
-- Stage 4：结果弹窗/overlay 渲染方法（原 `createResultModal`/`showTranslationResult` 起，`content.js` 现约 L3270+）外提为 `content-ui.js`。同一原型挂载式，调用点零改动。
-- 两者均用同一原型挂载式，调用点零改动。
+- Stage 3 ✅ **已完成**（2026-08-31，浏览器验证零报错）：DOM 文本抽取引擎（`content.js` 原 L590–L1777，约 1188 行、30 个方法）外提到 `content-text-extract.js`（`class TextExtractMethods`）。`content.js` 从 3783 → **2597 行**；manifest 在 `content.js` 之前加载 `content-text-extract.js`；回归测试已扩展覆盖（30/30 挂载）。提交前回滚锚点 `pre-stage-3` tag。
+- Stage 4 ✅ **已完成**（2026-08-31）：结果弹窗/overlay 渲染引擎（`content.js` `showTranslationResult` L2082 至 `destroy` L2568，约 487 行、7 个方法）外提到 `content-ui.js`（`class UIMethods`）。`content.js` 2610 → **2124 行**；manifest 在 `content.js` 之前加载 `content-ui.js`；回归测试已扩展覆盖（JP 50/50 + DOM 30/30 + UI 7/7 挂载 + 端到端日语翻译跑通）。提交前回滚锚点 `pre-stage-4` tag @ `0e26bc4`。
+- Task B 全部 Stage（1+2 / 3 / 4）现已完成；`content.js` 从 6387 行降至 **2124 行**。下一步：浏览器回归验证 Stage 4（结果弹窗渲染），并视情况更新 README/CHANGELOG。
 
 ## 关键 Bug 修复（2026-08-31，静态+动态冒烟测试发现并修复）
 

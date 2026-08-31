@@ -1583,7 +1583,15 @@ ${text}`;
     // 1. Google（与 LLM 并行）
     const googleTask = (async () => {
       if (toggles['engine-google'] !== false) {
-        try { results.google = await this.callGoogleTranslate(text, sourceLang, targetLang); }
+        try {
+          const cached = await this._checkCache(text, sourceLang, targetLang, 'google');
+          if (cached !== null) {
+            results.google = cached;
+          } else {
+            results.google = await this.callGoogleTranslate(text, sourceLang, targetLang);
+            this._setCache(text, sourceLang, targetLang, results.google, 'google').catch(() => {});
+          }
+        }
         catch (e) { errors.google = e.message; }
       }
     })();
@@ -1592,7 +1600,15 @@ ${text}`;
     const msTask = (async () => {
       const ak = settings.apiKeys?.microsoft;
       if (ak && toggles['engine-microsoft'] !== false) {
-        try { results.microsoft = await this.callMicrosoftTranslate(text, sourceLang, targetLang, ak); }
+        try {
+          const cached = await this._checkCache(text, sourceLang, targetLang, 'microsoft');
+          if (cached !== null) {
+            results.microsoft = cached;
+          } else {
+            results.microsoft = await this.callMicrosoftTranslate(text, sourceLang, targetLang, ak);
+            this._setCache(text, sourceLang, targetLang, results.microsoft, 'microsoft').catch(() => {});
+          }
+        }
         catch (e) { errors.microsoft = e.message; }
       }
     })();
@@ -1609,7 +1625,13 @@ ${text}`;
             const bu = cfg.baseUrl || s['moduleSettings.engine-custom']?.baseUrl;
             const mod = cfg.model || s['moduleSettings.engine-custom']?.model;
             if (ak && bu && mod) {
-              results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: mod });
+              const cached = await this._checkCache(text, sourceLang, targetLang, 'llm');
+              if (cached !== null) {
+                results.llm = cached;
+              } else {
+                results.llm = await this.callCustomLLMTranslate(text, sourceLang, targetLang, ak, { baseUrl: bu, model: mod });
+                this._setCache(text, sourceLang, targetLang, results.llm, 'llm').catch(() => {});
+              }
             } else { errors.llm = 'LLM 配置不完整'; }
           } catch (e) { errors.llm = e.message; }
         })());
@@ -1620,7 +1642,15 @@ ${text}`;
           try {
             const s = await chrome.storage.local.get(['apiKeys', 'moduleSettings.engine-glm']);
             const ak = s.apiKeys?.glm || s['moduleSettings.engine-glm']?.apiKey;
-            if (ak) results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, ak);
+            if (ak) {
+              const cached = await this._checkCache(text, sourceLang, targetLang, 'glm');
+              if (cached !== null) {
+                results.glm = cached;
+              } else {
+                results.glm = await this.callGLMTranslate(text, sourceLang, targetLang, ak);
+                this._setCache(text, sourceLang, targetLang, results.glm, 'glm').catch(() => {});
+              }
+            }
           } catch (e) { errors.glm = e.message; }
         })());
       }

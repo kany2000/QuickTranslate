@@ -5,6 +5,20 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 並且本項目遵循 [語義化版本](https://semver.org/lang/zh-CN/).
 
+## [3.3.3] - 2026-09-01
+
+### ✨ 新增 / Added
+- **悬浮翻譯開關補回**：popup 高級設置補回「啟用懸浮翻譯 (按 Alt 鍵懸停翻譯)」開關。此為歷史遺留的 UI 缺口——此前該開關在界面上根本不存在，導致 Alt 懸停翻譯預設關閉且永遠無法從界面開啟
+
+### 🔧 修復 / Fixed
+- **懸浮翻譯觸發延遲**：Alt 按下即觸發翻譯，無須再移動滑鼠（原僅在 mousemove 且 Alt 按住時觸發，按鍵不動則無反應）
+- **懸浮氣泡過早消失**：消失倒計時改為「翻譯結果渲染完成後才開始計算」，修復「翻譯還沒出來氣泡就消失」；翻譯在途時鬆手/移開不立即隱藏，待結果回傳後按 2 秒（移開/鬆手）或 10 秒（仍懸停）倒計時
+- **多引擎懸浮快取缺失**：`translateMultiEngine` 補回 Google / Microsoft / LLM / GLM 四引擎快取查詢（`_checkCache`/`_setCache`），多引擎模式下重複詞秒回
+- **常量作用域 ReferenceError**：`HOVER_BUBBLE_LINGER_MS` 移出 IIFE 至模組作用域，修復內容腳本 `is not defined`
+
+### 🏗️ 變更 / Changed
+- 懸浮氣泡在滑鼠移開 / 鬆開 Alt 後延遲 2 秒隱藏（原瞬時消失），方便閱讀與複製；停留時長由常量 `HOVER_BUBBLE_LINGER_MS` 統一控制
+
 ## [3.3.2] - 2026-07-10
 
 ### 🔧 修復 / Fixed

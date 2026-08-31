@@ -625,6 +625,11 @@ class PopupController {
     this.elements.multiEngineEnabled.checked = this.settings.multiEngineEnabled || false;
     this.elements.minSelectionLength.value = this.settings.minSelectionLength || 2;
 
+    // 更新懸浮翻譯設置（回填勾選態，確保開啟後重開設置不會誤顯為關閉）
+    if (this.elements.hoverTranslationEnabled) {
+      this.elements.hoverTranslationEnabled.checked = this.settings.hoverTranslationEnabled || false;
+    }
+
     // 更新 API Key（根据 provider 显示对应的输入框）
     this.elements.microsoftApiKey.value = this.settings.apiKeys?.microsoft || '';
     this.elements.glmApiKey.value = this.settings.apiKeys?.glm || '';
