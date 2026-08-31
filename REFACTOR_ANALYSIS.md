@@ -70,6 +70,9 @@ for (const name of Object.getOwnPropertyNames(jpProto)) {
 
 **结论**：挂载正确性已从"靠静态推断"升级为"动态实测验证"。剩余浏览器回归仅作双保险。
 
+**回归脚本（已入库）**：`scripts/regression-jp-engine.js` —— 在 Node `vm` 沙箱（模拟经典脚本语义）加载 `content-japanese.js`+`content.js`，断言 (1) `JapaneseMethods.prototype` 的全部方法（含 non-enumerable 的 class 方法）已挂到 `ScreenshotCapture.prototype`；(2) 真实实例可端到端调用 `translateJapaneseToChinese` / `smartTranslateEnglish` 且不抛错。失败则 `exit 1`，可接入 CI。运行：`npm run test:jp-engine`（或 `npm test` 含语法校验）。
+> 该脚本专门防「`Object.assign` 静默漏拷 class 方法」这一类回归——未来做 Stage 3/4 若再动挂载逻辑，一键即可拦截。
+
 ## 已完成清单
 
 - [x] 删除死代码 `src/`、`i18n.js.bak`
@@ -77,9 +80,31 @@ for (const name of Object.getOwnPropertyNames(jpProto)) {
 - [x] A：content.js 截图翻译兜底统一到 background（删除重复的 mymemory 实现）
 - [x] B（Stages 1+2）：日/韩/英语翻译引擎外提到 content-japanese.js（content.js 6355→3773 行）
 - [x] **关键修复**：挂载改用 `getOwnPropertyNames`+`defineProperty`（class 方法 non-enumerable，`Object.assign` 原会漏拷 → 51 个引擎方法全丢）；Node vm 动态实测 50/50 挂载 + 端到端日语翻译跑通
+- [x] 回归脚本：`scripts/regression-jp-engine.js`（vm 沙箱断言 50/50 挂载 + 端到端调用），`npm run test:jp-engine` / `npm test` 可一键验证，防止挂载类回归重演
 
 ## 建议的下一步（待用户确认）
 
-- **B 待浏览器回归**：Stage 1+2 已提交（c8ea4d3），请重新加载插件实测——重点：日语截图翻译、多引擎对比、单条划词翻译兜底链路。异常则 `git reset --hard pre-task-b` 回滚。
-- 后续 Stage 3/4（DOM 文本抽取引擎、结果弹窗 UI 外提）视回归结果再推进，均用同源型挂载式。
+- **B 浏览器回归（最后一步）**：重新加载插件，用 `window.` 前缀自检（`typeof window.ScreenshotCapture.prototype.translateJapaneseToChinese === 'function'`）或离线截图跑一次本地日语引擎，彻底闭环 B。在线路径你已测过没问题。
+- 后续 Stage 3/4（DOM 文本抽取引擎、结果弹窗 UI 外提）视回归结果再推进，均用同源型挂载式；每步先备份、独立提交、可回滚，并跑 `npm test` 确认挂载回归。
 - 不建议做 C（删 background switch-case 会破坏多引擎对比）。
+
+## 测试须知（Chrome 隔离世界 / isolated world）
+
+在页面 DevTools 控制台直接敲 `typeof ScreenshotCapture` 会报 `ReferenceError: ScreenshotCapture is not defined` —— **这不是 bug，是隔离世界导致的可见性问题**：
+
+- Chrome 扩展的 content script 运行在「隔离世界」，其顶层 `class ScreenshotCapture` / `JapaneseMethods` 是隔离世界内的词法绑定，不在页面的主世界全局作用域里，所以页面控制台（默认在主世界求值）看不到。
+- 但代码里显式把它们挂到了共享的 `window` 上（content.js:3760 `window.ScreenshotCapture`、:3781 `window.screenshotCaptureInstance` 实例、content-japanese.js:2600 `window.JapaneseMethods`）；`window` 是跨世界共享对象，所以可用 `window.` 前缀访问。
+
+**正确的控制台自检（用 `window.` 前缀）**：
+
+```js
+typeof window.ScreenshotCapture                                   // 期望 "function"
+typeof window.screenshotCaptureInstance                            // 期望 "object"
+typeof window.ScreenshotCapture.prototype.translateJapaneseToChinese  // 期望 "function"
+// 直接对真实实例调用：既验证挂载、又跑通引擎
+window.screenshotCaptureInstance.translateJapaneseToChinese('日本語を勉強します')
+// 期望：返回含中文的结果（如带「日语/学习」），不报错、不为 undefined
+```
+
+- 若 `window.ScreenshotCapture` 仍 `undefined`：点控制台顶部的「执行上下文」下拉（显示页面 URL / top），切到扩展 / content script 上下文再试；或直接用「离线截图翻译」（DevTools → Network → Offline 节流，框选日文含假名区域）做端到端验证——这条不依赖控制台世界，最权威。
+- 隔离世界可见性不影响功能本身：在线翻译走 background 主路径，本地日语引擎仅在在线失败时经 `fallbackTranslate` 兜底触发。
