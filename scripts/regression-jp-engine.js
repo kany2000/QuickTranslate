@@ -4,18 +4,22 @@
  * ------------------------
  * Headless regression test for the Task-B split of QuickTranslate.
  *
- * It loads content-japanese.js + content.js in a Node `vm` sandbox that mimics
- * Chrome's classic-script (isolated-world) semantics, then asserts:
+ * It loads content-japanese.js + content-text-extract.js + content.js in a Node
+ * `vm` sandbox that mimics Chrome's classic-script (isolated-world) semantics,
+ * then asserts:
  *   1. The Japanese/Korean/English engine class mounted onto
  *      ScreenshotCapture.prototype (every method, including the non-enumerable
  *      class methods that a naive Object.assign would silently DROP).
- *   2. The engine is actually callable end-to-end (real dictionary translation,
+ *   2. The DOM text-extraction engine class mounted onto ScreenshotCapture.prototype
+ *      (same guard: non-enumerable class methods must not be dropped).
+ *   3. The JP engine is actually callable end-to-end (real dictionary translation,
  *      not just present on the prototype).
  *
  * Why this matters: the original split used Object.assign(), which copies only
  * enumerable properties. ES class methods are NON-enumerable, so Object.assign
- * copied ZERO of the ~50 engine methods -> any local JP/KR/EN translation would
- * throw "is not a function". This script guards against that class of regression.
+ * copied ZERO of the engine methods -> any local JP/KR/EN translation or DOM
+ * text-extraction call would throw "is not a function". This script guards
+ * against that class of regression across every Stage of Task B.
  *
  * Run: `node scripts/regression-jp-engine.js`  (exit 0 = pass, 1 = fail)
  */
@@ -26,6 +30,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const jpSrc = fs.readFileSync(path.join(ROOT, 'content-japanese.js'), 'utf8');
+const teSrc = fs.readFileSync(path.join(ROOT, 'content-text-extract.js'), 'utf8');
 const ctSrc = fs.readFileSync(path.join(ROOT, 'content.js'), 'utf8');
 
 // ---- minimal browser-ish mocks (classic script globals + Chrome API stubs) ----
@@ -76,9 +81,10 @@ vm.createContext(sb);
 
 function fail(msg) { console.error('FAIL: ' + msg); process.exitCode = 1; }
 
-// ---- load order must match manifest: jp engine first, then content.js --------
+// ---- load order must match manifest: jp engine, text-extract, then content.js --
 try {
   vm.runInContext(jpSrc, sb, { filename: 'content-japanese.js' });
+  vm.runInContext(teSrc, sb, { filename: 'content-text-extract.js' });
   vm.runInContext(ctSrc, sb, { filename: 'content.js' });
 } catch (e) {
   fail('failed to load scripts: ' + e.message);
@@ -111,7 +117,25 @@ if (missing.length) {
   fail('engine methods NOT mounted: ' + missing.join(', '));
 }
 
-// 2) end-to-end: real dictionary translation must run without throwing
+// 2) DOM text-extraction engine mounted onto ScreenshotCapture.prototype
+if (typeof sb.TextExtractMethods !== 'function') {
+  fail('window.TextExtractMethods not defined after loading content-text-extract.js');
+}
+const teProto = sb.TextExtractMethods.prototype;
+const teMethods = Object.getOwnPropertyNames(teProto).filter((n) => n !== 'constructor');
+let teMounted = 0;
+const teMissing = [];
+for (const name of teMethods) {
+  if (typeof scProto[name] === 'function') teMounted++;
+  else teMissing.push(name);
+}
+console.log(`text-extract methods on TextExtractMethods.prototype : ${teMethods.length}`);
+console.log(`mounted on ScreenshotCapture.prototype              : ${teMounted}/${teMethods.length}`);
+if (teMissing.length) {
+  fail('text-extract methods NOT mounted: ' + teMissing.join(', '));
+}
+
+// 3) end-to-end: real dictionary translation must run without throwing
 const inst = sb.screenshotCaptureInstance;
 if (!inst || typeof inst.translateJapaneseToChinese !== 'function') {
   fail('screenshotCaptureInstance missing or engine not callable');

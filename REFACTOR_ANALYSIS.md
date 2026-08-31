@@ -27,7 +27,7 @@
 | 项 | 风险 | 状态 |
 |---|---|---|
 | A. 删除 `content.js` 冗余 mymemory 兜底，统一依赖 background 兜底 | 中 | ✅ **已完成 + 浏览器验证通过**（2026-08-30）：`callGoogleTranslate` 的 catch 改为统一走 background `translateText`，并删除 content 内 `callBackupTranslateService` 方法 |
-| B. 拆分 `content.js`（6387 行 god-class，原型挂载式） | 高（已用原型挂载式降至低） | ✅ **Stages 1+2 已完成 + 关键 bug 已修复**（2026-08-31）：提取日/韩/英语翻译引擎到 `content-japanese.js`，content.js 6355→3773 行；挂载改用 `getOwnPropertyNames`+`defineProperty`（见下） |
+| B. 拆分 `content.js`（6387 行 god-class，原型挂载式） | 高（已用原型挂载式降至低） | ✅ **Stages 1+2 已完成 + 关键 bug 已修复**（2026-08-31）；**Stage 3 已完成**（2026-08-31）：DOM 文本抽取引擎外提到 `content-text-extract.js`，content.js 3773→2597 行；挂载改用 `getOwnPropertyNames`+`defineProperty`（见下） |
 | C. 移除 background switch-case 兜底 | 高 | **不建议**（会破坏多引擎对比） |
 
 ## Task B 拆分实施（原型挂载式，Stages 1+2）
@@ -42,8 +42,8 @@
 - 提交：`c8ea4d3`（回滚主锚点：`pre-task-b` tag）。
 
 **待做（后续 Stage，同法可继续）**：
-- Stage 3：DOM 文本抽取引擎（content.js 原 L590–L1668）外提为 `content-text-extract.js`。
-- Stage 4：结果弹窗/overlay 渲染方法（原 L5858 起）外提为 `content-ui.js`。
+- Stage 3 ✅ **已完成**（2026-08-31）：DOM 文本抽取引擎（`content.js` 原 L590–L1777，约 1188 行、30 个方法）外提到 `content-text-extract.js`（`class TextExtractMethods`）。`content.js` 从 3783 → **2597 行**；manifest 在 `content.js` 之前加载 `content-text-extract.js`；回归测试已扩展覆盖（30/30 挂载）。提交前回滚锚点 `pre-stage-3` tag。
+- Stage 4：结果弹窗/overlay 渲染方法（原 `createResultModal`/`showTranslationResult` 起，`content.js` 现约 L3270+）外提为 `content-ui.js`。同一原型挂载式，调用点零改动。
 - 两者均用同一原型挂载式，调用点零改动。
 
 ## 关键 Bug 修复（2026-08-31，静态+动态冒烟测试发现并修复）
@@ -70,8 +70,8 @@ for (const name of Object.getOwnPropertyNames(jpProto)) {
 
 **结论**：挂载正确性已从"靠静态推断"升级为"动态实测验证"。剩余浏览器回归仅作双保险。
 
-**回归脚本（已入库）**：`scripts/regression-jp-engine.js` —— 在 Node `vm` 沙箱（模拟经典脚本语义）加载 `content-japanese.js`+`content.js`，断言 (1) `JapaneseMethods.prototype` 的全部方法（含 non-enumerable 的 class 方法）已挂到 `ScreenshotCapture.prototype`；(2) 真实实例可端到端调用 `translateJapaneseToChinese` / `smartTranslateEnglish` 且不抛错。失败则 `exit 1`，可接入 CI。运行：`npm run test:jp-engine`（或 `npm test` 含语法校验）。
-> 该脚本专门防「`Object.assign` 静默漏拷 class 方法」这一类回归——未来做 Stage 3/4 若再动挂载逻辑，一键即可拦截。
+**回归脚本（已入库）**：`scripts/regression-jp-engine.js` —— 在 Node `vm` 沙箱（模拟经典脚本语义）按 manifest 顺序加载 `content-japanese.js` + `content-text-extract.js` + `content.js`，断言 (1) `JapaneseMethods.prototype` 的全部方法（含 non-enumerable 的 class 方法）已挂到 `ScreenshotCapture.prototype`；(2) `TextExtractMethods.prototype` 的全部方法同样已挂载（30/30）；(3) 真实实例可端到端调用 `translateJapaneseToChinese` / `smartTranslateEnglish` 且不抛错。失败则 `exit 1`，可接入 CI。运行：`npm run test:jp-engine`（或 `npm test` 含语法校验）。
+> 该脚本专门防「`Object.assign` 静默漏拷 class 方法」这一类回归——未来做 Stage 4 若再动挂载逻辑，一键即可拦截。
 
 ## 已完成清单
 
