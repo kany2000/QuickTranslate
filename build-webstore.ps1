@@ -17,6 +17,9 @@ Write-Host ""
 $Files = @(
     "manifest.json",
     "background.js",
+    "content-japanese.js",
+    "content-text-extract.js",
+    "content-ui.js",
     "content.js",
     "content.css",
     "quick-panel.js",
