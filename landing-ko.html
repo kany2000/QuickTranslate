@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickTranslate - 빠른 번역 | Chrome 확장</title>
-  <meta name="description" content="QuickTranslate - 브라우저 텍스트 선택 시 즉시 번역. Google/DeepL/百度 등 여러 번역 엔진 지원. 영어 학습, 해외 사이트浏览에 최고. 무료 다운로드.">
-  <meta name="keywords" content="빠른 번역,chrome 확장,웹 번역,브라우저 번역,영어 학습,번역 도구,QuickTranslate">
+  <title>QuickTranslate - 즉시 번역 엔진 | Chrome 확장 프로그램</title>
+  <meta name="description" content="QuickTranslate — DOM 텍스트 추출과 모듈형 아키텍처를 적용한 Chrome 번역 확장 프로그램입니다. 선택 번역, 호버 번역, 다중 엔진, 단어장을 갖춰 정확하고 즉시, 효율적으로 번역합니다.">
+  <meta name="keywords" content="빠른 번역,chrome 확장,웹 번역,브라우저 번역,호버 번역,AI 번역,영어 학습,번역 도구,QuickTranslate">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://qtrans.737703.xyz/landing-ko.html">
   <meta name="author" content="kany2000">
   <!-- Open Graph -->
-  <meta property="og:title" content="QuickTranslate - 빠른 번역 | Chrome 확장">
-  <meta property="og:description" content="다중 번역 엔진 지원 웹 페이지 번역 브라우저 확장">
+  <meta property="og:title" content="QuickTranslate - 즉시 번역 엔진 | Chrome 확장 프로그램">
+  <meta property="og:description" content="DOM 텍스트 추출 + 모듈형 아키텍처. 선택 번역, 호버 번역, 다중 엔진으로 정확하고 즉시.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://qtrans.737703.xyz/landing-ko.html">
   <meta property="og:image" content="https://qtrans.737703.xyz/icons/icon128.png">
   <meta property="og:locale" content="ko_KR">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="QuickTranslate - 빠른 번역 | Chrome 확장">
-  <meta name="twitter:description" content="다중 번역 엔진 지원 웹 페이지 번역 브라우저 확장">
+  <meta name="twitter:title" content="QuickTranslate - 즉시 번역 엔진 | Chrome 확장 프로그램">
+  <meta name="twitter:description" content="DOM 텍스트 추출 + 모듈형 아키텍처. 선택 번역, 호버 번역, 다중 엔진 지원.">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-85LVY5M4TH"></script>
   <script>
@@ -33,1000 +33,527 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon128.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --gradient-start: #667eea;
-      --gradient-end: #764ba2;
-      --bg-dark: #0a0a0f;
-      --bg-dark-secondary: #12121a;
-      --bg-dark-tertiary: #1a1a25;
-      --text-dark: #ffffff;
-      --text-dark-secondary: #a0a0b0;
-      --card-bg-dark: rgba(255,255,255,0.03);
-      --card-border-dark: rgba(255,255,255,0.08);
-      --glow-dark: rgba(102,126,234,0.3);
+      --accent-1: #6366f1;
+      --accent-2: #8b5cf6;
+      --accent-3: #22d3ee;
+      --grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 52%, #22d3ee 100%);
 
-      --bg-light: #f8f9fc;
-      --bg-light-secondary: #ffffff;
-      --bg-light-tertiary: #f0f1f5;
-      --text-light: #1a1a2e;
-      --text-light-secondary: #6b6b80;
-      --card-bg-light: rgba(255,255,255,0.8);
-      --card-border-light: rgba(0,0,0,0.08);
-      --glow-light: rgba(102,126,234,0.2);
-    }
-
-    [data-theme="dark"] {
-      --bg: var(--bg-dark);
-      --bg-secondary: var(--bg-dark-secondary);
-      --bg-tertiary: var(--bg-dark-tertiary);
-      --text: var(--text-dark);
-      --text-secondary: var(--text-dark-secondary);
-      --card-bg: var(--card-bg-dark);
-      --card-border: var(--card-border-dark);
-      --glow: var(--glow-dark);
+      --bg: #0a0b14;
+      --bg-2: #0e1020;
+      --surface: rgba(255,255,255,0.045);
+      --surface-2: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.09);
+      --border-strong: rgba(255,255,255,0.16);
+      --text: #eef0f7;
+      --text-2: #9aa0b5;
+      --glow: rgba(99,102,241,0.45);
+      --grid: rgba(255,255,255,0.035);
+      --hero-vid-o: 0.6;
+      --hero-vid-b: 1;
+      --glass-bg: rgba(12, 14, 28, 0.62);
     }
 
     [data-theme="light"] {
-      --bg: var(--bg-light);
-      --bg-secondary: var(--bg-light-secondary);
-      --bg-tertiary: var(--bg-light-tertiary);
-      --text: var(--text-light);
-      --text-secondary: var(--text-light-secondary);
-      --card-bg: var(--card-bg-light);
-      --card-border: var(--card-border-light);
-      --glow: var(--glow-light);
+      --bg: #f5f6fb;
+      --bg-2: #ffffff;
+      --surface: rgba(15,23,42,0.035);
+      --surface-2: rgba(15,23,42,0.05);
+      --border: rgba(15,23,42,0.09);
+      --border-strong: rgba(15,23,42,0.16);
+      --text: #0f172a;
+      --text-2: #51607a;
+      --glow: rgba(99,102,241,0.28);
+      --grid: rgba(15,23,42,0.04);
+      --hero-vid-o: 0.7;
+      --hero-vid-b: 1.02;
+      --glass-bg: rgba(255, 255, 255, 0.78);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
+      line-height: 1.6;
       transition: background 0.4s ease, color 0.4s ease;
     }
+    h1, h2, h3, .display { font-family: 'Space Grotesk', 'Manrope', sans-serif; letter-spacing: -0.02em; }
 
-    /* Theme Toggle */
-    .theme-toggle {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index: 1000;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 1px solid var(--card-border);
-      background: var(--bg-secondary);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
+    /* ===== Background decoration ===== */
+    .bg-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .bg-grid {
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
     }
-    .theme-toggle:hover {
-      transform: scale(1.1);
-      border-color: var(--gradient-start);
-      box-shadow: 0 0 20px var(--glow);
+    .bg-aurora { filter: blur(90px); opacity: 0.55; }
+    .bg-aurora span {
+      position: absolute; border-radius: 50%; mix-blend-mode: screen;
+    }
+    .bg-aurora .a1 { width: 520px; height: 520px; left: -120px; top: -100px;
+      background: radial-gradient(circle, #6366f1, transparent 65%); animation: drift1 22s ease-in-out infinite; }
+    .bg-aurora .a2 { width: 460px; height: 460px; right: -100px; top: 120px;
+      background: radial-gradient(circle, #22d3ee, transparent 65%); animation: drift2 26s ease-in-out infinite; }
+    .bg-aurora .a3 { width: 480px; height: 480px; left: 35%; bottom: -160px;
+      background: radial-gradient(circle, #8b5cf6, transparent 65%); animation: drift3 30s ease-in-out infinite; }
+    @keyframes drift1 { 50% { transform: translate(80px, 60px) scale(1.1); } }
+    @keyframes drift2 { 50% { transform: translate(-70px, 40px) scale(1.15); } }
+    @keyframes drift3 { 50% { transform: translate(40px, -60px) scale(1.08); } }
+
+    /* Particles */
+    #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .particle { position: absolute; width: 3px; height: 3px; border-radius: 50%;
+      background: var(--accent-3); opacity: 0.35; animation: float 18s infinite ease-in-out; }
+    @keyframes float {
+      0%,100% { transform: translateY(0) translateX(0); opacity: 0.25; }
+      50% { transform: translateY(-140px) translateX(30px); opacity: 0.55; }
     }
 
-    /* Language Switcher Top Right */
-    .lang-switcher-top {
-      position: fixed;
-      top: 24px;
-      right: 80px;
-      z-index: 1000;
-    }
-    .lang-dropdown {
-      position: relative;
-    }
-    .lang-dropdown-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
-      background: var(--bg-secondary);
-      color: var(--text);
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-    .lang-dropdown-btn:hover {
-      border-color: var(--gradient-start);
-      box-shadow: 0 0 20px var(--glow);
-    }
-    .lang-arrow {
-      font-size: 10px;
-      transition: transform 0.3s ease;
-    }
-    .lang-dropdown.open .lang-arrow {
-      transform: rotate(180deg);
-    }
-    .lang-dropdown-content {
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ===== Top Nav ===== */
+    .topnav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 28px; backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--bg) 65%, transparent);
+      border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+    .brand img { width: 38px; height: 38px; border-radius: 10px; box-shadow: 0 6px 18px var(--glow); }
+    .brand b { font-family: 'Space Grotesk'; font-size: 19px; font-weight: 700; }
+    .brand span { font-size: 12px; color: var(--text-2); letter-spacing: 0.04em; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+
+    .lang-dropdown { position: relative; }
+    .lang-btn { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 11px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-size: 14px; cursor: pointer; transition: all 0.25s ease; font-family: inherit; }
+    .lang-btn:hover { border-color: var(--border-strong); box-shadow: 0 0 18px var(--glow); }
+    .lang-content { position: absolute; top: calc(100% + 10px); right: 0; min-width: 168px;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: 14px; padding: 8px;
+      opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.25s ease;
+      box-shadow: 0 24px 50px rgba(0,0,0,0.35); }
+    .lang-dropdown.open .lang-content { opacity: 1; visibility: visible; transform: translateY(0); }
+    .lang-content a { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border-radius: 9px;
+      color: var(--text); text-decoration: none; font-size: 14px; transition: all 0.2s ease; }
+    .lang-content a:hover { background: var(--grad); color: #fff; }
+    .lang-content a.active { background: var(--surface-2); }
+
+    .theme-toggle { width: 44px; height: 44px; border-radius: 11px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text); cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; transition: all 0.25s ease; }
+    .theme-toggle:hover { transform: scale(1.08); border-color: var(--border-strong); box-shadow: 0 0 18px var(--glow); }
+
+    /* ===== Hero background video ===== */
+    /* ===== Hero background AI image/animation ===== */
+    .hero-bg-media {
       position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      min-width: 160px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 8px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-    .lang-dropdown.open .lang-dropdown-content {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    .lang-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      color: var(--text);
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-size: 14px;
-    }
-    .lang-option:hover {
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: white;
-    }
-    .lang-option.active {
-      background: var(--bg-tertiary);
-    }
-
-    /* Old Language Switcher (Bottom) */
-    .lang-switcher {
-      position: fixed;
-      top: 24px;
-      left: 24px;
-      z-index: 1000;
-      display: flex;
-      gap: 8px;
-    }
-    .lang-btn {
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: 1px solid var(--card-border);
-      background: var(--bg-secondary);
-      color: var(--text-secondary);
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-    .lang-btn:hover, .lang-btn.active {
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: white;
-      border-color: transparent;
-    }
-
-    /* Particles Background */
-    .particles {
-      position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-bg-media img {
       width: 100%;
       height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
+      object-fit: cover;
+      object-position: 74% center;
+      opacity: 0.88;
+      filter: saturate(1.03) contrast(1.04);
+      display: block;
     }
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: var(--gradient-start);
-      border-radius: 50%;
-      opacity: 0.3;
-      animation: float 15s infinite ease-in-out;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
-      25% { transform: translateY(-100px) translateX(50px); opacity: 0.6; }
-      50% { transform: translateY(-200px) translateX(-30px); opacity: 0.3; }
-      75% { transform: translateY(-100px) translateX(-50px); opacity: 0.5; }
-    }
-
-    /* Container */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Hero Section */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 120px 24px 80px;
-    }
-
-    .logo-container {
-      margin-bottom: 32px;
-      animation: fadeInUp 0.8s ease;
-    }
-
-    .logo {
-      width: 120px;
-      height: 120px;
-      border-radius: 28px;
-      box-shadow: 0 20px 60px rgba(102,126,234,0.3);
-      animation: pulse 3s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 20px 60px rgba(102,126,234,0.3); }
-      50% { transform: scale(1.05); box-shadow: 0 30px 80px rgba(102,126,234,0.5); }
-    }
-
-    .hero h1 {
-      font-size: clamp(48px, 8vw, 80px);
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 24px;
-      animation: fadeInUp 0.8s ease 0.2s both;
-    }
-
-    .gradient-text {
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end), #a855f7, var(--gradient-start));
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradientShift 4s ease infinite;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .tagline {
-      font-size: clamp(18px, 3vw, 24px);
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-      animation: fadeInUp 0.8s ease 0.4s both;
-    }
-
-    .typewriter {
-      font-size: clamp(16px, 2.5vw, 20px);
-      color: var(--text-secondary);
-      margin-bottom: 48px;
-      height: 32px;
-      animation: fadeInUp 0.8s ease 0.5s both;
-    }
-    .typewriter span {
-      border-right: 2px solid var(--gradient-start);
-      padding-right: 4px;
-      animation: blink 0.8s step-end infinite;
-    }
-    @keyframes blink {
-      50% { border-color: transparent; }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeInUp 0.8s ease 0.6s both;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 32px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: white;
-      box-shadow: 0 8px 30px rgba(102,126,234,0.4);
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(102,126,234,0.6);
-    }
-
-    .btn-secondary {
-      background: var(--bg-secondary);
-      color: var(--text);
-      border: 1px solid var(--card-border);
-    }
-    .btn-secondary:hover {
-      border-color: var(--gradient-start);
-      transform: translateY(-3px);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 20px;
-      background: var(--bg-tertiary);
-      font-size: 14px;
-      margin-top: 32px;
-      animation: fadeInUp 0.8s ease 0.7s both;
-    }
-    .badge-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #34a853;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    /* Section Styles */
-    section {
-      padding: 100px 0;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: clamp(32px, 5vw, 48px);
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .section-subtitle {
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 18px;
-      margin-bottom: 64px;
-    }
-
-    /* Features */
-    .features {
-      background: var(--bg-secondary);
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 32px;
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .feature-card::before {
+    /* 渐变遮罩层：左侧文字区重压暗，右侧卡片区中度压暗，机器人面部保持清晰 */
+    .hero-bg-media::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
-      transform: scaleX(0);
-      transition: transform 0.4s ease;
+      inset: 0;
+      background: radial-gradient(circle at 72% 44%, transparent 46%, var(--bg) 94%),
+                  linear-gradient(180deg, transparent 74%, var(--bg) 100%),
+                  linear-gradient(90deg, var(--bg) 6%, rgba(10,11,20,0.52) 36%, rgba(10,11,20,0.42) 68%, rgba(10,11,20,0.2) 100%);
     }
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 60px var(--glow);
-      border-color: transparent;
+    [data-theme="light"] .hero-bg-media img {
+      opacity: 0.8;
+      filter: saturate(1.0) contrast(1.03);
     }
-    .feature-card:hover::before {
-      transform: scaleX(1);
+    [data-theme="light"] .hero-bg-media::after {
+      background: radial-gradient(circle at 75% 40%, transparent 20%, var(--bg) 85%),
+                  linear-gradient(180deg, transparent 65%, var(--bg) 100%),
+                  linear-gradient(90deg, var(--bg) 28%, rgba(245,246,251,0.5) 65%, transparent 100%);
     }
 
-    .feature-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
+    /* ===== Hero (split) ===== */
+    .hero { min-height: 100dvh; display: grid; grid-template-columns: 1.05fr 0.95fr; align-items: center;
+      gap: 48px; padding: 140px 0 80px; position: relative; z-index: 1; }
+    .hero-copy .pill { display: inline-flex; align-items: center; gap: 9px; padding: 7px 15px; border-radius: 30px;
+      border: 1px solid var(--border); background: var(--surface); font-size: 13px; color: var(--text-2);
+      margin-bottom: 26px; }
+    .hero-copy .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399;
+      box-shadow: 0 0 10px #34d399; animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 50% { opacity: 0.4; } }
 
-    .feature-card h3 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
+    .hero h1 { font-size: clamp(40px, 5.4vw, 72px); font-weight: 700; line-height: 1.05; margin-bottom: 22px; }
+    .hero h1 .accent { color: var(--accent-3); }
+    .hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; }
+    .hero .sub { font-size: clamp(17px, 1.6vw, 20px); color: var(--text-2); max-width: 32ch; margin-bottom: 22px; }
+    .typed { font-size: clamp(15px, 1.4vw, 18px); color: var(--text); min-height: 26px; margin-bottom: 36px;
+      font-family: 'Space Grotesk'; }
+    .typed .cursor { display: inline-block; width: 2px; height: 1.05em; background: var(--accent-3);
+      margin-left: 3px; vertical-align: -2px; animation: blink 0.9s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
 
-    .feature-card p {
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 9px; padding: 15px 28px; border-radius: 13px;
+      font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; border: 1px solid transparent;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; font-family: inherit; }
+    .btn-primary { background: var(--grad); color: #fff; box-shadow: 0 12px 34px var(--glow); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 18px 46px var(--glow); }
+    .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .btn-ghost:hover { transform: translateY(-3px); border-color: var(--border-strong); box-shadow: 0 10px 30px var(--glow); }
 
-    /* Demo Section */
-    .demo {
-      position: relative;
-    }
+    /* Hero visual — glass translation panel */
+    .hero-visual { position: relative; display: flex; justify-content: center; }
+    .hero-visual .halo { position: absolute; width: 360px; height: 360px; border-radius: 50%;
+      background: radial-gradient(circle, var(--glow), transparent 70%); filter: blur(40px); top: 50%; left: 50%;
+      transform: translate(-50%,-50%); z-index: 0; }
+    .glass-card { position: relative; z-index: 1; width: 100%; max-width: 440px; border-radius: 22px;
+      border: 1px solid var(--border-strong); background: var(--glass-bg);
+      backdrop-filter: blur(22px) saturate(1.15); box-shadow: 0 30px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+      overflow: hidden; }
+    .glass-card .gc-head { display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .gc-head .gc-title { display: flex; align-items: center; gap: 9px; font-weight: 700; font-family: 'Space Grotesk'; }
+    .gc-head .gc-title img { width: 24px; height: 24px; border-radius: 7px; }
+    .gc-head .gc-lang { font-size: 12px; color: var(--text-2); padding: 5px 11px; border-radius: 20px;
+      border: 1px solid var(--border); }
+    .gc-body { padding: 22px 20px; }
+    .gc-row { margin-bottom: 18px; }
+    .gc-label { font-size: 12px; color: var(--text-2); margin-bottom: 8px; letter-spacing: 0.03em; }
+    .gc-box { border: 1px solid var(--border); border-radius: 13px; padding: 15px 16px; background: var(--surface);
+      font-size: 16px; min-height: 54px; position: relative; overflow: hidden; }
+    .gc-box.src { font-family: 'Space Grotesk'; }
+    .gc-box.tgt { color: var(--accent-3); border-left: 3px solid var(--accent-3); }
+    .gc-scan { position: absolute; top: 0; left: -40%; width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34,211,238,0.18), transparent); animation: scan 2.6s ease-in-out infinite; }
+    @keyframes scan { 0% { left: -40%; } 60%,100% { left: 110%; } }
+    .gc-engines { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+    .gc-chip { font-size: 11px; padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border);
+      color: var(--text-2); background: var(--surface); }
+    .gc-chip.on { color: #fff; background: var(--grad); border-color: transparent; }
 
-    .demo-container {
-      background: var(--bg-secondary);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-    }
+    /* ===== Section base ===== */
+    section { padding: 96px 0; position: relative; z-index: 1; }
+    .section-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+    .section-head .eyebrow { display: inline-block; font-family: 'Space Grotesk'; font-size: 13px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent-3); margin-bottom: 14px; }
+    .section-title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; margin-bottom: 14px; }
+    .section-sub { color: var(--text-2); font-size: 17px; }
 
-    .demo-window {
-      background: var(--bg-tertiary);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    /* ===== Bento features ===== */
+    .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; grid-auto-flow: dense; }
+    .card { grid-column: span 2; position: relative; border-radius: 20px; padding: 28px;
+      border: 1px solid var(--border); background: var(--surface); overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.35s ease, box-shadow 0.35s ease; }
+    .card.featured { grid-column: span 3; }
+    .card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s ease;
+      background: radial-gradient(420px circle at var(--mx,50%) var(--my,0%), rgba(99,102,241,0.16), transparent 60%); pointer-events: none; }
+    .card:hover { transform: translateY(-6px); border-color: var(--border-strong); box-shadow: 0 24px 60px rgba(0,0,0,0.35); }
+    .card:hover::before { opacity: 1; }
+    .card .ic { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--accent-3); margin-bottom: 18px; }
+    .card.featured .ic { background: var(--grad); color: #fff; border-color: transparent; }
+    .card h3 { font-size: 19px; font-weight: 700; margin-bottom: 9px; font-family: 'Space Grotesk'; }
+    .card p { color: var(--text-2); font-size: 14.5px; line-height: 1.7; }
+    .card.featured p { font-size: 15.5px; max-width: 60ch; }
 
-    .demo-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-    .demo-dot.red { background: #ff5f56; }
-    .demo-dot.yellow { background: #ffbd2e; }
-    .demo-dot.green { background: #27c93f; }
+    /* ===== Demo ===== */
+    .demo-wrap { border-radius: 24px; border: 1px solid var(--border-strong); background: var(--surface-2);
+      backdrop-filter: blur(14px); overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.4); }
+    .demo-bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    .demo-bar .d { width: 11px; height: 11px; border-radius: 50%; }
+    .demo-bar .d.r { background: #ff5f56; } .demo-bar .d.y { background: #ffbd2e; } .demo-bar .d.g { background: #27c93f; }
+    .demo-bar .dt { flex: 1; text-align: center; font-size: 13px; color: var(--text-2); font-family: 'Space Grotesk'; }
+    .demo-body { padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 22px; position: relative; }
+    .demo-ui { width: 100%; max-width: 560px; border-radius: 16px; border: 1px solid var(--border);
+      background: var(--bg-2); overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+    .demo-ui .du-head { background: var(--grad); padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; }
+    .demo-ui .du-head b { color: #fff; font-family: 'Space Grotesk'; }
+    .demo-ui .du-head select { background: rgba(255,255,255,0.2); border: none; color: #fff; border-radius: 8px; padding: 7px 11px; font-family: inherit; }
+    .demo-ui .du-body { padding: 20px; }
+    .demo-ui label { font-size: 13px; color: var(--text-2); display: block; margin-bottom: 7px; }
+    .demo-ui .du-sel { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text); font-family: inherit; margin-bottom: 16px; }
+    .demo-ui .du-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: var(--grad); color: #fff;
+      font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: transform 0.2s ease; }
+    .demo-ui .du-btn:hover { transform: scale(1.02); }
+    .demo-panel { position: absolute; width: 320px; border-radius: 16px; border: 1px solid var(--border-strong);
+      background: var(--bg-2); padding: 18px; box-shadow: 0 24px 60px rgba(0,0,0,0.45); opacity: 0;
+      transform: translateY(18px) scale(0.96); transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+    .demo-panel.show { opacity: 1; transform: translateY(0) scale(1); }
+    .demo-panel h4 { font-family: 'Space Grotesk'; margin-bottom: 10px; display: flex; justify-content: space-between; }
+    .demo-panel .psrc { font-size: 13px; color: var(--text-2); padding: 10px; background: var(--surface); border-radius: 8px; margin-bottom: 12px; }
+    .demo-panel .ptgt { font-size: 15px; padding: 12px; border-left: 3px solid var(--accent-3);
+      background: rgba(34,211,238,0.08); border-radius: 8px; }
 
-    .demo-title {
-      flex: 1;
-      text-align: center;
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
+    /* ===== Stats ===== */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .stat { text-align: center; padding: 30px 18px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); }
+    .stat .num { font-family: 'Space Grotesk'; font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+      background: var(--grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat .lbl { color: var(--text-2); font-size: 15px; margin-top: 8px; }
 
-    .demo-content {
-      padding: 40px;
-      min-height: 400px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
+    /* ===== Install steps ===== */
+    .steps { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+    .step { display: flex; gap: 22px; padding: 26px; border-radius: 18px; border: 1px solid var(--border);
+      background: var(--surface); transition: transform 0.3s ease, border-color 0.3s ease; }
+    .step:hover { transform: translateX(8px); border-color: var(--border-strong); }
+    .step .n { flex-shrink: 0; width: 46px; height: 46px; border-radius: 50%; background: var(--grad); color: #fff;
+      font-family: 'Space Grotesk'; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .step h3 { font-size: 19px; margin-bottom: 7px; font-family: 'Space Grotesk'; }
+    .step p { color: var(--text-2); margin-bottom: 12px; }
+    .code { background: var(--bg-2); border: 1px solid var(--border); border-radius: 9px; padding: 13px 15px;
+      font-family: 'Space Grotesk', monospace; font-size: 13.5px; color: var(--accent-3); }
 
-    /* Animated Demo UI */
-    .demo-ui {
-      width: 100%;
-      max-width: 600px;
-      background: var(--bg);
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
+    /* ===== Dev docs + module store ===== */
+    .doc-links { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 8px; }
+    .module-card { text-align: left; }
+    .module-card .mc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .module-card h3 { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 700; }
+    .module-card .tag { font-size: 10px; padding: 3px 9px; border-radius: 12px; background: rgba(99,102,241,0.18); color: var(--accent-3); font-weight: 600; }
+    .module-card p { font-size: 13px; min-height: 38px; margin-bottom: 14px; }
+    .module-card .mc-foot { display: flex; justify-content: space-between; align-items: center; }
+    .module-card .mc-foot small { font-size: 11px; color: var(--text-2); }
 
-    .demo-header {
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    /* ===== FAQ ===== */
+    .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+    .faq-item { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--surface); transition: border-color 0.3s ease; }
+    .faq-item:hover, .faq-item.open { border-color: var(--border-strong); }
+    .faq-q { width: 100%; padding: 19px 22px; background: transparent; border: none; color: var(--text);
+      font-size: 16px; font-weight: 600; text-align: left; cursor: pointer; display: flex; justify-content: space-between;
+      align-items: center; font-family: inherit; }
+    .faq-q .plus { font-size: 22px; color: var(--accent-3); transition: transform 0.3s ease; }
+    .faq-item.open .plus { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .faq-item.open .faq-a { max-height: 280px; }
+    .faq-a .inner { padding: 0 22px 20px; color: var(--text-2); line-height: 1.7; }
 
-    .demo-header-title {
-      color: white;
-      font-weight: 700;
-      font-size: 18px;
-    }
+    /* ===== Footer ===== */
+    footer { padding: 56px 24px; text-align: center; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+    .footer-links { display: flex; justify-content: center; gap: 26px; margin-bottom: 20px; flex-wrap: wrap; }
+    .footer-links a { color: var(--text-2); text-decoration: none; transition: color 0.25s ease; }
+    .footer-links a:hover { color: var(--accent-3); }
+    .footer-cr { color: var(--text-2); font-size: 14px; }
 
-    .demo-header-select {
-      background: rgba(255,255,255,0.2);
-      border: none;
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
+    /* ===== Reveal ===== */
+    .reveal { opacity: 0; transform: translateY(34px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
 
-    .demo-body {
-      padding: 24px;
-    }
-
-    .demo-section {
-      margin-bottom: 20px;
-    }
-
-    .demo-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .demo-select {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 1px solid var(--card-border);
-      background: var(--bg-secondary);
-      color: var(--text);
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    .demo-btn {
-      width: 100%;
-      padding: 16px;
-      border-radius: 12px;
-      border: none;
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .demo-btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 8px 30px rgba(102,126,234,0.4);
-    }
-
-    /* Demo Animation - Show panel appearing */
-    .demo-panel {
-      position: absolute;
-      background: var(--bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 20px;
-      width: 320px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      opacity: 0;
-      transform: translateY(20px) scale(0.95);
-      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      pointer-events: none;
-    }
-    .demo-panel.show {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-
-    .demo-panel-header {
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .demo-panel-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 16px;
-      padding: 12px;
-      background: var(--bg-tertiary);
-      border-radius: 8px;
-    }
-
-    .demo-panel-result {
-      font-size: 15px;
-      padding: 12px;
-      background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
-      border-radius: 8px;
-      border-left: 3px solid var(--gradient-start);
-    }
-
-    /* Stats */
-    .stats {
-      background: var(--bg-secondary);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 32px;
-    }
-
-    @media (max-width: 768px) {
+    /* ===== Responsive ===== */
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; text-align: left; padding-top: 120px; gap: 40px; }
+      .hero-copy { order: 1; } .hero-visual { order: 2; }
+      .bento { grid-template-columns: repeat(4, 1fr); }
+      .card, .card.featured { grid-column: span 2; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
-
-    .stat-item {
-      text-align: center;
+    @media (max-width: 560px) {
+      .container { padding: 0 18px; }
+      .topnav { padding: 14px 18px; }
+      .brand span { display: none; }
+      .bento { grid-template-columns: repeat(2, 1fr); }
+      .card, .card.featured { grid-column: span 2; }
+      .step { flex-direction: column; gap: 14px; }
+      section { padding: 72px 0; }
     }
 
-    .stat-number {
-      font-size: clamp(40px, 6vw, 64px);
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .stat-label {
-      color: var(--text-secondary);
-      font-size: 16px;
-      margin-top: 8px;
-    }
-
-    /* Install */
-    .install-steps {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .install-step {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 32px;
-      padding: 24px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      transition: all 0.3s ease;
-    }
-    .install-step:hover {
-      border-color: var(--gradient-start);
-      transform: translateX(8px);
-    }
-
-    .step-number {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      color: white;
-      font-weight: 700;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .step-content h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-    }
-
-    .step-content p {
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-
-    .code-block {
-      background: var(--bg-tertiary);
-      border-radius: 8px;
-      padding: 16px;
-      font-family: 'Monaco', 'Menlo', monospace;
-      font-size: 14px;
-      overflow-x: auto;
-    }
-
-    /* FAQ */
-    .faq {
-      background: var(--bg-secondary);
-    }
-
-    .faq-list {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .faq-item {
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      margin-bottom: 16px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    .faq-item:hover {
-      border-color: var(--gradient-start);
-    }
-
-    .faq-question {
-      width: 100%;
-      padding: 20px 24px;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 17px;
-      font-weight: 600;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: inherit;
-    }
-
-    .faq-icon {
-      font-size: 24px;
-      transition: transform 0.3s ease;
-    }
-    .faq-item.open .faq-icon {
-      transform: rotate(45deg);
-    }
-
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease;
-    }
-    .faq-item.open .faq-answer {
-      max-height: 300px;
-    }
-
-    .faq-answer-inner {
-      padding: 0 24px 20px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-
-    /* Footer */
-    footer {
-      padding: 60px 24px;
-      text-align: center;
-      border-top: 1px solid var(--card-border);
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    .footer-link {
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    .footer-link:hover {
-      color: var(--gradient-start);
-    }
-
-    .footer-copyright {
-      color: var(--text-secondary);
-      font-size: 14px;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .lang-switcher-top {
-        top: 12px;
-        right: 12px;
-      }
-      .theme-toggle {
-        top: 12px;
-        right: 12px;
-      }
-      .hero { padding: 100px 16px 60px; }
-      .features-grid { grid-template-columns: 1fr; }
-      .install-step { flex-direction: column; }
-    }
-
-    /* Scroll Animations */
-    .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-    }
-    .reveal.active {
-      opacity: 1;
-      transform: translateY(0);
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
-  <!-- Particles -->
-  <div class="particles" id="particles"></div>
+  <div class="bg-layer bg-grid"></div>
+  <div class="bg-layer bg-aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+  <div id="particles"></div>
 
-  <!-- Theme Toggle -->
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
-
-  <!-- Language Dropdown (Top Right) -->
-  <div class="lang-switcher-top">
-    <div class="lang-dropdown">
-      <button class="lang-dropdown-btn" id="langDropdownBtn">
-        <span>🌐</span>
-        <span class="lang-arrow">▼</span>
-      </button>
-      <div class="lang-dropdown-content" id="langDropdownContent">
-        <a href="landing.html" class="lang-option">🇨🇳 中文</a>
-        <a href="landing-en.html" class="lang-option">🇺🇸 English</a>
-        <a href="landing-ja.html" class="lang-option">🇯🇵 日本語</a>
-        <a href="landing-ko.html" class="lang-option">🇰🇷 한국어</a>
-        <a href="landing-zh-TW.html" class="lang-option">🇹🇼 繁體中文</a>
-      </div>
-    </div>
+  <!-- Hero background video -->
+  <!-- Hero background media -->
+  <div class="hero-bg-media" aria-hidden="true">
+    <picture>
+      <source srcset="assets/hero-ai.webp" type="image/webp">
+      <img src="assets/hero-ai.gif" alt="" loading="eager" decoding="async">
+    </picture>
   </div>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="logo-container">
-      <img src="icons/icon128.png" alt="QuickTranslate" class="logo">
+  <!-- Top Nav -->
+  <nav class="topnav">
+    <a class="brand" href="landing-ko.html">
+      <img src="icons/icon128.png" alt="QuickTranslate">
+      <span style="display:flex;flex-direction:column;line-height:1.15">
+        <b>QuickTranslate</b><span>빠른 번역 · 즉시 번역 엔진</span>
+      </span>
+    </a>
+    <div class="nav-right">
+      <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-btn" id="langBtn">🌐 한국어 <span style="font-size:10px">▼</span></button>
+        <div class="lang-content" id="langContent">
+          <a href="landing.html">🇨🇳 中文</a>
+          <a href="landing-en.html">🇺🇸 English</a>
+          <a href="landing-ja.html">🇯🇵 日本語</a>
+          <a href="landing-ko.html" class="active">🇰🇷 한국어</a>
+          <a href="landing-zh-TW.html">🇹🇼 繁體中文</a>
+        </div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">🌙</button>
     </div>
+  </nav>
 
-    <h1>
-      <span class="gradient-text">QuickTranslate</span>
-    </h1>
-
-    <p class="tagline">텍스트를 선택하면 즉시 번역</p>
-
-    <div class="typewriter">
-      <span id="typed-text"></span>
+  <!-- Hero -->
+  <section class="hero container">
+    <div class="hero-copy">
+      <div class="pill"><span class="dot"></span> v3.3.3 · 오픈 소스 · Chrome 스토어 출시</div>
+      <h1>선택하면 바로,<br><span class="grad">밀리초</span> <span class="accent">즉시 번역</span></h1>
+      <p class="sub">DOM 텍스트 추출과 모듈형 아키텍처를 기반으로, 페이지 전체 번역을 하나의 자연스러운 읽기 동작으로 압축합니다.</p>
+      <div class="typed" id="typed"></div>
+      <div class="hero-cta">
+        <a href="https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba" class="btn btn-primary" target="_blank">🧩 Chrome 확장 프로그램 설치</a>
+        <a href="https://github.com/kany2000/QuickTranslate" class="btn btn-ghost" target="_blank">⭐ GitHub</a>
+      </div>
     </div>
-
-    <div class="hero-buttons">
-      <a href="https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba" class="btn btn-primary" target="_blank">
-        <span>🧩</span> Chrome 확장 설치
-      </a>
-      <a href="https://github.com/kany2000/QuickTranslate" class="btn btn-secondary" target="_blank">
-        <span>⭐</span> GitHub
-      </a>
-    </div>
-
-    <div class="badge">
-      <span class="badge-dot"></span>
-      <span>v3.3.3 · Chrome Web Store 신규 등록 · 오픈소스</span>
+    <div class="hero-visual">
+      <div class="halo"></div>
+      <div class="glass-card">
+        <div class="gc-head">
+          <span class="gc-title"><img src="icons/icon128.png" alt=""> QuickTranslate</span>
+          <span class="gc-lang">EN → 한국어</span>
+        </div>
+        <div class="gc-body">
+          <div class="gc-row">
+            <div class="gc-label">SOURCE · 원문</div>
+            <div class="gc-box src">The future of translation is instant.<span class="gc-scan"></span></div>
+          </div>
+          <div class="gc-row">
+            <div class="gc-label">TRANSLATION · 번역</div>
+            <div class="gc-box tgt">번역의 미래는 지금 이 순간입니다.</div>
+          </div>
+          <div class="gc-engines">
+            <span class="gc-chip on">Google</span>
+            <span class="gc-chip on">Microsoft</span>
+            <span class="gc-chip">GLM</span>
+            <span class="gc-chip">LLM</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Features -->
-  <section class="features">
+  <!-- Features (Bento) -->
+  <section>
     <div class="container">
-      <h2 class="section-title reveal">모듈식 번역, 모든 것을 제어</h2>
-      <p class="section-subtitle reveal">12개의 내장 모듈, 자유롭게 조합, 필요할 때 ON/OFF</p>
-
-      <div class="features-grid">
-        <div class="feature-card reveal feature-card-highlight">
-          <div class="feature-icon">🧩</div>
+      <div class="section-head reveal">
+        <span class="eyebrow">Core Engine</span>
+        <h2 class="section-title">모듈식 번역, 모든 것을 제어</h2>
+        <p class="section-sub">11개의 내장 모듈. 자유롭게 조합하고 필요할 때 켜세요.</p>
+      </div>
+      <div class="bento">
+        <div class="card featured reveal">
+          <div class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
           <h3>모듈식 아키텍처</h3>
           <p><strong>모든 기능은 모듈입니다.</strong>선택 번역, 호버 번역, 선택즉번역, 번역 엔진, 텍스트 처리, 백그라운드 서비스 — 모두 모듈 시스템으로 통합 관리됩니다. 한 번의 클릭으로 ON/OFF, 필요에 따라 확장 가능합니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">⚡</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
           <h3>번개 같은 번역</h3>
-          <p>작업 단계가 5단계에서 2단계로 줄었고, 번역 속도가 75% 향상되었으며, 0.5초 이내에 결과가 나타납니다. 텍스트 선택, 버튼 클릭, 번역 완료.</p>
+          <p>조작 단계가 5단계에서 2단계로 줄고, 번역 속도는 75% 향상되어 0.5초 안에 결과가 나타납니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">🎯</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
           <h3>정밀 인식</h3>
-          <p>DOM 직접 추출 기술로 OCR 단계를 건너뛰고 정확도가 98%+입니다. 지능형 다중 포인트 샘플링으로 선택 영역의 텍스트가 완벽하게 추출됩니다.</p>
+          <p>DOM 직접 추출 기술로 OCR 단계를 생략하고 정확도 98%+를 달성하며, 다중 지점 샘플링으로 텍스트를 온전히 유지합니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">🧠</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="3.5"/><path d="m6.5 6.5 1.5 1.5M16 16l1.5 1.5"/></svg></div>
           <h3>AI 언어 감지</h3>
-          <p>심층 문자 특성 분석을 기반으로 일본어, 한국어, 영어, 중국어 등 10개 이상의 언어를 자동으로 감지하며, 수동으로 원본 언어를 선택할 필요가 없습니다.</p>
+          <p>심층 문자 특징 분석으로 일본어, 한국어, 영어, 중국어 등 10+ 언어를 자동 인식합니다. 원문 언어를 직접 선택할 필요가 없습니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">🌐</div>
-          <h3>모듈 생태계</h3><p>.qt-module 플러그인으로 번역 엔진, 상호 작용 모드, UI 테마를 확장하세요. 커뮤니티 개발자가 모듈을 만들고 공유할 수 있습니다.</p>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <h3>모듈 생태계</h3>
+          <p>.qt-module로 번역 엔진, 상호작용 모드, UI 테마를 확장하세요. 커뮤니티 모듈은 가져오면 바로 사용할 수 있습니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">✨</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 4 7 7M4 4l4 0 0 4M20 20l-7-7M20 20l-4 0 0-4"/></svg></div>
           <h3>호버 번역</h3>
-          <p>Alt 키를 누르고 마우스를 호버하면 선택 없이도 번역할 수 있습니다. 몰입형 읽기 경험을 통해 번역이 자연스러운 읽기 과정이 됩니다.</p>
+          <p>Alt 키를 누른 채 마우스를 올리면 선택 없이 바로 번역되어 몰입형 읽기가 끊기지 않습니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">📚</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 19z"/><path d="M4 19a2.5 2.5 0 0 1 2.5-2.5H20"/></svg></div>
           <h3>단어장</h3>
-          <p>자주 사용하는 번역을 저장하고 자동으로 기록합니다. 500개 용량으로 복습과 조회가 편리합니다.</p>
+          <p>자주 쓰는 번역을 저장하고 기록은 자동 보관. 500개 대용량으로 복습과 조회가 편합니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">🌙</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></div>
           <h3>다크 모드</h3>
-          <p>시스템 테마를 자동으로 따라갑니다. 팝업, 퀵 패널, 플로트 패널, 스크린샷 UI 모두 다크 배경을 지원합니다.</p>
+          <p>시스템 테마를 자동으로 따라가며 팝업, 패널, 스크린샷 화면까지 다크 모드에 최적화됩니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">🧹</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l1.5 4.5L19 9l-4.5 1.5L13 15l-1.5-4.5L7 9z"/></svg></div>
           <h3>텍스트 정리</h3>
-          <p>선택한 텍스트의 불필요한 공백·줄바꿈·HTML 개체를 자동 제거합니다. 코드 블록은 번역으로 인한 손상으로부터 보호됩니다.</p>
+          <p>불필요한 공백, 줄바꿈, HTML 엔티티를 자동 정리하고 코드 블록은 손상되지 않도록 보호합니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">💾</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></div>
           <h3>번역 캐시</h3>
-          <p>번역 결과를 지능적으로 캐시하여 동일한 내용의 API 재호출을 방지합니다. 최대 200개 항목, 더 빠르고 데이터 절약.</p>
+          <p>번역 결과를 스마트하게 캐시해 같은 내용은 다시 요청하지 않습니다. 최대 200개로 더 빠르고 데이터도 절약됩니다.</p>
         </div>
-
-        <div class="feature-card reveal">
-          <div class="feature-icon">🖱️</div>
+        <div class="card reveal">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M10 7h4M10 11v3a2 2 0 0 0 4 0v-3"/></svg></div>
           <h3>우클릭 번역</h3>
-          <p>텍스트 선택 후 우클릭으로 번역합니다. 단일 엔진 및 멀티 엔진 모드를 지원합니다. 결과 창은 드래그 가능하며 저장 및 복사가 가능합니다.</p>
+          <p>선택 후 우클릭만으로 번역되며 단일/다중 엔진 모드를 지원합니다. 결과 말풍선은 드래그와 저장이 가능합니다.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Demo -->
-  <section class="demo">
+  <section style="background:var(--surface)">
     <div class="container">
-      <h2 class="section-title reveal">번역의 마법을 직접 확인하세요</h2>
-      <p class="section-subtitle reveal">간단한 操作으로前所未有的 번역 경험을感受하세요</p>
-
-      <div class="demo-container reveal">
-        <div class="demo-window">
-          <span class="demo-dot red"></span>
-          <span class="demo-dot yellow"></span>
-          <span class="demo-dot green"></span>
-          <span class="demo-title">QuickTranslate Demo</span>
-        </div>
-
-        <div class="demo-content">
+      <div class="section-head reveal">
+        <span class="eyebrow">Live Preview</span>
+        <h2 class="section-title">번역의 마법을 직접 확인하세요</h2>
+        <p class="section-sub">간단한 조작으로, 이전에 없던 번역 경험을</p>
+      </div>
+      <div class="demo-wrap reveal">
+        <div class="demo-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="dt">QuickTranslate · 실시간 데모</span></div>
+        <div class="demo-body">
           <div class="demo-ui">
-            <div class="demo-header">
-              <span class="demo-header-title">🌐 QuickTranslate</span>
-              <select class="demo-header-select">
-                <option>한국어</option>
-                <option>English</option>
-                <option>日本語</option>
-              </select>
-            </div>
-            <div class="demo-body">
-              <div class="demo-section">
-                <div class="demo-label">대상 언어</div>
-                <select class="demo-select">
-                  <option>한국어 → English</option>
-                  <option>English → 한국어</option>
-                  <option>日本語 → 한국어</option>
-                </select>
-              </div>
-              <button class="demo-btn" id="demoBtn">
-                <span>📷</span> 번역 시작
-              </button>
+            <div class="du-head"><b>🌐 QuickTranslate</b><select><option>한국어</option><option>English</option><option>简体中文</option></select></div>
+            <div class="du-body">
+              <label>대상 언어</label>
+              <select class="du-sel"><option>한국어 → English</option><option>English → 한국어</option><option>简体中文 → 한국어</option></select>
+              <button class="du-btn" id="demoBtn">📷 번역 시작</button>
             </div>
           </div>
-
           <div class="demo-panel" id="demoPanel">
-            <div class="demo-panel-header">
-              <span>🌐 빠른 번역</span>
-              <span style="cursor:pointer">×</span>
-            </div>
-            <div class="demo-panel-text">Hello World</div>
-            <div class="demo-panel-result">안녕하세요, 세계!</div>
+            <h4><span>🌐 빠른 번역</span><span style="cursor:pointer">×</span></h4>
+            <div class="psrc">Hello World</div>
+            <div class="ptgt">안녕하세요, 세계!</div>
           </div>
         </div>
       </div>
@@ -1034,175 +561,82 @@
   </section>
 
   <!-- Stats -->
-  <section class="stats">
+  <section>
     <div class="container">
       <div class="stats-grid">
-        <div class="stat-item reveal">
-          <div class="stat-number" data-target="98">0</div>
-          <div class="stat-label">문자 인식 정확도 %</div>
-        </div>
-        <div class="stat-item reveal">
-          <div class="stat-number" data-target="99">0</div>
-          <div class="stat-label">언어 감지 정확도 %</div>
-        </div>
-        <div class="stat-item reveal">
-          <div class="stat-number" data-target="95">0</div>
-          <div class="stat-label">번역 성공률 %</div>
-        </div>
-        <div class="stat-item reveal">
-          <div class="stat-number" data-target="500" data-suffix="ms"><500</div>
-          <div class="stat-label">응답 시간</div>
-        </div>
+        <div class="stat reveal"><div class="num" data-target="98">0</div><div class="lbl">문자 인식 정확도 %</div></div>
+        <div class="stat reveal"><div class="num" data-target="99">0</div><div class="lbl">언어 감지 정확도 %</div></div>
+        <div class="stat reveal"><div class="num" data-target="95">0</div><div class="lbl">번역 성공률 %</div></div>
+        <div class="stat reveal"><div class="num" data-target="500" data-suffix="ms">0</div><div class="lbl">응답 시간</div></div>
       </div>
     </div>
   </section>
 
-    <!-- Install -->
-  <section class="install">
+  <!-- Install -->
+  <section style="background:var(--surface)">
     <div class="container">
-      <h2 class="section-title reveal">지금 시작하기</h2>
-      <p class="section-subtitle reveal">원클릭 설치, 바로 사용</p>
-
-      <div class="install-steps">
-        <div class="install-step reveal">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Chrome Web Store 열기</h3>
-            <p>아래 버튼을 클릭하여 QuickTranslate 설치 페이지로 이동</p>
-            <a href="https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba" class="btn btn-primary" target="_blank" style="display:inline-flex;margin-top:8px">
-              🧩 Chrome 확장 프로그램 설치
-            </a>
-          </div>
-        </div>
-
-        <div class="install-step reveal">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>'Chrome에 추가' 클릭</h3>
-            <p>스토어 페이지에서 파란색 'Chrome에 추가' 버튼 클릭</p>
-            <div class="code-block">✓ 권한 확인 → 자동 설치</div>
-          </div>
-        </div>
-
-        <div class="install-step reveal">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>사용 시작 🎉</h3>
-            <p>브라우저 도구 모음에서 QuickTranslate 아이콘 클릭</p>
-            <div class="code-block">✓ 텍스트 선택 → 즉시 번역 → 끝!</div>
-          </div>
-        </div>
+      <div class="section-head reveal">
+        <span class="eyebrow">Get Started</span>
+        <h2 class="section-title">지금 시작하기</h2>
+        <p class="section-sub">원클릭 설치, 바로 사용</p>
       </div>
+      <div class="steps">
+        <div class="step reveal"><div class="n">1</div><div><h3>Chrome Web Store 열기</h3><p>아래 버튼을 클릭하여 QuickTranslate 설치 페이지로 이동</p><a href="https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba" class="btn btn-primary" target="_blank" style="display:inline-flex">🧩 Chrome 확장 프로그램 설치</a></div></div>
+        <div class="step reveal"><div class="n">2</div><div><h3>'Chrome에 추가' 클릭</h3><p>스토어 페이지에서 파란색 'Chrome에 추가' 버튼 클릭</p><div class="code">✓ 권한 확인 → 자동 설치</div></div></div>
+        <div class="step reveal"><div class="n">3</div><div><h3>사용 시작 🎉</h3><p>브라우저 도구 모음에서 QuickTranslate 아이콘 클릭</p><div class="code">✓ 텍스트 선택 → 즉시 번역 → 끝!</div></div></div>
+      </div>
+      <p style="text-align:center;margin-top:22px;color:var(--text-2);font-size:14px">💡 고급 사용자: git clone + 개발자 모드로도 로드 가능</p>
+    </div>
+  </section>
 
-      <div style="text-align:center;margin-top:24px">
-        <small style="color:var(--text-secondary)">💡 고급 사용자: git clone + 개발자 모드로도 로드 가능</small>
+  <!-- Dev docs -->
+  <section>
+    <div class="container" style="text-align:center">
+      <div class="section-head reveal" style="margin-bottom:24px">
+        <span class="eyebrow">For Developers</span>
+        <h2 class="section-title" style="font-size:28px">🛠️ 개발자 문서</h2>
+        <p class="section-sub">QuickTranslate 모듈을 개발하시겠습니까? 여기서 시작하세요</p>
+      </div>
+      <div class="doc-links reveal">
+        <a href="docs/spec-ko.html" class="btn btn-primary" target="_blank">📖 명세서</a>
+        <a href="docs/example-ko.html" class="btn btn-ghost" target="_blank">📝 튜토리얼</a>
+        <a href="docs/store-guide-ko.html" class="btn btn-ghost" target="_blank">📦 게시 가이드</a>
       </div>
     </div>
   </section>
 
-  
-  
-  <!-- 개발자 문서 -->
-  <div style="text-align:center;padding:32px 0 8px 0">
+  <!-- Module store -->
+  <section style="background:var(--surface)">
     <div class="container">
-      <h2 class="section-title reveal" style="font-size:22px">🛠️ 개발자 문서</h2>
-      <p class="section-subtitle reveal" style="margin-bottom:20px">QuickTranslate 모듈을 개발하시겠습니까? 여기서 시작하세요</p>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
-        <a href="docs/spec-ko.html" class="btn btn-primary" target="_blank" style="font-size:13px;padding:10px 22px">📖 명세서</a>
-        <a href="docs/example-ko.html" class="btn btn-secondary" target="_blank" style="font-size:13px;padding:10px 22px">📝 튜토리얼</a>
-        <a href="docs/store-guide-ko.html" class="btn btn-secondary" target="_blank" style="font-size:13px;padding:10px 22px">📦 게시 가이드</a>
+      <div class="section-head reveal" style="margin-bottom:18px">
+        <span class="eyebrow">Module Store</span>
+        <h2 class="section-title">🧩 모듈 스토어</h2>
+        <p class="section-sub"><a href="store-ko.html" style="color:var(--accent-3);font-weight:600;text-decoration:none">전체 스토어 보기 →</a></p>
       </div>
-    </div>
-  </div>
-  <!-- Module Store -->
-  <section class="module-store">
-    <div class="container">
-      <h2 class="section-title reveal">🧩 모듈 스토어</h2><p class="section-subtitle reveal" style="margin-bottom:24px"><a href="store-ko.html" style="color:#667eea;font-weight:600;text-decoration:none">전체 스토어 보기 →</a></p>
-      <p class="section-subtitle reveal">QuickTranslate 기능을 확장하는 커뮤니티 모듈</p>
-      <div class="features-grid module-grid">
-
-        <div class="feature-card module-card reveal" style="text-align:left">
-          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
-            <h3 style="margin:0;font-size:15px;font-weight:700;background:none;-webkit-text-fill-color:initial">Echo Translator</h3>
-            <span style="font-size:10px;background:rgba(102,126,234,0.2);color:#667eea;padding:2px 8px;border-radius:10px;font-weight:600">translator</span>
-          </div>
-          <p style="font-size:12px;line-height:1.6;margin-bottom:12px;min-height:36px">Demo module for testing module import flow</p>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:10px;color:#a0a0b0">QuickTranslate Team · v1.0.0</span>
-            <a href="store/echo-translator.qt-module" class="btn btn-primary" style="font-size:11px;padding:6px 14px" target="_blank">📥 다운로드</a>
-          </div>
+      <div class="module-grid">
+        <div class="card module-card reveal">
+          <div class="mc-top"><h3>Echo Translator</h3><span class="tag">translator</span></div>
+          <p>Demo module for testing module import flow</p>
+          <div class="mc-foot"><small>QuickTranslate Team · v1.0.0</small><a href="store/echo-translator.qt-module" class="btn btn-primary" target="_blank" style="font-size:12px;padding:7px 15px">📥 다운로드</a></div>
         </div>
-
       </div>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section class="faq">
+  <section>
     <div class="container">
-      <h2 class="section-title reveal">자주 묻는 질문</h2>
-      <p class="section-subtitle reveal">문제가 있으신가요? 여기서 답을 찾으세요</p>
-
+      <div class="section-head reveal">
+        <span class="eyebrow">FAQ</span>
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <p class="section-sub">문제가 있으신가요? 여기서 답을 찾으세요</p>
+      </div>
       <div class="faq-list">
-        <div class="faq-item reveal">
-          <button class="faq-question">
-            <span>단축키가 작동하지 않으면 어떻게 하나요?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              chrome://extensions/shortcuts로 이동하여 단축키 설정을 확인하고 다른 확장 프로그램과 충돌하지 않는지 확인하세요. 새 단축키 조합을 수동으로 설정할 수도 있습니다.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-question">
-            <span>일부 텍스트가 인식되지 않는 이유는 무엇인가요?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              선택한 영역에 선명한 텍스트가 포함되어 있는지 확인하세요. 이미지, 특수 폰트 또는 복잡한 배경의 텍스트는 정확하게 인식되지 않을 수 있습니다. 대비가 높은 텍스트 영역을 선택하세요.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-question">
-            <span>어떤 언어 번역을 지원하나요?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              현재 일본어, 한국어, 영어, 독일어, 프랑스어, 스페인어 등 10개 이상의 언어를 중국어(간체/번체)로 번역할 수 있습니다. 시스템이 원본 언어를 자동으로 감지하므로 수동으로 선택할 필요가 없습니다.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-question">
-            <span>인터페이스 언어를切换하는 방법은?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              확장 프로그램 아이콘을 클릭하여 메인 인터페이스를 열면 제목 표시 줄 오른쪽에 언어 선택기가 있습니다. 간체 중국어, 번체 중국어, 영어, 일본어, 한국어 등 5가지 인터페이스 언어를 지원합니다. 설정은 자동으로 저장됩니다.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item reveal">
-          <button class="faq-question">
-            <span>번역 결과가 부정확하면 어떻게 하나요?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              더 정확한 텍스트 영역을 선택하거나 고급 설정에서 다른 번역 엔진을切换해 보세요. Google 번역은 일상 사용에 적합하고, GLM 대형 모델 번역 품질이 더 높지만 API Key가 필요합니다.
-            </div>
-          </div>
-        </div>
+        <div class="faq-item reveal"><button class="faq-q"><span>단축키가 작동하지 않으면 어떻게 하나요?</span><span class="plus">+</span></button><div class="faq-a"><div class="inner">chrome://extensions/shortcuts로 이동하여 단축키 설정을 확인하고 다른 확장 프로그램과 충돌하지 않는지 확인하세요. 새 단축키 조합을 수동으로 설정할 수도 있습니다.</div></div></div>
+        <div class="faq-item reveal"><button class="faq-q"><span>일부 텍스트가 인식되지 않는 이유는 무엇인가요?</span><span class="plus">+</span></button><div class="faq-a"><div class="inner">선택한 영역에 선명한 텍스트가 포함되어 있는지 확인하세요. 이미지, 특수 폰트 또는 복잡한 배경의 텍스트는 정확하게 인식되지 않을 수 있습니다. 대비가 높은 텍스트 영역을 선택하세요.</div></div></div>
+        <div class="faq-item reveal"><button class="faq-q"><span>어떤 언어 번역을 지원하나요?</span><span class="plus">+</span></button><div class="faq-a"><div class="inner">현재 일본어, 한국어, 영어, 독일어, 프랑스어, 스페인어 등 10+ 언어를 중국어(간체/번체)로 번역할 수 있습니다. 원문 언어는 자동 감지되어 직접 선택할 필요가 없습니다.</div></div></div>
+        <div class="faq-item reveal"><button class="faq-q"><span>인터페이스 언어는 어떻게 전환하나요?</span><span class="plus">+</span></button><div class="faq-a"><div class="inner">확장 아이콘을 클릭해 메인 화면을 열면 제목 표시줄 오른쪽에 언어 선택기가 있습니다. 간체 중국어, 번체 중국어, 영어, 일본어, 한국어 5개 인터페이스 언어를 지원하며 설정은 자동 저장됩니다.</div></div></div>
+        <div class="faq-item reveal"><button class="faq-q"><span>번역 결과가 부정확하면 어떻게 하나요?</span><span class="plus">+</span></button><div class="faq-a"><div class="inner">더 정확한 영역을 선택하거나 고급 설정에서 다른 번역 엔진으로 전환해 보세요. Google 번역은 일상용에 적합하고, GLM 대형 모델은 품질이 더 높지만 API 키가 필요합니다.</div></div></div>
       </div>
     </div>
   </section>
@@ -1210,167 +644,108 @@
   <!-- Footer -->
   <footer>
     <div class="footer-links">
-      <a href="https://github.com/kany2000/QuickTranslate" class="footer-link">GitHub</a>
-      <a href="https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba" class="footer-link">Chrome Web Store</a>
-      <a href="LICENSE" class="footer-link">License (MIT)</a>
+      <a href="https://github.com/kany2000/QuickTranslate">GitHub</a>
+      <a href="https://chromewebstore.google.com/detail/quicktranslate-%E5%BF%AB%E8%AF%91/dacnbehjlfoahneibfabeoipbkfgegba">Chrome Web Store</a>
+      <a href="LICENSE">License (MIT)</a>
     </div>
-    <p class="footer-copyright">
-      Made with ❤️ by QuickTranslate Team · v3.3.3
-    </p>
+    <p class="footer-cr">Made with precision by QuickTranslate Team · v3.3.3</p>
   </footer>
 
   <script>
-    // Language Dropdown
-    const langDropdownBtn = document.getElementById('langDropdownBtn');
-    const langDropdown = langDropdownBtn.parentElement;
-    const langDropdownContent = document.getElementById('langDropdownContent');
+    // Language dropdown
+    const langBtn = document.getElementById('langBtn');
+    const langDropdown = document.getElementById('langDropdown');
+    const langContent = document.getElementById('langContent');
+    langBtn.addEventListener('click', (e) => { e.stopPropagation(); langDropdown.classList.toggle('open'); });
+    document.addEventListener('click', () => langDropdown.classList.remove('open'));
 
-    langDropdownBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      langDropdown.classList.toggle('open');
-    });
-
-    document.addEventListener('click', () => {
-      langDropdown.classList.remove('open');
-    });
-
-    // Language dropdown is optional - main switcher is in hero section
-    // This just provides quick access from top right
+    // Theme
     const themeToggle = document.getElementById('themeToggle');
     const html = document.documentElement;
-
-    // Check saved theme or system preference
-    const savedTheme = localStorage.getItem('theme') ||
-      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    html.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
-
+    const saved = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    html.setAttribute('data-theme', saved);
+    themeToggle.textContent = saved === 'dark' ? '🌙' : '☀️';
     themeToggle.addEventListener('click', () => {
-      const current = html.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
-      updateThemeIcon(next);
+      themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
     });
 
-    function updateThemeIcon(theme) {
-      themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
-    }
-
-    // Typewriter Effect
-    const phrases = [
-      'Google, Microsoft, GLM, LLM 등 다양한 번역 엔진 지원',
-      'Alt+1 스마트 번역, 자동 언어 감지',
-      '호버 번역, 몰입형 읽기 경험',
-      '기록 + 단어장, 학습 도우미'
-    ];
-    let phraseIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    const typedElement = document.getElementById('typed-text');
-
+    // Typewriter
+    const phrases = ['Google, Microsoft, GLM, LLM 등 다양한 번역 엔진 지원', 'Alt+1 스마트 번역, 언어 자동 감지', '호버 번역으로 몰입형 읽기 경험', '기록 + 단어장, 학습 도우미'];
+    const typedEl = document.getElementById('typed');
+    let pi = 0, ci = 0, del = false;
     function type() {
-      const currentPhrase = phrases[phraseIndex];
-
-      if (isDeleting) {
-        typedElement.textContent = currentPhrase.substring(0, charIndex - 1);
-        charIndex--;
-      } else {
-        typedElement.textContent = currentPhrase.substring(0, charIndex + 1);
-        charIndex++;
-      }
-
-      let typeSpeed = isDeleting ? 50 : 100;
-
-      if (!isDeleting && charIndex === currentPhrase.length) {
-        typeSpeed = 2000;
-        isDeleting = true;
-      } else if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        phraseIndex = (phraseIndex + 1) % phrases.length;
-        typeSpeed = 500;
-      }
-
-      setTimeout(type, typeSpeed);
+      const p = phrases[pi];
+      typedEl.innerHTML = (del ? p.slice(0, ci - 1) : p.slice(0, ci + 1)) + '<span class="cursor"></span>';
+      ci += del ? -1 : 1;
+      let sp = del ? 45 : 90;
+      if (!del && ci === p.length) { sp = 1900; del = true; }
+      else if (del && ci === 0) { del = false; pi = (pi + 1) % phrases.length; sp = 450; }
+      setTimeout(type, sp);
     }
     type();
 
     // Particles
-    const particlesContainer = document.getElementById('particles');
-    for (let i = 0; i < 50; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.top = Math.random() * 100 + '%';
-      particle.style.animationDelay = Math.random() * 15 + 's';
-      particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-      particlesContainer.appendChild(particle);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pc = document.getElementById('particles');
+    const pcount = window.innerWidth < 640 ? 18 : 38;
+    if (!reduce) {
+      for (let i = 0; i < pcount; i++) {
+        const s = document.createElement('div');
+        s.className = 'particle';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.animationDelay = (Math.random() * 18) + 's';
+        s.style.animationDuration = (14 + Math.random() * 10) + 's';
+        pc.appendChild(s);
+      }
     }
 
-    // Demo Panel Animation
+    // Demo panel
     const demoBtn = document.getElementById('demoBtn');
     const demoPanel = document.getElementById('demoPanel');
     demoBtn.addEventListener('click', () => {
       demoPanel.classList.add('show');
-      setTimeout(() => {
-        demoPanel.classList.remove('show');
-      }, 3000);
+      setTimeout(() => demoPanel.classList.remove('show'), 3000);
     });
 
-    // FAQ Accordion
-    document.querySelectorAll('.faq-question').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const item = btn.parentElement;
-        const isOpen = item.classList.contains('open');
+    // FAQ
+    document.querySelectorAll('.faq-q').forEach(b => {
+      b.addEventListener('click', () => {
+        const item = b.parentElement;
+        const open = item.classList.contains('open');
         document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
+        if (!open) item.classList.add('open');
       });
     });
 
-    // Scroll Reveal
-    const revealElements = document.querySelectorAll('.reveal');
-    const revealOnScroll = () => {
-      revealElements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 100) {
-          el.classList.add('active');
-        }
-      });
-    };
-    window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll();
+    // Scroll reveal + stats
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('active'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    // Stats Counter Animation
-    const statNumbers = document.querySelectorAll('.stat-number[data-target]');
-    let statsAnimated = false;
-
+    const nums = document.querySelectorAll('.num[data-target]');
+    let statsDone = false;
     const animateStats = () => {
-      if (statsAnimated) return;
-
-      const statsSection = document.querySelector('.stats');
-      const rect = statsSection.getBoundingClientRect();
-
-      if (rect.top < window.innerHeight - 100) {
-        statsAnimated = true;
-        statNumbers.forEach(stat => {
-          const target = parseInt(stat.dataset.target);
-          const suffix = stat.dataset.suffix || '%';
-          let current = 0;
-          const increment = target / 50;
-          const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-              current = target;
-              clearInterval(timer);
-            }
-            stat.textContent = Math.floor(current) + suffix;
-          }, 30);
+      if (statsDone) return;
+      const sec = document.querySelector('.stats');
+      if (sec.getBoundingClientRect().top < window.innerHeight - 80) {
+        statsDone = true;
+        nums.forEach(n => {
+          const t = parseInt(n.dataset.target), suf = n.dataset.suffix || '%';
+          let c = 0; const step = t / 50;
+          const tm = setInterval(() => {
+            c += step; if (c >= t) { c = t; clearInterval(tm); }
+            n.textContent = Math.floor(c) + suf;
+          }, 28);
         });
       }
     };
-
-    window.addEventListener('scroll', animateStats);
-    animateStats();
+    if (reduce) { nums.forEach(n => n.textContent = n.dataset.target + (n.dataset.suffix || '%')); }
+    else { window.addEventListener('scroll', animateStats); animateStats(); }
   </script>
 </body>
 </html>

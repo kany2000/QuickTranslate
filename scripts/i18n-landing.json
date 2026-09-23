@@ -1,0 +1,795 @@
+{
+ "text": {
+  "QuickTranslate - 快译 | Chrome Extension": {
+   "en": "QuickTranslate - Quick Translation | Chrome Extension",
+   "ja": "QuickTranslate - クイック翻訳 | Chrome 拡張機能",
+   "ko": "QuickTranslate - 빠른 번역 | Chrome 확장",
+   "tw": "QuickTranslate - 快譯 | Chrome Extension"
+  },
+  "选中文字，即刻翻译": {
+   "en": "Select text, translate instantly",
+   "ja": "テキストを選択すれば瞬時に翻訳",
+   "ko": "텍스트를 선택하면 즉시 번역",
+   "tw": "選取文字，即刻翻譯"
+  },
+  "安装 Chrome 扩展": {
+   "en": "Install Chrome Extension",
+   "ja": "Chrome 拡張機能をインストール",
+   "ko": "Chrome 확장 설치",
+   "tw": "安裝 Chrome 擴展"
+  },
+  "v3.3.3 · 🎉 Chrome 商店新上架 · 开源免费": {
+   "en": "v3.3.3 · New on Chrome Web Store · Open Source",
+   "ja": "v3.3.3 · Chrome Web Store 新登場 · オープンソース",
+   "ko": "v3.3.3 · Chrome Web Store 신규 등록 · 오픈소스",
+   "tw": "v3.3.3 · Chrome Web Store 新上架 · 開源免費"
+  },
+  "模块化翻译，一切尽在掌控": {
+   "en": "Modular Translation, Fully in Control",
+   "ja": "モジュール式翻訳、すべてを掌握",
+   "ko": "모듈식 번역, 모든 것을 제어",
+   "tw": "模組化翻譯，一切盡在掌控"
+  },
+  "12 个内置模块，自由组合，按需开关": {
+   "en": "12 built-in modules, freely combine, toggle on demand",
+   "ja": "12 の内蔵モジュール、自由に組み合わせ、必要な時にON/OFF",
+   "ko": "12개의 내장 모듈, 자유롭게 조합, 필요할 때 ON/OFF",
+   "tw": "12 個內建模組，自由組合，按需開關"
+  },
+  "模块化架构": {
+   "en": "Modular Architecture",
+   "ja": "モジュール方式",
+   "ko": "모듈식 아키텍처",
+   "tw": "模組化架構"
+  },
+  "所有功能都是模块。": {
+   "en": "Everything is a module.",
+   "ja": "すべての機能はモジュールです。",
+   "ko": "모든 기능은 모듈입니다.",
+   "tw": "所有功能都是模組。"
+  },
+  "划词、悬浮、选词即译、翻译引擎、处理器、缓存服务，全部由模块系统统一管理。一键开关，按需扩展，无需在多个设置页面之间切换。": {
+   "en": "Selection translate, hover translate, select-to-translate, translation engines, text processors, background services — all managed by the module system. Toggle on/off with one click, extend as needed, no more switching between settings pages.",
+   "ja": "選択翻訳、ホバー翻訳、選択即翻訳、翻訳エンジン、テキスト処理、バックグラウンドサービス — すべてモジュールシステムで一元管理。クリック一つでON/OFF、必要な時に拡張可能。",
+   "ko": "선택 번역, 호버 번역, 선택즉번역, 번역 엔진, 텍스트 처리, 백그라운드 서비스 — 모두 모듈 시스템으로 통합 관리됩니다. 한 번의 클릭으로 ON/OFF, 필요에 따라 확장 가능합니다.",
+   "tw": "劃詞、懸浮、選詞即譯、翻譯引擎、處理器、快取服務，全部由模組系統統一管理。一鍵開關，按需擴展，無需在多個設定頁面之間切換。"
+  },
+  "闪电翻译": {
+   "en": "Lightning Translation",
+   "ja": "瞬時翻訳",
+   "ko": "번개 같은 번역",
+   "tw": "閃電翻譯"
+  },
+  "操作步骤从5步减少到2步，翻译速度提升75%，0.5秒内即现结果。选中文本、点击按钮、完成翻译。": {
+   "en": "Reduced steps from 5 to 2, 75% faster translation speed, results in under 0.5 seconds. Select text, click, done.",
+   "ja": "操作ステップを5ステップから2ステップに削減し、翻訳速度75%向上。0.5秒以内に結果を表示。テキストを選択、ボタンをクリック、翻訳完了。",
+   "ko": "작업 단계가 5단계에서 2단계로 줄었고, 번역 속도가 75% 향상되었으며, 0.5초 이내에 결과가 나타납니다. 텍스트 선택, 버튼 클릭, 번역 완료.",
+   "tw": "操作步驟從5步減少到2步，翻譯速度提升75%，0.5秒內即現結果。選取文字、點擊按鈕、完成翻譯。"
+  },
+  "精准识别": {
+   "en": "Precise Recognition",
+   "ja": "高精度認識",
+   "ko": "정밀 인식",
+   "tw": "精準識別"
+  },
+  "DOM直接提取技术，跳过OCR环节，准确率高达98%+。智能多点采样，确保选中区域文字完整。": {
+   "en": "DOM direct extraction technology, skips OCR, 98%+ accuracy. Smart multi-point sampling ensures complete text in selected area.",
+   "ja": "DOM直接抽出技術でOCR环节をスキップし、精度98%以上を実現。インテリジェントマルチポイントサンプリングで、選択領域のテキストを完全に取得。",
+   "ko": "DOM 직접 추출 기술로 OCR 단계를 건너뛰고 정확도가 98%+입니다. 지능형 다중 포인트 샘플링으로 선택 영역의 텍스트가 완벽하게 추출됩니다.",
+   "tw": "DOM直接提取技術，跳過OCR環節，準確率高達98%+。智慧多點採樣，確保選取區域文字完整。"
+  },
+  "AI语言检测": {
+   "en": "AI Language Detection",
+   "ja": "AI言語検出",
+   "ko": "AI 언어 감지",
+   "tw": "AI語言檢測"
+  },
+  "基于深度字符特征分析，自动识别日、韩、英、中等10+种语言，无需手动选择源语言。": {
+   "en": "Based on deep character feature analysis, automatically identifies 10+ languages including Japanese, Korean, English, Chinese, no manual source language selection needed.",
+   "ja": "深い文字特徴分析に基づき、日・韓・英・中など10以上の言語を自動識別。源言語の手動選択は不要。",
+   "ko": "심층 문자 특성 분석을 기반으로 일본어, 한국어, 영어, 중국어 등 10개 이상의 언어를 자동으로 감지하며, 수동으로 원본 언어를 선택할 필요가 없습니다.",
+   "tw": "基於深度字元特徵分析，自動識別日、韓、英、中等10+種語言，無需手動選擇源語言。"
+  },
+  "模块生态": {
+   "en": "Module Ecosystem",
+   "ja": "モジュールエコシステム",
+   "ko": "모듈 생태계",
+   "tw": "模組生態"
+  },
+  "支持通过 .qt-module 模块扩展翻译引擎、交互模式、UI 主题。社区开发者可自行开发模块，导入即用。": {
+   "en": "Extend with .qt-module plugins: translation engines, interaction modes, UI themes. Community developers can build and share modules.",
+   "ja": ".qt-module プラグインで翻訳エンジン、操作モード、UI テーマを拡張。コミュニティの開発者がモジュールを作成、共有できます。",
+   "ko": ".qt-module 플러그인으로 번역 엔진, 상호 작용 모드, UI 테마를 확장하세요. 커뮤니티 개발자가 모듈을 만들고 공유할 수 있습니다.",
+   "tw": "支援透過 .qt-module 模組擴充翻譯引擎、互動模式、UI 主題。社群開發者可自行開發模組，匯入即用。"
+  },
+  "悬停翻译": {
+   "en": "Hover Translation",
+   "ja": "ホバー翻訳",
+   "ko": "호버 번역",
+   "tw": "懸浮翻譯"
+  },
+  "按住 Alt 键并悬停鼠标，无需选中即可翻译。沉浸式阅读体验，让翻译成为自然的阅读过程。": {
+   "en": "Hold Alt key and hover mouse, translate without selecting. Immersive reading experience, translation becomes a natural part of reading.",
+   "ja": "Altキーを押しながらマウスオーバーで翻訳可能。没入型読書体験で、翻訳が自然な読書プロセスに。",
+   "ko": "Alt 키를 누르고 마우스를 호버하면 선택 없이도 번역할 수 있습니다. 몰입형 읽기 경험을 통해 번역이 자연스러운 읽기 과정이 됩니다.",
+   "tw": "按住 Alt 鍵並懸浮滑鼠，無需選取即可翻譯。沈浸式閱讀體驗，讓翻譯成為自然的閱讀過程。"
+  },
+  "生词本": {
+   "en": "Word Book",
+   "ja": "単語帳",
+   "ko": "단어장",
+   "tw": "生詞本"
+  },
+  "收藏常用翻译，自动保存历史记录。500条超大容量，方便复习查阅。": {
+   "en": "Save frequently used translations, automatically save history. 500 entries capacity, easy review and reference.",
+   "ja": "よく使う翻訳をブックマーク、履歴は自動保存。500件の大容量で、復習と確認が簡単。",
+   "ko": "자주 사용하는 번역을 저장하고 자동으로 기록합니다. 500개 용량으로 복습과 조회가 편리합니다.",
+   "tw": "收藏常用翻譯，自動儲存歷史記錄。500條超大容量，方便複習查閱。"
+  },
+  "暗色模式": {
+   "en": "Dark Mode",
+   "ja": "ダークモード",
+   "ko": "다크 모드",
+   "tw": "暗色模式"
+  },
+  "自动跟随系统主题切换，弹窗、快捷面板、浮动面板、截图界面全部适配深色背景。": {
+   "en": "Follows system theme automatically. Popup, quick panel, float panel, and screenshot UI all support dark backgrounds.",
+   "ja": "システムテーマに自動追従。ポップアップ、クイックパネル、フロートパネル、スクリーンショットUIすべてがダーク背景に対応。",
+   "ko": "시스템 테마를 자동으로 따라갑니다. 팝업, 퀵 패널, 플로트 패널, 스크린샷 UI 모두 다크 배경을 지원합니다.",
+   "tw": "自動跟隨系統主題切換，彈窗、快捷面板、浮動面板、截圖介面全部適配深色背景。"
+  },
+  "文本净化": {
+   "en": "Text Sanitizer",
+   "ja": "テキスト整形",
+   "ko": "텍스트 정리",
+   "tw": "文字淨化"
+  },
+  "自动清理选中文本的多余空格、换行和 HTML 实体。代码块自动保护，不会被翻译引擎破坏。": {
+   "en": "Auto-clean whitespace, line breaks, and HTML entities from selected text. Code blocks are protected from translation corruption.",
+   "ja": "選択テキストの余分な空白・改行・HTML実体を自動除去。コードブロックは翻訳による破壊から保護されます。",
+   "ko": "선택한 텍스트의 불필요한 공백·줄바꿈·HTML 개체를 자동 제거합니다. 코드 블록은 번역으로 인한 손상으로부터 보호됩니다.",
+   "tw": "自動清理選中文字的多餘空格、換行和 HTML 實體。程式碼區塊自動保護，不會被翻譯引擎破壞。"
+  },
+  "翻译缓存": {
+   "en": "Translation Cache",
+   "ja": "翻訳キャッシュ",
+   "ko": "번역 캐시",
+   "tw": "翻譯快取"
+  },
+  "智能缓存翻译结果，相同内容无需重复请求 API。最多缓存 200 条，翻译更快、更省流量。": {
+   "en": "Smart caching for repeated text — no redundant API calls. Up to 200 entries, faster translations with less bandwidth.",
+   "ja": "翻訳結果をインテリジェントにキャッシュ。同じ内容のAPI再呼び出しを回避。最大200件、より速く、より省データ。",
+   "ko": "번역 결과를 지능적으로 캐시하여 동일한 내용의 API 재호출을 방지합니다. 최대 200개 항목, 더 빠르고 데이터 절약.",
+   "tw": "智慧快取翻譯結果，相同內容無需重複請求 API。最多快取 200 條，翻譯更快、更省流量。"
+  },
+  "右键翻译": {
+   "en": "Context Menu",
+   "ja": "右クリック翻訳",
+   "ko": "우클릭 번역",
+   "tw": "右鍵翻譯"
+  },
+  "选中文字后右键即可翻译，支持单引擎和多引擎两种模式。翻译结果气泡可拖拽、可收藏。": {
+   "en": "Right-click selected text to translate. Supports single-engine and multi-engine modes. Draggable result bubble with save & copy.",
+   "ja": "テキストを選択して右クリックで翻訳。シングルエンジンとマルチエンジンの両モードに対応。結果バブルはドラッグ可能で保存もコピーも可能。",
+   "ko": "텍스트 선택 후 우클릭으로 번역합니다. 단일 엔진 및 멀티 엔진 모드를 지원합니다. 결과 창은 드래그 가능하며 저장 및 복사가 가능합니다.",
+   "tw": "選中文字後右鍵即可翻譯，支援單引擎和多引擎兩種模式。翻譯結果氣泡可拖曳、可收藏。"
+  },
+  "亲眼见证翻译的魔力": {
+   "en": "Witness the Magic of Translation",
+   "ja": "翻訳の魔法を直接体験",
+   "ko": "번역의 마법을 직접 확인하세요",
+   "tw": "親眼見證翻譯的魔力"
+  },
+  "操作如此简单，感受前所未有的翻译体验": {
+   "en": "So simple, experience translation like never before",
+   "ja": "シンプルな操作で、かつてない翻訳体験を",
+   "ko": "간단한 조작으로, 이전에 없던 번역 경험을",
+   "tw": "操作如此簡單，感受前所未有的翻譯體驗"
+  },
+  "目标语言": {
+   "en": "Target Language",
+   "ja": "目標言語",
+   "ko": "대상 언어",
+   "tw": "目標語言"
+  },
+  "开始翻译": {
+   "en": "Start Translation",
+   "ja": "翻訳を開始",
+   "ko": "번역 시작",
+   "tw": "開始翻譯"
+  },
+  "🌐 快捷翻译": {
+   "en": "🌐 Quick Translate",
+   "ja": "🌐 クイック翻訳",
+   "ko": "🌐 빠른 번역",
+   "tw": "🌐 快捷翻譯"
+  },
+  "文字识别准确率 %": {
+   "en": "Text Recognition Accuracy %",
+   "ja": "文字認識精度 %",
+   "ko": "문자 인식 정확도 %",
+   "tw": "文字識別準確率 %"
+  },
+  "语言检测准确率 %": {
+   "en": "Language Detection Accuracy %",
+   "ja": "言語検出精度 %",
+   "ko": "언어 감지 정확도 %",
+   "tw": "語言檢測準確率 %"
+  },
+  "翻译成功率 %": {
+   "en": "Translation Success Rate %",
+   "ja": "翻訳成功率 %",
+   "ko": "번역 성공률 %",
+   "tw": "翻譯成功率 %"
+  },
+  "响应时间": {
+   "en": "Response Time",
+   "ja": "応答時間",
+   "ko": "응답 시간",
+   "tw": "響應時間"
+  },
+  "立刻开始使用": {
+   "en": "Get Started Now",
+   "ja": "今すぐ始める",
+   "ko": "지금 시작하기",
+   "tw": "立刻開始使用"
+  },
+  "一键安装，马上体验": {
+   "en": "One-click install, start immediately",
+   "ja": "ワンクリックでインストール",
+   "ko": "원클릭 설치, 바로 사용",
+   "tw": "一鍵安裝，馬上體驗"
+  },
+  "打开 Chrome 网上应用店": {
+   "en": "Open Chrome Web Store",
+   "ja": "Chrome Web Store を開く",
+   "ko": "Chrome Web Store 열기",
+   "tw": "打開 Chrome 網上應用店"
+  },
+  "点击下方按钮，直达 QuickTranslate 安装页": {
+   "en": "Click the button below to go to the QuickTranslate page",
+   "ja": "下のボタンをクリックしてインストールページへ",
+   "ko": "아래 버튼을 클릭하여 QuickTranslate 설치 페이지로 이동",
+   "tw": "點擊下方按鈕，直達 QuickTranslate 安裝頁"
+  },
+  "🧩 安装 Chrome 扩展": {
+   "en": "🧩 Install Chrome Extension",
+   "ja": "🧩 Chrome 拡張機能をインストール",
+   "ko": "🧩 Chrome 확장 프로그램 설치",
+   "tw": "🧩 安裝 Chrome 擴充功能"
+  },
+  "点击「添加至 Chrome」": {
+   "en": "Click 'Add to Chrome'",
+   "ja": "「Chrome に追加」をクリック",
+   "ko": "'Chrome에 추가' 클릭",
+   "tw": "點擊「新增至 Chrome」"
+  },
+  "在弹出的商店页面中，点击蓝色的「添加至 Chrome」按钮": {
+   "en": "Click the blue 'Add to Chrome' button on the store page",
+   "ja": "ストアページで青い「Chrome に追加」ボタンをクリック",
+   "ko": "스토어 페이지에서 파란색 'Chrome에 추가' 버튼 클릭",
+   "tw": "在商店頁面中點擊藍色的「新增至 Chrome」按鈕"
+  },
+  "✓ 确认权限 → 自动下载安装": {
+   "en": "✓ Confirm permissions → Auto install",
+   "ja": "✓ 権限を確認 → 自動インストール",
+   "ko": "✓ 권한 확인 → 자동 설치",
+   "tw": "✓ 確認權限 → 自動下載安裝"
+  },
+  "开始使用 🎉": {
+   "en": "Start Using 🎉",
+   "ja": "使用開始 🎉",
+   "ko": "사용 시작 🎉",
+   "tw": "開始使用 🎉"
+  },
+  "安装完成后，点击浏览器工具栏的 QuickTranslate 图标即可开始翻译": {
+   "en": "Click the QuickTranslate icon in your browser toolbar to begin",
+   "ja": "ツールバーの QuickTranslate アイコンをクリックして使う",
+   "ko": "브라우저 도구 모음에서 QuickTranslate 아이콘 클릭",
+   "tw": "安裝完成後，點擊瀏覽器工具欄的 QuickTranslate 圖示即可開始翻譯"
+  },
+  "✓ 选中文字 → 即刻翻译 → 就是这么简单": {
+   "en": "✓ Select text → Translate instantly → That's it!",
+   "ja": "✓ テキストを選択 → 即翻訳 → 完了",
+   "ko": "✓ 텍스트 선택 → 즉시 번역 → 끝!",
+   "tw": "✓ 選中文字 → 即刻翻譯 → 就是這麼簡單"
+  },
+  "💡 高级用户：也可通过 git clone + 开发者模式加载": {
+   "en": "💡 Advanced: You can also load via git clone + developer mode",
+   "ja": "💡 git clone + デベロッパーモードでも読み込み可能",
+   "ko": "💡 고급 사용자: git clone + 개발자 모드로도 로드 가능",
+   "tw": "💡 進階用戶：也可透過 git clone + 開發者模式載入"
+  },
+  "🛠️ 开发者文档": {
+   "en": "🛠️ Developer Docs",
+   "ja": "🛠️ 開発者向けドキュメント",
+   "ko": "🛠️ 개발자 문서",
+   "tw": "🛠️ 開發者文件"
+  },
+  "为 QuickTranslate 开发模块，从这里开始": {
+   "en": "Want to build modules for QuickTranslate? Start here",
+   "ja": "QuickTranslate のモジュール開発はこちら",
+   "ko": "QuickTranslate 모듈을 개발하시겠습니까? 여기서 시작하세요",
+   "tw": "為 QuickTranslate 開發模組，從這裡開始"
+  },
+  "📖 规范文档": {
+   "en": "📖 Specification",
+   "ja": "📖 仕様書",
+   "ko": "📖 명세서",
+   "tw": "📖 規範文件"
+  },
+  "📝 教程": {
+   "en": "📝 Tutorial",
+   "ja": "📝 チュートリアル",
+   "ko": "📝 튜토리얼",
+   "tw": "📝 教學"
+  },
+  "📦 发布指南": {
+   "en": "📦 Publishing Guide",
+   "ja": "📦 ストア公開ガイド",
+   "ko": "📦 게시 가이드",
+   "tw": "📦 發布指南"
+  },
+  "🧩 模块商店": {
+   "en": "🧩 Module Store",
+   "ja": "🧩 モジュールストア",
+   "ko": "🧩 모듈 스토어",
+   "tw": "🧩 模組商店"
+  },
+  "查看完整商店 →": {
+   "en": "View Full Store →",
+   "ja": "完全ストアを見る →",
+   "ko": "전체 스토어 보기 →",
+   "tw": "查看完整商店 →"
+  },
+  "为 QuickTranslate 扩展功能的社区模块": {
+   "en": "Community modules that extend QuickTranslate",
+   "ja": "QuickTranslate の機能を拡張するコミュニティモジュール",
+   "ko": "QuickTranslate 기능을 확장하는 커뮤니티 모듈",
+   "tw": "為 QuickTranslate 擴展功能的社群模組"
+  },
+  "📥 下载模块": {
+   "en": "📥 Download Module",
+   "ja": "📥 ダウンロード",
+   "ko": "📥 다운로드",
+   "tw": "📥 下載模組"
+  },
+  "常见问题": {
+   "en": "Frequently Asked Questions",
+   "ja": "よくある質問",
+   "ko": "자주 묻는 질문",
+   "tw": "常見問題"
+  },
+  "遇到问题？这里有答案": {
+   "en": "Have questions? Here are the answers",
+   "ja": "お困りですか？答えがここにあります",
+   "ko": "문제가 있으신가요? 여기서 답을 찾으세요",
+   "tw": "遇到問題？這裡有答案"
+  },
+  "快捷键不生效怎么办？": {
+   "en": "Keyboard shortcuts not working?",
+   "ja": "ショートカットキーが動作しません",
+   "ko": "단축키가 작동하지 않으면 어떻게 하나요?",
+   "tw": "快捷鍵不生效怎麼辦？"
+  },
+  "请前往 chrome://extensions/shortcuts 检查快捷键设置，确保没有与其他扩展冲突。您也可以手动设置新的快捷键组合。": {
+   "en": "Go to chrome://extensions/shortcuts to check your keyboard shortcut settings. Make sure there are no conflicts with other extensions. You can also manually set a new shortcut combination.",
+   "ja": "chrome://extensions/shortcuts でショートカットの設定を確認し、他の拡張機能との競合がないことを確認してください。新しいショートカットの組み合わせ手動で設定することもできます。",
+   "ko": "chrome://extensions/shortcuts로 이동하여 단축키 설정을 확인하고 다른 확장 프로그램과 충돌하지 않는지 확인하세요. 새 단축키 조합을 수동으로 설정할 수도 있습니다.",
+   "tw": "請前往 chrome://extensions/shortcuts 檢查快捷鍵設置，確保沒有與其他擴展衝突。您也可以手動設置新的快捷鍵組合。"
+  },
+  "为什么有些文字无法识别？": {
+   "en": "Why can't some text be recognized?",
+   "ja": "一部のテキストが認識されません",
+   "ko": "일부 텍스트가 인식되지 않는 이유는 무엇인가요?",
+   "tw": "為什麼有些文字無法識別？"
+  },
+  "请确保选中的区域包含清晰的文字。图片、特殊字体或背景复杂的文字可能无法准确识别。建议选择文字对比度高的区域。": {
+   "en": "Make sure the selected area contains clear text. Images, special fonts, or text with complex backgrounds may not be accurately recognized. We recommend selecting areas with high text contrast.",
+   "ja": "選択した領域に明確なテキストが含まれていることを確認してください。画像化されたテキスト、特殊フォント、複雑な背景のテキストは正確に認識できない場合があります。テキストのコントラストが高い領域を選択してください。",
+   "ko": "선택한 영역에 선명한 텍스트가 포함되어 있는지 확인하세요. 이미지, 특수 폰트 또는 복잡한 배경의 텍스트는 정확하게 인식되지 않을 수 있습니다. 대비가 높은 텍스트 영역을 선택하세요.",
+   "tw": "請確保選取的區域包含清晰的文字。圖片、特殊字體或背景複雜的文字可能無法準確識別。建議選擇文字對比度高的區域。"
+  },
+  "支持哪些语言翻译？": {
+   "en": "What languages are supported?",
+   "ja": "対応している翻訳言語は？",
+   "ko": "어떤 언어 번역을 지원하나요?",
+   "tw": "支援哪些語言翻譯？"
+  },
+  "目前支持日语、韩语、英语、德语、法语、西班牙语等10+种语言翻译成中文（简体/繁体）。系统会自动检测源语言，无需手动选择。": {
+   "en": "Currently supports 10+ languages including Japanese, Korean, English, German, French, Spanish translating to Chinese (Simplified/Traditional). The system automatically detects the source language, no manual selection needed.",
+   "ja": "現在、日本語・韓国語・英語・ドイツ語・フランス語・スペイン語など 10 以上の言語から中国語（簡体字／繁体字）への翻訳に対応しています。ソース言語は自動検出されるため、手動選択は不要です。",
+   "ko": "현재 일본어, 한국어, 영어, 독일어, 프랑스어, 스페인어 등 10개 이상의 언어를 중국어(간체/번체)로 번역할 수 있습니다. 시스템이 원본 언어를 자동으로 감지하므로 수동으로 선택할 필요가 없습니다.",
+   "tw": "目前支援日語、韓語、英語、德語、法語、西班牙語等10+種語言翻譯成中文（簡體/繁體）。系統會自動檢測源語言，無需手動選擇。"
+  },
+  "如何切换界面语言？": {
+   "en": "How to switch the interface language?",
+   "ja": "インターフェース言語を切り替えるには？",
+   "ko": "인터페이스 언어는 어떻게 전환하나요?",
+   "tw": "如何切換介面語言？"
+  },
+  "点击扩展图标打开主界面，在标题栏右侧有语言选择器。支持简体中文、繁体中文、英语、日语、韩语5种界面语言。设置会自动保存。": {
+   "en": "Click the extension icon to open the main interface, there is a language selector on the right side of the title bar. Supports 5 interface languages: Simplified Chinese, Traditional Chinese, English, Japanese, Korean. Settings are saved automatically.",
+   "ja": "拡張機能のアイコンをクリックしてメイン画面を開くと、タイトルバー右側に言語セレクターがあります。簡体字中国語・繁体字中国語・英語・日本語・韓国語の 5 言語に対応。設定は自動保存されます。",
+   "ko": "확장 프로그램 아이콘을 클릭하여 메인 인터페이스를 열면 제목 표시 줄 오른쪽에 언어 선택기가 있습니다. 간체 중국어, 번체 중국어, 영어, 일본어, 한국어 등 5가지 인터페이스 언어를 지원합니다. 설정은 자동으로 저장됩니다.",
+   "tw": "點擊擴展圖示打開主介面，在標題欄右側有語言選擇器。支援簡體中文、繁體中文、英語、日語、韓語5種介面語言。設置會自動儲存。"
+  },
+  "翻译结果不准确怎么办？": {
+   "en": "Translation result is inaccurate?",
+   "ja": "翻訳結果の精度が悪い場合は？",
+   "ko": "번역 결과가 부정확하면 어떻게 하나요?",
+   "tw": "翻譯結果不準確怎麼辦？"
+  },
+  "可以尝试选择更精确的文字区域，或在高级设置中切换不同的翻译引擎。Google翻译适合日常使用，GLM大模型翻译质量更高但需要API Key。": {
+   "en": "Try selecting a more precise text area, or switch to a different translation engine in advanced settings. Google Translate is suitable for daily use, GLM large model offers higher translation quality but requires an API Key.",
+   "ja": "より正確なテキスト領域を選択してみてください。また、高度な設定で異なる翻訳エンジンに切り替えることもできます。Google翻訳は日常使用に適しており、GLM大モデル翻訳はより高品質ですがAPI Keyが必要です。",
+   "ko": "더 정확한 텍스트 영역을 선택하거나 고급 설정에서 다른 번역 엔진으로 전환해 보세요. Google 번역은 일상 사용에 적합하고, GLM 대형 모델 번역 품질이 더 높지만 API Key가 필요합니다.",
+   "tw": "可以嘗試選擇更精確的文字區域，或在高階設置中切換不同的翻譯引擎。Google翻譯適合日常使用，GLM大模型翻譯品質更高但需要API Key。"
+  },
+  "QuickTranslate - 快译 | 即时翻译的科技引擎": {
+   "en": "QuickTranslate - Instant Translation Engine | Chrome Extension",
+   "ja": "QuickTranslate - インスタント翻訳エンジン | Chrome 拡張機能",
+   "ko": "QuickTranslate - 즉시 번역 엔진 | Chrome 확장 프로그램",
+   "tw": "QuickTranslate - 快譯 | 即時翻譯的科技引擎"
+  },
+  "快译 · 即时翻译引擎": {
+   "en": "QuickTranslate · Instant Translation Engine",
+   "ja": "クイック翻訳 · インスタント翻訳エンジン",
+   "ko": "빠른 번역 · 즉시 번역 엔진",
+   "tw": "快譯 · 即時翻譯引擎"
+  },
+  "🌐 中文": {
+   "en": "🌐 English",
+   "ja": "🌐 日本語",
+   "ko": "🌐 한국어",
+   "tw": "🌐 繁體中文"
+  },
+  "v3.3.3 · 开源免费 · Chrome 商店上架": {
+   "en": "v3.3.3 · Open Source · Live on Chrome Web Store",
+   "ja": "v3.3.3 · オープンソース · Chrome ストア公開中",
+   "ko": "v3.3.3 · 오픈 소스 · Chrome 스토어 출시",
+   "tw": "v3.3.3 · 開源免費 · Chrome 商店上架"
+  },
+  "选中即译，": {
+   "en": "Select & translate,",
+   "ja": "選択するだけで、",
+   "ko": "선택하면 바로,",
+   "tw": "選中即譯，"
+  },
+  "毫秒级": {
+   "en": "millisecond",
+   "ja": "ミリ秒",
+   "ko": "밀리초",
+   "tw": "毫秒級"
+  },
+  "即时翻译": {
+   "en": "instant translation",
+   "ja": "即時翻訳",
+   "ko": "즉시 번역",
+   "tw": "即時翻譯"
+  },
+  "基于 DOM 文字提取与模块化架构，把整页翻译压缩成一次自然的阅读动作。": {
+   "en": "Built on DOM text extraction and a modular architecture, it turns full-page translation into one natural reading action.",
+   "ja": "DOM テキスト抽出とモジュール式アーキテクチャにより、ページ全体の翻訳をひとつの自然な読書動作に変えます。",
+   "ko": "DOM 텍스트 추출과 모듈형 아키텍처를 기반으로, 페이지 전체 번역을 하나의 자연스러운 읽기 동작으로 압축합니다.",
+   "tw": "基於 DOM 文字擷取與模組化架構，把整頁翻譯壓縮成一次自然的閱讀動作。"
+  },
+  "EN → 中文": {
+   "en": "中文 → English",
+   "ja": "EN → 日本語",
+   "ko": "EN → 한국어",
+   "tw": "EN → 繁體中文"
+  },
+  "SOURCE · 原文": {
+   "en": "SOURCE · Original",
+   "ja": "SOURCE · 原文",
+   "ko": "SOURCE · 원문",
+   "tw": "SOURCE · 原文"
+  },
+  "TRANSLATION · 译文": {
+   "en": "TRANSLATION · Result",
+   "ja": "TRANSLATION · 訳文",
+   "ko": "TRANSLATION · 번역",
+   "tw": "TRANSLATION · 譯文"
+  },
+  "翻译的未来，此刻即时。": {
+   "ja": "翻訳の未来は、今この瞬間に。",
+   "ko": "번역의 미래는 지금 이 순간입니다.",
+   "tw": "翻譯的未來，此刻即時。"
+  },
+  "11 个内置模块，自由组合，按需开关": {
+   "en": "11 built-in modules — combine freely, toggle on demand",
+   "ja": "11 個の内蔵モジュール。自由に組み合わせ、必要な時にオン。",
+   "ko": "11개의 내장 모듈. 자유롭게 조합하고 필요할 때 켜세요.",
+   "tw": "11 個內建模組，自由組合，按需開關"
+  },
+  "操作步骤从 5 步减到 2 步，翻译速度提升 75%，0.5 秒内即现结果。": {
+   "en": "Steps cut from 5 to 2, translation 75% faster — results in under 0.5 seconds.",
+   "ja": "操作手順は 5 ステップから 2 ステップへ。翻訳速度は 75% 向上し、0.5 秒以内に結果が表示されます。",
+   "ko": "조작 단계가 5단계에서 2단계로 줄고, 번역 속도는 75% 향상되어 0.5초 안에 결과가 나타납니다.",
+   "tw": "操作步驟從 5 步減到 2 步，翻譯速度提升 75%，0.5 秒內即現結果。"
+  },
+  "DOM 直接提取技术，跳过 OCR 环节，准确率高达 98%+，多选点采样确保文字完整。": {
+   "en": "Direct DOM extraction skips OCR entirely, hitting 98%+ accuracy with multi-point sampling that keeps text intact.",
+   "ja": "DOM 直接抽出技術で OCR を省略し、精度は 98%+ に。マルチポイントサンプリングで文字の欠けを防ぎます。",
+   "ko": "DOM 직접 추출 기술로 OCR 단계를 생략하고 정확도 98%+를 달성하며, 다중 지점 샘플링으로 텍스트를 온전히 유지합니다.",
+   "tw": "DOM 直接擷取技術，跳過 OCR 環節，準確率高達 98%+，多點取樣確保文字完整。"
+  },
+  "AI 语言检测": {
+   "en": "AI Language Detection",
+   "ja": "AI 言語検出",
+   "ko": "AI 언어 감지",
+   "tw": "AI 語言偵測"
+  },
+  "基于深度字符特征分析，自动识别日、韩、英、中等 10+ 语言，无需手动选择源语言。": {
+   "en": "Deep character-feature analysis auto-detects 10+ languages including Japanese, Korean, English and Chinese — no manual source selection.",
+   "ja": "深い文字特徴分析により、日本語・韓国語・英語・中国語など 10+ 言語を自動識別。ソース言語の手動選択は不要です。",
+   "ko": "심층 문자 특징 분석으로 일본어, 한국어, 영어, 중국어 등 10+ 언어를 자동 인식합니다. 원문 언어를 직접 선택할 필요가 없습니다.",
+   "tw": "基於深度字元特徵分析，自動辨識日、韓、英、中等 10+ 語言，無需手動選擇來源語言。"
+  },
+  "通过 .qt-module 扩展翻译引擎、交互模式、UI 主题，社区模块导入即用。": {
+   "en": "Extend translation engines, interaction modes and UI themes through .qt-module — community modules work the moment you import them.",
+   "ja": ".qt-module で翻訳エンジン・操作モード・UI テーマを拡張。コミュニティ製モジュールは読み込むだけですぐ使えます。",
+   "ko": ".qt-module로 번역 엔진, 상호작용 모드, UI 테마를 확장하세요. 커뮤니티 모듈은 가져오면 바로 사용할 수 있습니다.",
+   "tw": "透過 .qt-module 擴充翻譯引擎、互動模式、UI 主題，社群模組匯入即用。"
+  },
+  "按住 Alt 键并悬停鼠标，无需选中即可翻译，沉浸式阅读不中断。": {
+   "en": "Hold Alt and hover — translate without selecting a thing, keeping immersive reading uninterrupted.",
+   "ja": "Alt キーを押しながらマウスを重ねるだけで翻訳。選択不要で、没入感のある読書を妨げません。",
+   "ko": "Alt 키를 누른 채 마우스를 올리면 선택 없이 바로 번역되어 몰입형 읽기가 끊기지 않습니다.",
+   "tw": "按住 Alt 鍵並懸停滑鼠，無需選取即可翻譯，沉浸式閱讀不中斷。"
+  },
+  "收藏常用翻译，自动保存历史记录，500 条超大容量，方便复习查阅。": {
+   "en": "Save the translations you use most, with automatic history — 500 entries of room for easy review.",
+   "ja": "よく使う翻訳を保存し、履歴は自動記録。500 件の大容量で復習もらくらく。",
+   "ko": "자주 쓰는 번역을 저장하고 기록은 자동 보관. 500개 대용량으로 복습과 조회가 편합니다.",
+   "tw": "收藏常用翻譯，自動儲存歷史紀錄，500 條超大容量，方便複習查閱。"
+  },
+  "自动跟随系统主题切换，弹窗、面板、截图界面全适配深色背景。": {
+   "en": "Follows your system theme automatically — popup, panels and screenshot UI all adapt to dark backgrounds.",
+   "ja": "システムテーマに自動追従。ポップアップ・パネル・スクリーンショット画面までダークに対応。",
+   "ko": "시스템 테마를 자동으로 따라가며 팝업, 패널, 스크린샷 화면까지 다크 모드에 최적화됩니다.",
+   "tw": "自動跟隨系統主題切換，彈窗、面板、截圖介面全適配深色背景。"
+  },
+  "自动清理多余空格、换行与 HTML 实体，代码块自动保护不被破坏。": {
+   "en": "Strips redundant spaces, line breaks and HTML entities, while code blocks stay protected from damage.",
+   "ja": "余分な空白・改行・HTML エンティティを自動除去。コードブロックは壊れないよう自動保護されます。",
+   "ko": "불필요한 공백, 줄바꿈, HTML 엔티티를 자동 정리하고 코드 블록은 손상되지 않도록 보호합니다.",
+   "tw": "自動清理多餘空格、換行與 HTML 實體，程式碼區塊自動保護不被破壞。"
+  },
+  "智能缓存翻译结果，相同内容免重复请求，最多 200 条，更快更省流量。": {
+   "en": "Smart caching skips duplicate requests for identical content — up to 200 entries, faster and lighter on data.",
+   "ja": "翻訳結果を賢くキャッシュ。同じ内容は再リクエスト不要で、最大 200 件。高速かつ通信量も節約。",
+   "ko": "번역 결과를 스마트하게 캐시해 같은 내용은 다시 요청하지 않습니다. 최대 200개로 더 빠르고 데이터도 절약됩니다.",
+   "tw": "智慧快取翻譯結果，相同內容免重複請求，最多 200 條，更快更省流量。"
+  },
+  "选中后右键即可翻译，支持单/多引擎模式，结果气泡可拖拽、可收藏。": {
+   "en": "Select and right-click to translate, with single or multi-engine modes and draggable, savable result bubbles.",
+   "ja": "選択して右クリックするだけで翻訳。シングル／マルチエンジンモードに対応し、結果バブルはドラッグも保存も可能。",
+   "ko": "선택 후 우클릭만으로 번역되며 단일/다중 엔진 모드를 지원합니다. 결과 말풍선은 드래그와 저장이 가능합니다.",
+   "tw": "選取後按右鍵即可翻譯，支援單／多引擎模式，結果氣泡可拖曳、可收藏。"
+  },
+  "QuickTranslate · 实时演示": {
+   "en": "QuickTranslate · Live Demo",
+   "ja": "QuickTranslate · ライブデモ",
+   "ko": "QuickTranslate · 실시간 데모",
+   "tw": "QuickTranslate · 即時演示"
+  },
+  "📷 开始翻译": {
+   "en": "📷 Start translating",
+   "ja": "📷 翻訳を開始",
+   "ko": "📷 번역 시작",
+   "tw": "📷 開始翻譯"
+  },
+  "目前支持日语、韩语、英语、德语、法语、西班牙语等 10+ 种语言翻译成中文（简体/繁体）。系统会自动检测源语言，无需手动选择。": {
+   "en": "Currently 10+ languages — Japanese, Korean, English, German, French, Spanish and more — can be translated into Chinese (Simplified/Traditional). The source language is detected automatically, with no manual selection needed.",
+   "ja": "現在、日本語・韓国語・英語・ドイツ語・フランス語・スペイン語など 10+ 言語から中国語（簡体字／繁体字）への翻訳に対応しています。ソース言語は自動検出され、手動選択は不要です。",
+   "ko": "현재 일본어, 한국어, 영어, 독일어, 프랑스어, 스페인어 등 10+ 언어를 중국어(간체/번체)로 번역할 수 있습니다. 원문 언어는 자동 감지되어 직접 선택할 필요가 없습니다.",
+   "tw": "目前支援日語、韓語、英語、德語、法語、西班牙語等 10+ 種語言翻譯成中文（簡體／繁體）。系統會自動偵測來源語言，無需手動選擇。"
+  },
+  "点击扩展图标打开主界面，在标题栏右侧有语言选择器。支持简体中文、繁体中文、英语、日语、韩语 5 种界面语言。设置会自动保存。": {
+   "en": "Click the extension icon to open the main UI — the language selector sits on the right of the title bar. Five interface languages are supported: Simplified Chinese, Traditional Chinese, English, Japanese and Korean. Settings are saved automatically.",
+   "ja": "拡張機能アイコンをクリックしてメイン画面を開くと、タイトルバー右側に言語セレクターがあります。簡体字中国語・繁体字中国語・英語・日本語・韓国語の 5 言語に対応。設定は自動保存されます。",
+   "ko": "확장 아이콘을 클릭해 메인 화면을 열면 제목 표시줄 오른쪽에 언어 선택기가 있습니다. 간체 중국어, 번체 중국어, 영어, 일본어, 한국어 5개 인터페이스 언어를 지원하며 설정은 자동 저장됩니다.",
+   "tw": "點擊擴充功能圖示開啟主介面，在標題列右側有語言選擇器。支援簡體中文、繁體中文、英語、日語、韓語 5 種介面語言。設定會自動儲存。"
+  },
+  "可以尝试选择更精确的文字区域，或在高级设置中切换不同的翻译引擎。Google 翻译适合日常使用，GLM 大模型翻译质量更高但需要 API Key。": {
+   "en": "Try selecting a more precise text area, or switch engines in Advanced Settings. Google suits everyday use, while GLM's large model delivers higher quality but requires an API key.",
+   "ja": "より正確な範囲を選択するか、詳細設定で別の翻訳エンジンに切り替えてみてください。Google 翻訳は日常利用に、GLM の大規模モデルはより高品質ですが API キーが必要です。",
+   "ko": "더 정확한 영역을 선택하거나 고급 설정에서 다른 번역 엔진으로 전환해 보세요. Google 번역은 일상용에 적합하고, GLM 대형 모델은 품질이 더 높지만 API 키가 필요합니다.",
+   "tw": "可以嘗試選取更精確的文字區域，或在進階設定中切換不同的翻譯引擎。Google 翻譯適合日常使用，GLM 大模型翻譯品質更高但需要 API Key。"
+  },
+  "Made with precision by QuickTranslate Team · v3.3.3": {
+   "ja": "Made with precision by QuickTranslate Team · v3.3.3",
+   "ko": "Made with precision by QuickTranslate Team · v3.3.3",
+   "tw": "Made with precision by QuickTranslate Team · v3.3.3"
+  }
+ },
+ "attr": {
+  "切换主题": {
+   "en": "Toggle theme",
+   "ja": "テーマを切り替え",
+   "ko": "테마 전환",
+   "tw": "切換主題"
+  }
+ },
+ "links": {
+  "docs_spec": {
+   "zh": "docs/spec-zh-CN.html",
+   "en": "docs/spec.html",
+   "ja": "docs/spec-ja.html",
+   "ko": "docs/spec-ko.html",
+   "tw": "docs/spec-zh-TW.html"
+  },
+  "docs_example": {
+   "zh": "docs/example-zh-CN.html",
+   "en": "docs/example.html",
+   "ja": "docs/example-ja.html",
+   "ko": "docs/example-ko.html",
+   "tw": "docs/example-zh-TW.html"
+  },
+  "docs_storeguide": {
+   "zh": "docs/store-guide-zh-CN.html",
+   "en": "docs/store-guide.html",
+   "ja": "docs/store-guide-ja.html",
+   "ko": "docs/store-guide-ko.html",
+   "tw": "docs/store-guide-zh-TW.html"
+  },
+  "store": {
+   "zh": "store-zh-CN.html",
+   "en": "store.html",
+   "ja": "store-ja.html",
+   "ko": "store-ko.html",
+   "tw": "store-zh-TW.html"
+  }
+ },
+ "phrases": {
+  "en": [
+   "Supports Google, Microsoft, GLM, LLM and other translation engines",
+   "Alt+1 smart translation with automatic language detection",
+   "Hover translation for an immersive reading experience",
+   "History + Word Book, the perfect learning companion"
+  ],
+  "ja": [
+   "Google、Microsoft、GLM、LLM など複数の翻訳エンジンに対応",
+   "Alt+1 でスマート翻訳、言語を自動検出",
+   "ホバー翻訳で、没入型の読書体験",
+   "履歴＋単語帳、学習の強い味方"
+  ],
+  "ko": [
+   "Google, Microsoft, GLM, LLM 등 다양한 번역 엔진 지원",
+   "Alt+1 스마트 번역, 언어 자동 감지",
+   "호버 번역으로 몰입형 읽기 경험",
+   "기록 + 단어장, 학습 도우미"
+  ],
+  "tw": [
+   "支援 Google、Microsoft、GLM、LLM 多種翻譯引擎",
+   "Alt+1 智慧翻譯，自動偵測語言",
+   "懸浮翻譯，沉浸式閱讀體驗",
+   "歷史記錄 + 生詞本，學習好幫手"
+  ]
+ },
+ "meta": {
+  "en": {
+   "lang": "en",
+   "canonical": "https://qtrans.737703.xyz/landing-en.html",
+   "title": "QuickTranslate - Instant Translation Engine | Chrome Extension",
+   "description": "QuickTranslate — a Chrome extension built on DOM text extraction and a modular architecture. Select-to-translate, hover translation, multi-engine support and a vocabulary book: precise, instant and efficient.",
+   "keywords": "translation,chrome extension,web translator,browser translation,hover translation,AI translation,language learning,QuickTranslate",
+   "og_desc": "DOM text extraction + modular architecture. Select-to-translate, hover translation, multi-engine — precise, instant, efficient.",
+   "twitter_desc": "DOM text extraction + modular architecture. Select-to-translate, hover translation, multi-engine.",
+   "og_locale": "en_US",
+   "aria_theme": "Toggle theme"
+  },
+  "ja": {
+   "lang": "ja",
+   "canonical": "https://qtrans.737703.xyz/landing-ja.html",
+   "title": "QuickTranslate - クイック翻訳 | Chrome 拡張機能",
+   "description": "QuickTranslate — DOM テキスト抽出とモジュール式アーキテクチャを採用した Chrome 翻訳拡張機能。選択翻訳・ホバー翻訳・マルチエンジン・単語帳を搭載し、正確・即時・高効率に翻訳します。",
+   "keywords": "クイック翻訳,chrome拡張機能,ウェブ翻訳,ブラウザ翻訳,ホバー翻訳,AI翻訳,英語学習,翻訳ツール,QuickTranslate",
+   "og_desc": "DOM テキスト抽出＋モジュール式アーキテクチャ。選択翻訳・ホバー翻訳・マルチエンジンで、正確かつ即時。",
+   "twitter_desc": "DOM テキスト抽出＋モジュール式アーキテクチャ。選択翻訳・ホバー翻訳・マルチエンジン対応。",
+   "og_locale": "ja_JP",
+   "aria_theme": "テーマを切り替え"
+  },
+  "ko": {
+   "lang": "ko",
+   "canonical": "https://qtrans.737703.xyz/landing-ko.html",
+   "title": "QuickTranslate - 빠른 번역 | Chrome 확장 프로그램",
+   "description": "QuickTranslate — DOM 텍스트 추출과 모듈형 아키텍처를 적용한 Chrome 번역 확장 프로그램입니다. 선택 번역, 호버 번역, 다중 엔진, 단어장을 갖춰 정확하고 즉시, 효율적으로 번역합니다.",
+   "keywords": "빠른 번역,chrome 확장,웹 번역,브라우저 번역,호버 번역,AI 번역,영어 학습,번역 도구,QuickTranslate",
+   "og_desc": "DOM 텍스트 추출 + 모듈형 아키텍처. 선택 번역, 호버 번역, 다중 엔진으로 정확하고 즉시.",
+   "twitter_desc": "DOM 텍스트 추출 + 모듈형 아키텍처. 선택 번역, 호버 번역, 다중 엔진 지원.",
+   "og_locale": "ko_KR",
+   "aria_theme": "테마 전환"
+  },
+  "tw": {
+   "lang": "zh-TW",
+   "canonical": "https://qtrans.737703.xyz/landing-zh-TW.html",
+   "title": "QuickTranslate - 快譯 | 即時翻譯的科技引擎",
+   "description": "QuickTranslate 快譯 — 基於 DOM 文字擷取與模組化架構的 Chrome 翻譯擴充功能。選中即譯、懸浮翻譯、多引擎、生詞本，精準、即時、高效。",
+   "keywords": "劃詞翻譯,chrome翻譯擴充,網頁翻譯,懸浮翻譯,AI翻譯,英語學習,瀏覽器翻譯工具,QuickTranslate",
+   "og_desc": "DOM 文字擷取 + 模組化架構，選中即譯、懸浮翻譯、多引擎，精準即時高效",
+   "twitter_desc": "DOM 文字擷取 + 模組化架構，選中即譯、懸浮翻譯、多引擎",
+   "og_locale": "zh_TW",
+   "aria_theme": "切換主題"
+  }
+ },
+ "swap_en": {
+  "note": "On the English page the demo pair is reversed: Chinese becomes the source, English the target.",
+  "src_zh": "The future of translation is instant.",
+  "tgt_zh": "翻译的未来，此刻即时。"
+ },
+ "demo": {
+  "zh": {
+   "ui": [
+    "简体中文",
+    "English",
+    "日本語"
+   ],
+   "pairs": [
+    "简体中文 → English",
+    "English → 简体中文",
+    "日本語 → 简体中文"
+   ],
+   "src": "Hello World",
+   "tgt": "你好，世界！"
+  },
+  "en": {
+   "ui": [
+    "English",
+    "简体中文",
+    "日本語"
+   ],
+   "pairs": [
+    "English → 简体中文",
+    "简体中文 → English",
+    "日本語 → English"
+   ],
+   "src": "你好，世界！",
+   "tgt": "Hello, world!"
+  },
+  "ja": {
+   "ui": [
+    "日本語",
+    "English",
+    "简体中文"
+   ],
+   "pairs": [
+    "日本語 → English",
+    "English → 日本語",
+    "简体中文 → 日本語"
+   ],
+   "src": "Hello World",
+   "tgt": "こんにちは、世界！"
+  },
+  "ko": {
+   "ui": [
+    "한국어",
+    "English",
+    "简体中文"
+   ],
+   "pairs": [
+    "한국어 → English",
+    "English → 한국어",
+    "简体中文 → 한국어"
+   ],
+   "src": "Hello World",
+   "tgt": "안녕하세요, 세계!"
+  },
+  "tw": {
+   "ui": [
+    "繁體中文",
+    "English",
+    "日本語"
+   ],
+   "pairs": [
+    "繁體中文 → English",
+    "English → 繁體中文",
+    "日本語 → 繁體中文"
+   ],
+   "src": "Hello World",
+   "tgt": "你好，世界！"
+  }
+ }
+}
