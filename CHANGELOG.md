@@ -8,14 +8,19 @@
 ## [3.4.0] - 2026-11-19
 
 ### 🔧 修復 / Fixed
-- **自定義 LLM 接口可真正連通**：新增 `optional_host_permissions`，在設置頁保存配置或獲取模型列表時，按 baseUrl 域名向用戶申請訪問權限；background 請求前會校驗權限，未授權時返回明確提示。此前不在預裝名單的域名（如 OpenAI 官方接口）會被 CORS 攔截、填了也用不了
-- **懸浮面板錯誤信息改經轉義輸出**：API 返回的錯誤文本此前直接拼入 innerHTML，現統一經 escapeHtml 處理
-- 移除無人讀取的 `shortcutKey` 存儲寫入（死代碼）；快捷鍵顯示只以 chrome.commands 為準
+- **截圖翻譯慢 3~4 秒（核心修復）**：DOM 文字提取原本對整頁每個文本節點的**每個字符**執行 `getBoundingClientRect()` 強制重排，CNN 等重型頁面上萬次布局計算阻塞主執行緒。改為「節點級粗篩」——先用 `getClientRects()` 判斷節點是否與選區相交，只對相交節點逐字符定位。計算量從 O(全頁字符) 降到 O(相交字符)，實測 **1904ms → 18ms（約 100 倍提速）**
+- **翻譯引擎超時**：默認 Google 端點在本網絡環境下超時約 10 秒，改為**有道優先**（實測 0.2 秒），失敗才回退 Google；fetch 加 4~5 秒超時
+- **網頁死鎖**：移除會在重型頁面注入 wasm 編譯 OCR 的「預熱」邏輯（曾導致 Chrome 彈出 Page Unresponsive），OCR 恢復純按需加載
+- **人為延遲**：去除處理流程的 800ms 與弹窗的 200+50ms 硬編碼延遲
 
 ### 🚀 優化 / Improved
-- **OCR 庫改按需注入**：tesseract.min.js 不再預載到每個網頁，改由截圖翻譯用到時經 background 以 scripting API 注入當前頁，減輕每個頁面的負擔
-- **新增 CI**：GitHub Actions 於 push／PR 時自動跑語法檢查與日語引擎回歸測試
-- **日誌開關**：新增 debug-log.js，生產環境默認關閉 console.log（warn／error 不受影響）；調試時設置 `chrome.storage.local` 的 `qtDebug: true` 即開啟
+- **OCR 本地化**：Tesseract worker／core（SIMD+非 SIMD）／eng 語言包全部本地化到擴展，脫離慢速 CDN；worker 單例復用，避免每次重建
+- **截圖體積**：`captureVisibleTab` 由無損 PNG 改為 JPEG quality 90，截圖與裁剪更快
+- **耗時打點**：新增 `[QT perf]` 日誌，便於定位提取／翻譯各階段耗時
+
+### 🏗️ 變更 / Changed
+- 打包腳本納入 `tesseract/` 目錄，確保 Web Store／release 的 zip 包含完整 OCR 資源
+- 新增 `OCR-FIX.md` 記錄四輪診斷與修復過程
 
 ## [3.3.4] - 2026-11-19
 

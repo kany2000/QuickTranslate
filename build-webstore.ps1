@@ -40,7 +40,8 @@ $Files = @(
 $Directories = @(
     "core",
     "modules",
-    "icons"
+    "icons",
+    "tesseract"
 )
 
 $TempDir = Join-Path $ProjectRoot "_build_temp"
