@@ -44,7 +44,7 @@
 
 /**
  * FloatPanel - 独立翻译面板
- * Version: 3.3.3
+ * Version: 3.4.0
  * 独立浮动面板，可打字翻译，附带历史记录和生词本功能
  */
 
@@ -483,10 +483,10 @@ class FloatPanel {
           targetLang: targetLang
         });
       } else {
-        resultArea.innerHTML = `<span class="float-error">${response.error}</span>`;
+        resultArea.innerHTML = `<span class="float-error">${this.escapeHtml(response.error || '')}</span>`;
       }
     } catch (error) {
-      resultArea.innerHTML = `<span class="float-error">${error.message}</span>`;
+      resultArea.innerHTML = `<span class="float-error">${this.escapeHtml(error.message || '')}</span>`;
     }
   }
 

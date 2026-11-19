@@ -7,7 +7,7 @@
   <a href="https://github.com/kany2000/QuickTranslate">
     <img src="https://img.shields.io/github/stars/kany2000/QuickTranslate?style=for-the-badge&logo=github" alt="Stars"/>
   </a>
-  <img src="https://img.shields.io/badge/version-3.3.3-667EEA?style=for-the-badge" alt="Version 3.3.3"/>
+  <img src="https://img.shields.io/badge/version-3.4.0-667EEA?style=for-the-badge" alt="Version 3.4.0"/>
   <img src="https://img.shields.io/badge/license-MIT-764BA2?style=for-the-badge" alt="MIT License"/>
   <img src="https://img.shields.io/badge/模块系统-Enabled-10b981?style=for-the-badge" alt="Module System"/>
 </p>
@@ -134,8 +134,21 @@ QuickTranslate/
 ### 构建发布
 
 ```bash
-powershell -File build-release.ps1 -Version "3.3.3"
+powershell -File build-webstore.ps1
 ```
+
+## 📚 文档
+
+| 文档 | 内容 |
+|---|---|
+| [USER_GUIDE.md](USER_GUIDE.md) | 用户使用指南 |
+| [EXAMPLE.md](EXAMPLE.md) | 模块开发示例（另有 ja / ko / zh-CN / zh-TW 版） |
+| [MODULE_SPEC.md](MODULE_SPEC.md) | 模块规范（另有 ja / ko / zh-CN / zh-TW 版） |
+| [STORE_GUIDE.md](STORE_GUIDE.md) | 模块商店指南（另有 ja / ko / zh-CN / zh-TW 版） |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献指南 |
+| [CHANGELOG.md](CHANGELOG.md) | 更新日志 |
+| [RELEASE_INSTRUCTIONS.md](RELEASE_INSTRUCTIONS.md) | 发布流程 |
+| [archive/](archive/) | 历史文档归档（旧版发布说明、进度与重构记录） |
 
 ## 📄 许可证
 
@@ -144,5 +157,5 @@ MIT — 详见 [LICENSE](LICENSE)。
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.3.3
+  Made with ❤️ by <a href="https://github.com/kany2000">kany2000</a> · QuickTranslate v3.4.0
 </p>

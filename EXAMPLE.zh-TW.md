@@ -111,7 +111,7 @@ echo-translator.qt-module
 
 ## 完整示例參考
 
-- [`echo-translator.qt-module`](echo-translator.qt-module) — 最簡翻譯引擎（含配置項）
+- [`echo-translator.qt-module`](store/echo-translator.qt-module) — 最簡翻譯引擎（含配置項）
 - [`modules/translator-google.js`](modules/translator-google.js) — 內置 Google 翻譯模块
 - [`modules/translator-custom.js`](modules/translator-custom.js) — 自定義 LLM 模块
 - [`modules/mode-quick-panel.js`](modules/mode-quick-panel.js) — 交互模式模块示例

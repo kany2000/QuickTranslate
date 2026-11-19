@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "QuickTranslate - 快译",
-  "version": "3.3.3",
+  "version": "3.4.0",
   "description": "QuickTranslate 快译 - 選中文字即時翻譯，支持 Google、Microsoft、GLM、LLM。快捷面板、截圖、懸浮翻譯，識別準確率 98%+。",
   "author": "QuickTranslate Team",
   "permissions": [
@@ -13,12 +13,17 @@
     "contextMenus"
   ],
   "host_permissions": [
+    "https://aidemo.youdao.com/*",
     "https://translate.googleapis.com/*",
     "https://clients5.google.com/*",
     "https://api.mymemory.translated.net/*",
     "https://api.cognitive.microsofttranslator.com/*",
     "https://open.bigmodel.cn/*",
     "https://lingva.ml/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -41,7 +46,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["tesseract.min.js", "content-japanese.js", "content-text-extract.js", "content-ui.js", "content.js", "quick-panel.js", "float-panel.js"],
+      "js": ["debug-log.js", "content-japanese.js", "content-text-extract.js", "content-ui.js", "content.js", "quick-panel.js", "float-panel.js"],
       "css": ["content.css", "quick-panel.css", "float-panel.css"],
       "run_at": "document_idle",
       "all_frames": false
@@ -50,6 +55,15 @@
   "web_accessible_resources": [
     {
       "resources": ["icons/*.png"],
+      "matches": ["<all_urls>"]
+    },
+    {
+      "resources": [
+        "tesseract/worker.min.js",
+        "tesseract/core/tesseract-core.wasm.js",
+        "tesseract/core/tesseract-core-simd.wasm.js",
+        "tesseract/langs/*.gz"
+      ],
       "matches": ["<all_urls>"]
     }
   ],

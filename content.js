@@ -220,6 +220,9 @@ if (typeof window.ScreenshotCapture === 'undefined') {
       this.startY = 0;
       this.isSelecting = false;
       this.lang = 'en';  // UI语言
+      // Tesseract OCR worker 单例缓存：避免每次截图都重新下载语言包/初始化 wasm（这是截图翻译慢的主因）
+      this._ocrWorker = null;
+      this._ocrWorkerPromise = null;
       this.setupMessageListeners();
       this.loadUserLanguage();
     }
@@ -326,6 +329,8 @@ if (typeof window.ScreenshotCapture === 'undefined') {
 
       console.log('Content: Creating new overlay...');
       this.createOverlay();
+      // 注意：不在此處預熱 OCR。重型頁面（如 CNN）注入 tesseract + wasm 會鎖死主執行緒；
+      // 且多數網頁劃選區走 DOM 文字提取，無需 OCR。OCR 僅在真正需要時按需初始化。
     }
 
     createOverlay() {
@@ -537,6 +542,7 @@ if (typeof window.ScreenshotCapture === 'undefined') {
 
     processSelection(rect) {
       console.log('Content: Processing selection:', rect);
+      const _procT0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
 
       // 顯示處理狀態
       if (this.instructionText) {
@@ -547,6 +553,7 @@ if (typeof window.ScreenshotCapture === 'undefined') {
 
       // 先嘗試提取選中區域的文字
       const selectedText = this.extractTextFromArea(rect);
+      console.log(`[QT perf] ① extractTextFromArea: ${((typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now()) - _procT0).toFixed(0)}ms`);
 
       if (selectedText && selectedText.trim()) {
         console.log('Content: Extracted text:', selectedText);
@@ -555,11 +562,14 @@ if (typeof window.ScreenshotCapture === 'undefined') {
           this.instructionText.textContent = this.t('quick.msg.translatingInProgress');
         }
 
-        // 進行真實翻譯處理
-        setTimeout(async () => {
+        // 進行真實翻譯處理（去掉人為 800ms 延遲，直接翻譯）
+        (async () => {
           console.log('Content: About to translate text');
+          const _trT0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
           try {
             const translatedText = await this.translateText(selectedText);
+            console.log(`[QT perf] ② translateText: ${((typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now()) - _trT0).toFixed(0)}ms`);
+            console.log(`[QT perf] ③ total (selection→result): ${((typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now()) - _procT0).toFixed(0)}ms`);
             console.log('Content: Translation completed:', translatedText);
             this.showTranslationResult({
               originalText: selectedText,
@@ -574,7 +584,7 @@ if (typeof window.ScreenshotCapture === 'undefined') {
               confidence: 0.0
             });
           }
-        }, 800);
+        })();
       } else {
         console.log('Content: No text found, using screenshot method');
 
@@ -1725,11 +1735,11 @@ if (result && result !== text) {
                 0, 0, rect.width, rect.height
               );
 
-              // 將裁剪後的圖片轉換為 base64
-              const croppedImageData = canvas.toDataURL('image/png');
+              // 將裁剪後的圖片轉換為 base64（JPEG 體積更小，傳入 OCR 更快）
+              const croppedImageData = canvas.toDataURL('image/jpeg', 0.92);
 
-              // 使用簡化的OCR方法
-              const ocrResult = await this.runSimpleTextDetection(croppedImageData);
+              // 使用真正的 Tesseract OCR（本地語言包 + worker 復用，見 runTesseractOCR）
+              const ocrResult = await this.runTesseractOCR(croppedImageData);
               resolve(ocrResult);
 
             } catch (error) {
@@ -1877,30 +1887,50 @@ if (result && result !== text) {
       }
     }
 
+    /**
+     * 取得（或首次建立）復用的 Tesseract worker。
+     * 所有資源指向擴展本地目錄，避免每次走慢速 CDN 下載語言包。
+     * 用 promise 緩存做並發去重，防止同時多次截圖建立多個 worker。
+     */
+    async getOcrWorker() {
+      if (this._ocrWorker) return this._ocrWorker;
+      if (this._ocrWorkerPromise) return this._ocrWorkerPromise;
+
+      this._ocrWorkerPromise = (async () => {
+        console.log('Content: Loading Tesseract.js...');
+        if (typeof Tesseract === 'undefined') await this.loadTesseract();
+
+        const base = chrome.runtime.getURL('tesseract/');
+        const worker = await Tesseract.createWorker('eng', 1, {
+          logger: m => console.log('Tesseract:', m),
+          workerPath: base + 'worker.min.js',
+          corePath: base + 'core',
+          langPath: base + 'langs'
+        });
+        console.log('Content: Tesseract worker created (local assets, cached)');
+        this._ocrWorker = worker;
+        this._ocrWorkerPromise = null;
+        return worker;
+      })();
+
+      try {
+        return await this._ocrWorkerPromise;
+      } catch (error) {
+        this._ocrWorkerPromise = null; // 失敗時清空，允許重試
+        throw error;
+      }
+    }
+
     async runTesseractOCR(imageData) {
       try {
         console.log('Content: Running Tesseract OCR...');
 
-        // 檢查是否已載入 Tesseract
-        if (typeof Tesseract === 'undefined') {
-          console.log('Content: Loading Tesseract.js...');
-          await this.loadTesseract();
-        }
-
-        console.log('Content: Tesseract loaded, starting recognition...');
-
-        // 使用 Tesseract 進行文字識別，先嘗試英文
-        const worker = await Tesseract.createWorker('eng', 1, {
-          logger: m => console.log('Tesseract:', m)
-        });
-
-        console.log('Content: Tesseract worker created');
+        // 復用已有 worker；首次建立後不再重複初始化（關鍵提速點）
+        const worker = await this.getOcrWorker();
 
         const { data: { text, confidence } } = await worker.recognize(imageData);
 
         console.log('Tesseract result:', { text, confidence });
-
-        await worker.terminate();
 
         // 如果識別到有意義的文字
         if (text && text.trim().length > 2) {
@@ -1922,15 +1952,21 @@ if (result && result !== text) {
     }
 
     async loadTesseract() {
-      // Tesseract 现在通过 manifest.json 直接加载，所以应该已经可用
-      return new Promise((resolve, reject) => {
-        if (typeof Tesseract !== 'undefined') {
-          console.log('Content: Tesseract is loaded');
-          resolve();
-          return;
-        }
+      if (typeof Tesseract !== 'undefined') {
+        console.log('Content: Tesseract is loaded');
+        return;
+      }
 
-        // 如果不可用，等待一下再检查
+      // 按需注入：tesseract.min.js 已改為不再預載到每個頁面，
+      // 用到 OCR 時先請 background 用 scripting API 注入當前頁面
+      try {
+        await chrome.runtime.sendMessage({ action: 'injectTesseract' });
+      } catch (error) {
+        console.log('Content: Tesseract injection request failed:', error);
+      }
+
+      // 等待注入完成（全域 Tesseract 出現）
+      return new Promise((resolve, reject) => {
         let attempts = 0;
         const checkInterval = setInterval(() => {
           attempts++;

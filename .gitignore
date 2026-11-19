@@ -75,3 +75,7 @@ RELEASE_NOTES_*
 
 # Issues 目錄
 issues/
+
+# 本地工具元數據（不上傳）
+.workbuddy/
+.claude/

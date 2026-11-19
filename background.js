@@ -9,6 +9,7 @@ self.addEventListener('error', (event) => {
 })
 
 importScripts(
+  'debug-log.js',
   'core/event-bus.js',
   'core/module-loader.js',
   'modules/translator-google.js',
@@ -574,6 +575,9 @@ class ScreenshotTranslator {
           console.log('Capturing visible tab...');
           this.captureVisibleTab(request.rect, sendResponse);
           break;
+        case 'injectTesseract':
+          this.injectTesseract(sender, sendResponse);
+          break;
         case 'getSettings':
           console.log('Getting settings...');
           this.getSettings(sendResponse);
@@ -754,6 +758,36 @@ class ScreenshotTranslator {
     }
   }
 
+  // OCR 庫按需注入：tesseract.min.js 不再預載到每個頁面，用到時先注入當前標籤頁
+  async injectTesseract(sender, sendResponse) {
+    try {
+      const tabId = sender && sender.tab && sender.tab.id;
+      if (!tabId) {
+        sendResponse({ success: false, error: 'No tab context for injection' });
+        return;
+      }
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        files: ['tesseract.min.js']
+      });
+      sendResponse({ success: true });
+    } catch (error) {
+      console.error('Background: Tesseract injection failed:', error);
+      sendResponse({ success: false, error: error.message });
+    }
+  }
+
+  // 自定義 LLM 域名不在預裝 host_permissions 內時，
+  // 需用戶在設置頁授權（optional_host_permissions）後才可 fetch，否則會被 CORS 攔截
+  async _hasHostPermission(targetUrl) {
+    try {
+      const origin = new URL(targetUrl).origin + '/*';
+      return await chrome.permissions.contains({ origins: [origin] });
+    } catch (error) {
+      return false;
+    }
+  }
+
   async getAvailableModels(apiKey, baseUrl, sendResponse) {
     try {
       // 构建 API URL
@@ -763,6 +797,10 @@ class ScreenshotTranslator {
       }
       // 尝试 OpenAI 兼容的 models 端点
       const modelsUrl = `${url}/models`;
+
+      if (!await this._hasHostPermission(modelsUrl)) {
+        throw new Error('未授權訪問該 API 域名：請在擴展設置中保存自定義 LLM 配置並允許權限申請');
+      }
 
       console.log('Background: Fetching models from:', modelsUrl);
 
@@ -815,9 +853,10 @@ class ScreenshotTranslator {
       }
 
       // 使用 Chrome 的截圖 API
+      // JPEG quality 90：比無損 PNG 體積小很多，傳遞與 canvas 裁剪更快，OCR 清晰度足夠
       const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, {
-        format: 'png',
-        quality: 100
+        format: 'jpeg',
+        quality: 90
       });
 
       console.log('Screenshot captured successfully');
@@ -1068,7 +1107,14 @@ class ScreenshotTranslator {
 
           case 'google':
           default:
-            result = await this.callGoogleTranslate(processedText, sourceLang, targetLang);
+            // 首选有道（国内直连 ~0.2s），失败才回退 Google（国内常超时）
+            try {
+              result = await this.callYoudaoTranslate(processedText, sourceLang, targetLang);
+              console.log('Background: Translated via Youdao (fast path)');
+            } catch (ydError) {
+              console.warn('Background: Youdao failed, falling back to Google:', ydError.message);
+              result = await this.callGoogleTranslate(processedText, sourceLang, targetLang);
+            }
             break;
         }
       }
@@ -1143,6 +1189,38 @@ class ScreenshotTranslator {
     return translatedText;
   }
 
+  // 有道翻译（免费 web 端点，国内直连，实测 ~0.2s，作为首选引擎）
+  // 支持的源语言：auto/en/ja/ko/zh-CHS/fr/de/es/ru/pt/it/ar/th/vi 等
+  // 说明：该端点输出简体中文；目标繁体(zh-TW/zh-CHT)会由上层 convertLanguageCode 归一为 zh
+  async callYoudaoTranslate(text, sourceLang, targetLang) {
+    const LANG = {
+      'auto': 'auto',
+      'zh': 'zh-CHS', 'zh-cn': 'zh-CHS', 'zh-CN': 'zh-CHS',
+      'zh-TW': 'zh-CHT', 'zh-CHT': 'zh-CHT', 'zh-CHS': 'zh-CHS',
+      'en': 'en', 'ja': 'ja', 'ko': 'ko',
+      'fr': 'fr', 'de': 'de', 'es': 'es', 'ru': 'ru',
+      'pt': 'pt', 'it': 'it', 'ar': 'ar', 'th': 'th', 'vi': 'vi'
+    }
+    const from = LANG[sourceLang] || 'auto'
+    // 有道此 web 端点对繁体目标支持不稳定，统一用简体（与现有 zh 目标行为一致）
+    const to = (targetLang && targetLang.startsWith('zh')) ? 'zh-CHS' : (LANG[targetLang] || 'auto')
+
+    const body = `q=${encodeURIComponent(text)}&from=${from}&to=${to}`
+    const resp = await fetch('https://aidemo.youdao.com/trans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+      signal: AbortSignal.timeout(5000)
+    })
+    if (!resp.ok) throw new Error(`Youdao HTTP ${resp.status}`)
+    const data = await resp.json()
+    const translation = data?.translation?.[0]
+    if (data?.errorCode === '0' && translation && translation.trim() && translation !== text) {
+      return translation.trim()
+    }
+    throw new Error(`Youdao failed: errorCode=${data?.errorCode}`)
+  }
+
   // Google 翻译（免费，含 429 自动重试）
   async callGoogleTranslate(text, sourceLang, targetLang) {
     const RETRY_DELAYS = [1500, 3000, 5000]
@@ -1161,7 +1239,8 @@ class ScreenshotTranslator {
             method: 'GET',
             headers: {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
+            },
+            signal: AbortSignal.timeout(4000)
           });
 
           console.log('Background: Google Translate response status:', response.status);
@@ -1407,6 +1486,10 @@ ${text}`;
         baseUrl = baseUrl.slice(0, -1);
       }
       const chatEndpoint = `${baseUrl}/chat/completions`;
+
+      if (!await this._hasHostPermission(chatEndpoint)) {
+        throw new Error('未授權訪問該 API 域名：請在擴展設置中保存自定義 LLM 配置並允許權限申請');
+      }
 
       console.log('Background: Custom LLM endpoint:', chatEndpoint);
 

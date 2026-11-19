@@ -16,6 +16,7 @@ Write-Host ""
 # Files to include (hardcoded list, explicitly complete)
 $Files = @(
     "manifest.json",
+    "debug-log.js",
     "background.js",
     "content-japanese.js",
     "content-text-extract.js",

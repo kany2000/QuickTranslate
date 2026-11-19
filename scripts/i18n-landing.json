@@ -18,11 +18,11 @@
    "ko": "Chrome 확장 설치",
    "tw": "安裝 Chrome 擴展"
   },
-  "v3.3.3 · 🎉 Chrome 商店新上架 · 开源免费": {
-   "en": "v3.3.3 · New on Chrome Web Store · Open Source",
-   "ja": "v3.3.3 · Chrome Web Store 新登場 · オープンソース",
-   "ko": "v3.3.3 · Chrome Web Store 신규 등록 · 오픈소스",
-   "tw": "v3.3.3 · Chrome Web Store 新上架 · 開源免費"
+  "v3.4.0 · 🎉 Chrome 商店新上架 · 开源免费": {
+   "en": "v3.4.0 · New on Chrome Web Store · Open Source",
+   "ja": "v3.4.0 · Chrome Web Store 新登場 · オープンソース",
+   "ko": "v3.4.0 · Chrome Web Store 신규 등록 · 오픈소스",
+   "tw": "v3.4.0 · Chrome Web Store 新上架 · 開源免費"
   },
   "模块化翻译，一切尽在掌控": {
    "en": "Modular Translation, Fully in Control",
@@ -444,11 +444,11 @@
    "ko": "🌐 한국어",
    "tw": "🌐 繁體中文"
   },
-  "v3.3.3 · 开源免费 · Chrome 商店上架": {
-   "en": "v3.3.3 · Open Source · Live on Chrome Web Store",
-   "ja": "v3.3.3 · オープンソース · Chrome ストア公開中",
-   "ko": "v3.3.3 · 오픈 소스 · Chrome 스토어 출시",
-   "tw": "v3.3.3 · 開源免費 · Chrome 商店上架"
+  "v3.4.0 · 开源免费 · Chrome 商店上架": {
+   "en": "v3.4.0 · Open Source · Live on Chrome Web Store",
+   "ja": "v3.4.0 · オープンソース · Chrome ストア公開中",
+   "ko": "v3.4.0 · 오픈 소스 · Chrome 스토어 출시",
+   "tw": "v3.4.0 · 開源免費 · Chrome 商店上架"
   },
   "选中即译，": {
    "en": "Select & translate,",
@@ -599,10 +599,10 @@
    "ko": "더 정확한 영역을 선택하거나 고급 설정에서 다른 번역 엔진으로 전환해 보세요. Google 번역은 일상용에 적합하고, GLM 대형 모델은 품질이 더 높지만 API 키가 필요합니다.",
    "tw": "可以嘗試選取更精確的文字區域，或在進階設定中切換不同的翻譯引擎。Google 翻譯適合日常使用，GLM 大模型翻譯品質更高但需要 API Key。"
   },
-  "Made with precision by QuickTranslate Team · v3.3.3": {
-   "ja": "Made with precision by QuickTranslate Team · v3.3.3",
-   "ko": "Made with precision by QuickTranslate Team · v3.3.3",
-   "tw": "Made with precision by QuickTranslate Team · v3.3.3"
+  "Made with precision by QuickTranslate Team · v3.4.0": {
+   "ja": "Made with precision by QuickTranslate Team · v3.4.0",
+   "ko": "Made with precision by QuickTranslate Team · v3.4.0",
+   "tw": "Made with precision by QuickTranslate Team · v3.4.0"
   }
  },
  "attr": {

@@ -5,6 +5,23 @@
 格式基於 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 並且本項目遵循 [語義化版本](https://semver.org/lang/zh-CN/).
 
+## [3.4.0] - 2026-11-19
+
+### 🔧 修復 / Fixed
+- **自定義 LLM 接口可真正連通**：新增 `optional_host_permissions`，在設置頁保存配置或獲取模型列表時，按 baseUrl 域名向用戶申請訪問權限；background 請求前會校驗權限，未授權時返回明確提示。此前不在預裝名單的域名（如 OpenAI 官方接口）會被 CORS 攔截、填了也用不了
+- **懸浮面板錯誤信息改經轉義輸出**：API 返回的錯誤文本此前直接拼入 innerHTML，現統一經 escapeHtml 處理
+- 移除無人讀取的 `shortcutKey` 存儲寫入（死代碼）；快捷鍵顯示只以 chrome.commands 為準
+
+### 🚀 優化 / Improved
+- **OCR 庫改按需注入**：tesseract.min.js 不再預載到每個網頁，改由截圖翻譯用到時經 background 以 scripting API 注入當前頁，減輕每個頁面的負擔
+- **新增 CI**：GitHub Actions 於 push／PR 時自動跑語法檢查與日語引擎回歸測試
+- **日誌開關**：新增 debug-log.js，生產環境默認關閉 console.log（warn／error 不受影響）；調試時設置 `chrome.storage.local` 的 `qtDebug: true` 即開啟
+
+## [3.3.4] - 2026-11-19
+
+### 🔧 修復 / Fixed
+- **快捷鍵設定無反應（Issue #4）**：錄製快捷鍵時，按鍵監聽在第一個 keydown 後就被移除——而組合鍵必然先落修飾鍵（Ctrl/Alt/Shift），錄製未等到主鍵就已失效，表現為「按下去不會改快捷鍵、沒反應」。改為：修飾鍵單獨按下時顯示已按部分並繼續等待主鍵，主鍵＋修飾鍵成組合後才保存；Esc 可取消錄製，收尾（移除監聽／清計時／恢復顯示）統一只執行一次
+
 ## [3.3.3] - 2026-09-01
 
 ### ✨ 新增 / Added

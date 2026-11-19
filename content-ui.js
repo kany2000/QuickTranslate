@@ -12,8 +12,8 @@ class UIMethods {
       // 先清理覆蓋層
       this.cleanupOverlay();
 
-      // 等待一下再顯示結果，確保覆蓋層已清理
-      setTimeout(() => {
+      // 直接顯示結果（去掉人為 200ms 延遲，cleanupOverlay 為同步操作無需等待）
+      {
         console.log('Content: Creating result modal...');
 
         // 創建更詳細的結果顯示
@@ -31,27 +31,10 @@ class UIMethods {
         // 強制重繪
         resultModal.offsetHeight;
 
-        // 添加動畫效果
-        setTimeout(() => {
-          resultModal.style.opacity = '1';
-          resultModal.classList.add('show');
-          console.log('Content: Result modal should be visible now');
-
-          // 檢查模態框是否真的可見
-          setTimeout(() => {
-            const rect = resultModal.getBoundingClientRect();
-            const computed = window.getComputedStyle(resultModal);
-            console.log('Content: Modal visibility check:', {
-              rect: rect,
-              display: computed.display,
-              visibility: computed.visibility,
-              opacity: computed.opacity,
-              zIndex: computed.zIndex,
-              inDOM: document.body.contains(resultModal)
-            });
-          }, 100);
-        }, 50);
-      }, 200);
+        // 立即顯示（去掉人為 50ms 延遲）
+        resultModal.style.opacity = '1';
+        resultModal.classList.add('show');
+      }
     }
 
     createResultModal(result) {

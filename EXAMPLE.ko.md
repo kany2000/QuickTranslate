@@ -111,7 +111,7 @@ Check `manifest` is complete:
 
 ## 참고 예제
 
-- [`echo-translator.qt-module`](echo-translator.qt-module) — Minimal translator with options
+- [`echo-translator.qt-module`](store/echo-translator.qt-module) — Minimal translator with options
 - [`modules/translator-google.js`](modules/translator-google.js) — Built-in Google Translate module
 - [`modules/translator-custom.js`](modules/translator-custom.js) — Custom LLM module
 - [`modules/mode-quick-panel.js`](modules/mode-quick-panel.js) — Interaction mode example

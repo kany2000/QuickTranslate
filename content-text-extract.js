@@ -24,6 +24,7 @@ class TextExtractMethods {
 
     getPreciseTextFromArea(rect) {
       try {
+        const _t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
         const tolerance = 2;
         const nodeData = new Map();
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
@@ -35,29 +36,50 @@ class TextExtractMethods {
           }
         });
 
+        // 關鍵提速：複用單一 Range，且先用「節點級粗篩」排除完全落在選區外的文本節點。
+        // 原實現對整頁每個字符都 createRange + getBoundingClientRect（強制布局），
+        // CNN 等複雜頁面上萬字符 → 上萬次布局計算 → 同步阻塞主執行緒 3~4 秒。
+        // 現在：每個文本節點先一次性 getClientRects() 粗判是否與選區相交，
+        // 只有相交節點才逐字符精定位 → 計算量從 O(全頁字符) 降到 O(相交字符)。
+        const range = document.createRange();
+        const outOfArea = (r) =>
+          r.right < rect.left - tolerance || r.left > rect.left + rect.width + tolerance ||
+          r.bottom < rect.top - tolerance || r.top > rect.top + rect.height + tolerance;
+
         while (walker.nextNode()) {
           const node = walker.currentNode;
           const text = node.textContent;
+
+          // 粗篩：節點所有行矩形都在選區外 → 跳過整個節點（不逐字符）
+          try {
+            range.selectNodeContents(node);
+            const rects = range.getClientRects();
+            let intersects = false;
+            for (let k = 0; k < rects.length; k++) {
+              if (!outOfArea(rects[k])) { intersects = true; break; }
+            }
+            if (!intersects) continue;
+          } catch (e) { /* 粗篩異常則仍逐字符兜底 */ }
+
+          // 精定位：僅對與選區相交的節點逐字符
           for (let i = 0; i < text.length; i++) {
             try {
-              const r = document.createRange();
-              r.setStart(node, i);
-              r.setEnd(node, i + 1);
-              const cr = r.getBoundingClientRect();
-              if (cr.width > 0 && cr.height > 0) {
-                if (!(cr.right < rect.left - tolerance || cr.left > rect.left + rect.width + tolerance || cr.bottom < rect.top - tolerance || cr.top > rect.top + rect.height + tolerance)) {
-                  if (!nodeData.has(node)) {
-                    nodeData.set(node, { firstIdx: i, lastIdx: i, top: cr.top, left: cr.left, bottom: cr.bottom, text: text });
-                  } else {
-                    const d = nodeData.get(node);
-                    d.firstIdx = Math.min(d.firstIdx, i);
-                    d.lastIdx = Math.max(d.lastIdx, i);
-                  }
+              range.setStart(node, i);
+              range.setEnd(node, i + 1);
+              const cr = range.getBoundingClientRect();
+              if (cr.width > 0 && cr.height > 0 && !outOfArea(cr)) {
+                if (!nodeData.has(node)) {
+                  nodeData.set(node, { firstIdx: i, lastIdx: i, top: cr.top, left: cr.left, bottom: cr.bottom, text: text });
+                } else {
+                  const d = nodeData.get(node);
+                  d.firstIdx = Math.min(d.firstIdx, i);
+                  d.lastIdx = Math.max(d.lastIdx, i);
                 }
               }
-            } catch(e) { /* ignore */ }
+            } catch (e) { /* ignore */ }
           }
         }
+        console.log(`[QT perf] getPreciseTextFromArea: ${((typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now()) - _t0).toFixed(0)}ms, nodes=${nodeData.size}`);
 
         if (nodeData.size === 0) return this.getTextFromElementsInArea(rect);
 

@@ -367,12 +367,32 @@ class PopupController {
     this.elements.llmBaseUrl.addEventListener('input', () => this.showUnsavedChanges());
   }
 
+  // 自定義 LLM 的 baseUrl 若不在預裝 host_permissions 內，
+  // 必須在用戶手勢下申請該域名權限（optional_host_permissions），否則 fetch 會被 CORS 攔截
+  async ensureHostPermission(baseUrl) {
+    try {
+      const origin = new URL(baseUrl).origin + '/*';
+      if (await chrome.permissions.contains({ origins: [origin] })) {
+        return true;
+      }
+      return await chrome.permissions.request({ origins: [origin] });
+    } catch (error) {
+      console.error('Popup: Host permission request failed:', error);
+      return false;
+    }
+  }
+
   async fetchAvailableModels() {
     const apiKey = this.elements.customApiKey?.value.trim() || this.elements.apiKey?.value.trim() || '';
     const baseUrl = this.elements.llmBaseUrl.value.trim();
 
     if (!apiKey || !baseUrl) {
       this.showStatus('請先填寫 API Key 和 Base URL', 'error');
+      return;
+    }
+
+    if (!await this.ensureHostPermission(baseUrl)) {
+      this.showStatus('未獲得該 API 域名的訪問權限，無法連接', 'error');
       return;
     }
 
@@ -753,6 +773,15 @@ class PopupController {
         }
         if (!finalModel || finalModel === '__custom__') {
           this.showStatus('請選擇或輸入模型名稱', 'error');
+          return;
+        }
+      }
+
+      // 自定義 LLM 需先取得該域名權限，否則保存後亦連接失敗
+      if (provider === 'custom') {
+        const granted = await this.ensureHostPermission(this.elements.llmBaseUrl.value.trim());
+        if (!granted) {
+          this.showStatus('未獲得該 API 域名的訪問權限，請允許權限申請後再保存', 'error');
           return;
         }
       }
@@ -1420,10 +1449,30 @@ class PopupController {
     button.classList.add('shortcut-recording');
     button.textContent = '錄製中';
 
+    // 統一收尾：移除監聽、清計時、恢復顯示，只執行一次
+    let finished = false;
+    let timer = null;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      if (timer) clearTimeout(timer);
+      document.removeEventListener('keydown', handleKeyDown, true);
+      this.endShortcutRecording();
+    };
+
     // 監聽按鍵
+    // 注意：組合鍵必然先落修飾鍵（Ctrl/Alt/Shift/Cmd），修飾鍵單獨按下時
+    // 絕不能移除監聽——舊寫法在第一個 keydown 後就移除監聽，導致錄製
+    // 永遠等不到主鍵，表現為「按下去不會改快捷鍵、沒反應」（Issue #4）。
     const handleKeyDown = async (e) => {
       e.preventDefault();
       e.stopPropagation();
+
+      // Esc 取消錄製
+      if (e.key === 'Escape') {
+        finish();
+        return;
+      }
 
       const keys = [];
       if (e.ctrlKey) keys.push('Ctrl');
@@ -1431,29 +1480,29 @@ class PopupController {
       if (e.shiftKey) keys.push('Shift');
       if (e.metaKey) keys.push('Cmd');
 
+      const isModifier = ['Control', 'Alt', 'Shift', 'Meta'].includes(e.key);
+
       // 添加主鍵
-      if (e.key && !['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) {
-        keys.push(e.key.toUpperCase());
+      if (!isModifier && e.key) {
+        keys.push(e.key.length === 1 ? e.key.toUpperCase() : e.key);
       }
 
-      if (keys.length >= 2) {
+      if (!isModifier && keys.length >= 2) {
+        // 主鍵 + 至少一個修飾鍵，先至算完整組合
         const shortcut = keys.join('+');
         await this.saveShortcut(shortcut);
-        this.endShortcutRecording();
+        finish();
+      } else if (keys.length > 0) {
+        // 未成組合：顯示已按下的部分，繼續等埋主鍵
+        input.value = keys.join('+') + '+...';
       }
-
-      // 移除監聽器
-      document.removeEventListener('keydown', handleKeyDown, true);
     };
 
     // 添加監聽器
     document.addEventListener('keydown', handleKeyDown, true);
 
     // 10秒後自動取消
-    setTimeout(() => {
-      document.removeEventListener('keydown', handleKeyDown, true);
-      this.endShortcutRecording();
-    }, 10000);
+    timer = setTimeout(finish, 10000);
   }
 
   endShortcutRecording() {
@@ -1469,9 +1518,8 @@ class PopupController {
 
   async saveShortcut(shortcut) {
     try {
-      // 保存到本地存儲
-      await chrome.storage.local.set({ shortcutKey: shortcut });
-
+      // 實際快捷鍵綁定由 chrome.commands 管理，此處只更新顯示；
+      // 不再寫入無人讀取的 shortcutKey 存儲（舊行為屬死代碼）
       this.elements.shortcutKey.value = shortcut;
       this.showStatus(`快捷鍵已設置為: ${shortcut}`, 'success');
 
@@ -1491,9 +1539,6 @@ class PopupController {
       const smartTranslate = commands.find(cmd => cmd.name === 'smart-translate');
       const shortcut = smartTranslate?.shortcut || 'Alt+1';
       this.elements.shortcutKey.value = shortcut;
-
-      // 同步保存到 storage，方便其他邏輯讀取
-      await chrome.storage.local.set({ shortcutKey: shortcut });
     } catch (error) {
       console.error('Failed to load shortcut setting:', error);
       this.elements.shortcutKey.value = 'Alt+1';
